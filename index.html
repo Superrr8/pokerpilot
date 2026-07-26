@@ -4,139 +4,217 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07110d">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="PokerPilot">
-  
-  
+  <title>PokerPilot v1.6</title>
   <style>
-:root{--bg:#07110d;--panel:#102019;--panel2:#162a22;--line:#29483b;--text:#f4fbf7;--muted:#9db8ac;--accent:#3be09b;--accent2:#1d8e63;--warn:#efbd4f;--danger:#ff7474;--blue:#71aaff;--shadow:0 16px 42px rgba(0,0,0,.28)}
-*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 90% 0,rgba(59,224,155,.13),transparent 31%),linear-gradient(180deg,#06100c,#0b1712);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.app{width:min(100%,500px);margin:auto;padding:env(safe-area-inset-top) 14px calc(92px + env(safe-area-inset-bottom))}.topbar{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;background:none;border:0;color:inherit;padding:0;text-align:left}.brand>span:last-child{display:flex;flex-direction:column}.brand strong{font-size:20px}.brand small{color:var(--muted);font-size:11px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#03110b;font-weight:1000;box-shadow:0 8px 20px rgba(59,224,155,.2)}button,select,input{font:inherit}.chip,.tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}.chip{border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.03)}.tag{background:rgba(59,224,155,.11);color:var(--accent)}.screen{display:none}.screen.active{display:block}.hero,.panel,.mode-card{border:1px solid var(--line);background:linear-gradient(155deg,var(--panel2),var(--panel));border-radius:22px;box-shadow:var(--shadow)}.hero{padding:20px;background:linear-gradient(145deg,rgba(59,224,155,.11),rgba(255,255,255,.02))}.eyebrow{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:900}.hero h1{font-size:27px;line-height:1.1;margin:9px 0}.hero p,.muted{color:var(--muted);line-height:1.48;font-size:13px}.section-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:19px 2px 9px}.mode-list{display:grid;gap:10px}.mode-card{width:100%;display:grid;grid-template-columns:38px 1fr 18px;gap:10px;align-items:center;padding:15px;color:inherit;text-align:left}.mode-card span:nth-child(2){display:flex;flex-direction:column;gap:4px}.mode-card small{color:var(--muted);line-height:1.35}.mode-card b{font-size:22px;color:var(--muted)}.mode-icon{font-size:25px}.panel{padding:15px;margin-bottom:12px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panel h3{font-size:19px;margin:9px 0 0}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.stats-grid.four{grid-template-columns:repeat(4,1fr)}.stat{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:14px;text-align:center;padding:9px 4px}.stat small{display:block;color:var(--muted);font-size:10px}.stat strong{font-size:16px}.back,.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:13px;padding:9px 11px}.back{border:0;padding-left:1px;margin-bottom:10px}.small{font-size:11px;padding:7px 9px}.wide{width:100%}.primary{border:0;background:var(--accent);color:#03110b;border-radius:14px;padding:14px 11px;font-weight:1000}.hidden{display:none!important}.cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.playing-card{width:65px;height:90px;border-radius:12px;background:#f7faf8;color:#131a16;padding:7px;display:flex;flex-direction:column;justify-content:space-between;font-size:22px;font-weight:1000;box-shadow:0 9px 19px rgba(0,0,0,.25)}.playing-card.red{color:#d33e3e}.playing-card.small-card{width:48px;height:67px;font-size:17px;border-radius:9px;padding:5px}.hero-cards{margin:14px 0}.spot-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:13px 0}.spot-question{font-size:14px;line-height:1.45;color:#dce9e2}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.actions button{border-radius:14px;padding:13px 7px;border:1px solid var(--line);background:#1a2d25;color:var(--text);font-weight:900}.actions .fold{background:#3a2020;color:#ffdcdc;border-color:#653535}.actions .main{background:var(--accent);color:#03110b;border-color:var(--accent)}.actions .allin{background:#382b17;color:#ffe8b3;border-color:#6c5123}.feedback{margin-top:12px;padding:12px;border-radius:15px;line-height:1.48;font-size:13px}.feedback.good{background:rgba(59,224,155,.1);border:1px solid rgba(59,224,155,.3)}.feedback.warn{background:rgba(239,189,79,.1);border:1px solid rgba(239,189,79,.3)}.feedback.bad{background:rgba(255,116,116,.1);border:1px solid rgba(255,116,116,.3)}.feedback.info{background:rgba(113,170,255,.1);border:1px solid rgba(113,170,255,.3)}.field{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;margin:12px 0}.field select{background:#13251e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px}.poker-table{height:320px;position:relative;margin:8px 0 14px;border-radius:46%;border:11px solid #452f1f;background:radial-gradient(circle,#207650,#155b3d 67%,#0c402b);box-shadow:inset 0 0 44px rgba(0,0,0,.35),var(--shadow)}.table-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;min-width:220px}.table-center small{color:#d0e1d8}.table-center strong{background:rgba(3,17,11,.66);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:7px 10px}.board{display:flex;gap:4px}.seat{position:absolute;width:64px;height:60px;border-radius:16px;background:#102019;border:2px solid #4b6c5b;padding:5px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:0 5px 12px rgba(0,0,0,.25)}.seat.hero{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,224,155,.14)}.seat.folded{opacity:.35}.seat.active-player{border-color:var(--warn)}.seat small{font-size:9px;color:var(--muted)}.seat strong{font-size:11px}.seat em{font-style:normal;font-size:10px;color:var(--accent)}.action-log{max-height:118px;overflow:auto;background:rgba(0,0,0,.12);border-radius:13px;padding:9px;font-size:12px;line-height:1.5;color:#cfe0d7}.action-log p{margin:0 0 4px}.math-box{margin:10px 0;border-left:4px solid var(--accent);padding:9px 10px;background:rgba(59,224,155,.06);border-radius:0 12px 12px 0;font-size:12px;line-height:1.5}.bet-sizer{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:14px}.bet-sizer label{display:flex;justify-content:space-between}.bet-sizer input{width:100%;accent-color:var(--accent)}.quick-sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.quick-sizes button{background:#1a2d25;border:1px solid var(--line);color:var(--muted);padding:8px 2px;border-radius:9px;font-size:10px}.score-list{display:grid;gap:7px}.score-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,500px);padding:8px 14px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:linear-gradient(180deg,transparent,rgba(5,12,9,.96) 30%)}.bottom-nav button{border:1px solid var(--line);border-radius:14px;padding:11px 5px;background:#0f1d18;color:var(--muted);font-size:12px}.bottom-nav button.active{background:#19352a;color:var(--accent)}@media(max-width:390px){.poker-table{height:290px}.seat{width:58px}.stats-grid.four{grid-template-columns:repeat(2,1fr)}.playing-card{width:59px;height:83px}.actions button{font-size:12px}}
+:root{--motion-fast:.18s;--motion-med:.34s;--bg:#07110d;--panel:#102019;--panel2:#162a22;--line:#29483b;--text:#f4fbf7;--muted:#9db8ac;--accent:#3be09b;--accent2:#1d8e63;--warn:#efbd4f;--danger:#ff7474;--blue:#71aaff;--purple:#c28cff;--shadow:0 16px 42px rgba(0,0,0,.28)}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 90% 0,rgba(59,224,155,.13),transparent 31%),linear-gradient(180deg,#06100c,#0b1712);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.app{width:min(100%,500px);margin:auto;padding:env(safe-area-inset-top) 14px calc(96px + env(safe-area-inset-bottom))}.topbar{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;background:none;border:0;color:inherit;padding:0;text-align:left}.brand>span:last-child{display:flex;flex-direction:column}.brand strong{font-size:20px}.brand small{color:var(--muted);font-size:11px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#03110b;font-weight:1000;box-shadow:0 8px 20px rgba(59,224,155,.2)}button,select,input{font:inherit}.chip,.tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}.chip{border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.03)}.tag{background:rgba(59,224,155,.11);color:var(--accent)}.screen{display:none}.screen.active{display:block}.hero,.panel,.mode-card{border:1px solid var(--line);background:linear-gradient(155deg,var(--panel2),var(--panel));border-radius:22px;box-shadow:var(--shadow)}.hero{padding:20px;background:linear-gradient(145deg,rgba(59,224,155,.11),rgba(255,255,255,.02))}.eyebrow{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:900}.hero h1{font-size:27px;line-height:1.1;margin:9px 0}.hero p,.muted{color:var(--muted);line-height:1.48;font-size:13px}.section-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:19px 2px 9px}.mode-list{display:grid;gap:10px}.mode-card{width:100%;display:grid;grid-template-columns:38px 1fr 18px;gap:10px;align-items:center;padding:15px;color:inherit;text-align:left}.mode-card span:nth-child(2){display:flex;flex-direction:column;gap:4px}.mode-card small{color:var(--muted);line-height:1.35}.mode-card b{font-size:22px;color:var(--muted)}.mode-icon{font-size:25px}.panel{padding:15px;margin-bottom:12px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panel h3{font-size:19px;margin:9px 0 0}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.stats-grid.four{grid-template-columns:repeat(4,1fr)}.stat{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:14px;text-align:center;padding:9px 4px}.stat small{display:block;color:var(--muted);font-size:10px}.stat strong{font-size:16px}.back,.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:13px;padding:9px 11px}.back{border:0;padding-left:1px;margin-bottom:10px}.small{font-size:11px;padding:7px 9px}.wide{width:100%}.primary{border:0;background:var(--accent);color:#03110b;border-radius:14px;padding:14px 11px;font-weight:1000}.hidden{display:none!important}.cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.playing-card{width:65px;height:90px;border-radius:12px;background:#f7faf8;color:#131a16;padding:7px;display:flex;flex-direction:column;justify-content:space-between;font-size:22px;font-weight:1000;box-shadow:0 9px 19px rgba(0,0,0,.25)}.playing-card.red{color:#d33e3e}.playing-card.small-card{width:48px;height:67px;font-size:17px;border-radius:9px;padding:5px}.hero-cards{margin:14px 0}.spot-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:13px 0}.spot-question{font-size:14px;line-height:1.45;color:#dce9e2}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.actions button{border-radius:14px;padding:13px 7px;border:1px solid var(--line);background:#1a2d25;color:var(--text);font-weight:900;transition:.15s}.neutral-actions button{background:#1a2d25;color:var(--text);border-color:var(--line)}.actions button:active{transform:scale(.98)}.actions button.selected-correct{background:var(--accent);color:#03110b;border-color:var(--accent)}.actions button.selected-wrong{background:#4a2424;color:#ffdcdc;border-color:#8a4242}.actions button.reveal-best:not(.selected-correct){box-shadow:0 0 0 2px var(--accent) inset;color:var(--accent)}.actions button.good-choice{box-shadow:0 0 0 2px var(--blue) inset;color:var(--blue)}.feedback{margin-top:12px;padding:12px;border-radius:15px;line-height:1.48;font-size:13px}.feedback.good{background:rgba(59,224,155,.1);border:1px solid rgba(59,224,155,.3)}.feedback.warn{background:rgba(239,189,79,.1);border:1px solid rgba(239,189,79,.3)}.feedback.bad{background:rgba(255,116,116,.1);border:1px solid rgba(255,116,116,.3)}.feedback.info{background:rgba(113,170,255,.1);border:1px solid rgba(113,170,255,.3)}.field{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;margin:12px 0}.field select{background:#13251e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px}.mode-settings{display:grid;gap:7px}.mode-settings label{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(255,255,255,.02)}.mode-settings input{margin-top:4px;accent-color:var(--accent)}.mode-settings span{display:flex;flex-direction:column;gap:3px}.mode-settings small{color:var(--muted)}.coach-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.coach-box,.coach-panel{margin-top:11px;padding:12px;border-radius:15px;background:rgba(194,140,255,.08);border:1px solid rgba(194,140,255,.28);font-size:13px;line-height:1.5}.coach-title{color:var(--purple);font-weight:900;margin-bottom:8px}.coach-questions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.coach-questions button{border:1px solid var(--line);border-radius:11px;padding:9px 6px;background:#1a2d25;color:var(--muted);font-size:11px}.coach-answer{margin-top:9px;color:#e5efe9}.math-box{margin:10px 0;border-left:4px solid var(--accent);padding:10px;background:rgba(59,224,155,.06);border-radius:0 12px 12px 0;font-size:12px;line-height:1.55}.math-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:8px 0}.math-cell{padding:8px;border-radius:10px;background:rgba(255,255,255,.04)}.math-cell small{display:block;color:var(--muted);font-size:10px}.math-cell strong{font-size:14px}.outs-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.out-pill{border-radius:999px;padding:5px 8px;background:rgba(255,255,255,.05);color:#dce9e2;font-size:10px}.out-pill.conditional{color:var(--warn)}.decision-panel{overflow:hidden}.poker-table{height:320px;position:relative;margin:8px 0 14px;border-radius:46%;border:11px solid #452f1f;background:radial-gradient(circle,#207650,#155b3d 67%,#0c402b);box-shadow:inset 0 0 44px rgba(0,0,0,.35),var(--shadow)}.table-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;min-width:220px}.table-center small{color:#d0e1d8}.table-center strong{background:rgba(3,17,11,.66);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:7px 10px}.board{display:flex;gap:4px}.seat{position:absolute;width:64px;height:60px;border-radius:16px;background:#102019;border:2px solid #4b6c5b;padding:5px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:0 5px 12px rgba(0,0,0,.25)}.seat.hero{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,224,155,.14)}.seat.folded{opacity:.35}.seat.active-player{border-color:var(--warn)}.seat small{font-size:9px;color:var(--muted)}.seat strong{font-size:11px}.seat em{font-style:normal;font-size:10px;color:var(--accent)}.action-log{max-height:118px;overflow:auto;background:rgba(0,0,0,.12);border-radius:13px;padding:9px;font-size:12px;line-height:1.5;color:#cfe0d7}.action-log p{margin:0 0 4px}.bet-sizer{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:14px}.bet-sizer label{display:flex;justify-content:space-between}.bet-sizer input{width:100%;accent-color:var(--accent)}.quick-sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}.quick-sizes button{background:#1a2d25;border:1px solid var(--line);color:var(--muted);padding:8px 2px;border-radius:9px;font-size:10px}.score-list{display:grid;gap:7px}.score-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.history-list{display:grid;gap:8px}.history-item{padding:10px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}.history-item strong{display:block;font-size:13px}.history-item small{color:var(--muted)}.coach-summary-card{padding:12px;border-radius:15px;background:rgba(255,255,255,.03);margin:10px 0}.coach-summary-card h4{margin:0 0 5px}.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,500px);padding:8px 14px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:linear-gradient(180deg,transparent,rgba(5,12,9,.96) 30%)}.bottom-nav button{border:1px solid var(--line);border-radius:14px;padding:11px 5px;background:#0f1d18;color:var(--muted);font-size:12px}.bottom-nav button.active{background:#19352a;color:var(--accent)}@media(max-width:390px){.poker-table{height:290px}.seat{width:58px}.stats-grid.four{grid-template-columns:repeat(2,1fr)}.playing-card{width:59px;height:83px}.actions button{font-size:12px}.coach-questions{grid-template-columns:1fr}.spot-meta{grid-template-columns:repeat(2,1fr)}}
+
+
+/* v1.6 motion + Hand Lab */
+@keyframes screenIn{from{opacity:0;transform:translateY(10px) scale(.992)}to{opacity:1;transform:none}}
+@keyframes cardDeal{0%{opacity:0;transform:translateY(-18px) rotate(-5deg) scale(.88)}70%{transform:translateY(2px) rotate(1deg) scale(1.02)}100%{opacity:1;transform:none}}
+@keyframes resultPop{0%{opacity:0;transform:translateY(14px) scale(.97)}100%{opacity:1;transform:none}}
+@keyframes potPulse{0%,100%{box-shadow:0 0 0 rgba(59,224,155,0)}50%{box-shadow:0 0 0 8px rgba(59,224,155,.08)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.screen.active{animation:screenIn var(--motion-med) cubic-bezier(.2,.8,.2,1)}
+.logo{animation:logoFloat 3.2s ease-in-out infinite}
+.mode-card,.panel,.primary,.ghost,.actions button,.bottom-nav button{transition:transform var(--motion-fast) ease,box-shadow var(--motion-fast) ease,border-color var(--motion-fast) ease,background var(--motion-fast) ease}
+.mode-card:active,.primary:active,.ghost:active{transform:scale(.975)}
+.mode-card:hover{transform:translateY(-2px);border-color:rgba(59,224,155,.42)}
+.playing-card{animation:cardDeal .38s cubic-bezier(.2,.8,.2,1) both}
+.playing-card:nth-child(2){animation-delay:.06s}.playing-card:nth-child(3){animation-delay:.12s}.playing-card:nth-child(4){animation-delay:.18s}.playing-card:nth-child(5){animation-delay:.24s}
+.table-center strong.pulse{animation:potPulse .55s ease}
+.ripple-host{position:relative;overflow:hidden}.tap-ripple{position:absolute;border-radius:999px;pointer-events:none;background:rgba(255,255,255,.28);transform:translate(-50%,-50%) scale(0);animation:ripple .52s ease-out forwards}@keyframes ripple{to{transform:translate(-50%,-50%) scale(10);opacity:0}}
+.form-grid{display:grid;gap:8px}.form-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.field input,.field textarea,.card-select{width:100%;background:#13251e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px;outline:none}.field input:focus,.field textarea:focus,.card-select:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,224,155,.09)}
+.field textarea{resize:vertical;min-height:82px}.field-help{margin:-7px 0 10px;color:var(--muted);font-size:10px;line-height:1.4}.compact{margin-top:12px;margin-bottom:7px}.card-picker-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.board-pickers{grid-template-columns:repeat(5,1fr)}.board-pickers .card-select{padding:10px 4px;font-size:11px}.card-select.invalid{border-color:var(--danger)}
+.analyze-button{margin-top:13px;background:linear-gradient(110deg,var(--accent),#66efb3,var(--accent));background-size:220% 100%;animation:shimmer 5s linear infinite}.analyzer-result.reveal{animation:resultPop .42s cubic-bezier(.2,.8,.2,1)}.result-hero{text-align:center;padding:8px 4px 4px}.result-hero small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;margin:10px 0 4px}.result-hero h2{font-size:29px;margin:3px 0;color:var(--accent)}.analyzer-visual{display:flex;flex-direction:column;align-items:center;gap:9px;margin:12px 0}.analyzer-visual .board{justify-content:center}.analysis-sections{display:grid;gap:8px;margin-top:12px}.analysis-sections details{border:1px solid rgba(255,255,255,.07);border-radius:14px;background:rgba(255,255,255,.025);overflow:hidden}.analysis-sections summary{cursor:pointer;padding:12px;font-size:13px;font-weight:900;list-style:none}.analysis-sections summary::-webkit-details-marker{display:none}.analysis-sections summary:after{content:'+';float:right;color:var(--accent)}.analysis-sections details[open] summary:after{content:'−'}.analysis-sections details>div{padding:0 12px 12px;color:#dce9e2;font-size:12px;line-height:1.55}.analysis-sections ul{padding-left:18px;margin:5px 0}.analyzer-result .math-box{border-left:0;border:1px solid rgba(59,224,155,.25);border-radius:15px}.confidence-high{background:rgba(59,224,155,.14)!important}.confidence-medium{background:rgba(239,189,79,.14)!important;color:var(--warn)!important}.confidence-low{background:rgba(113,170,255,.14)!important;color:var(--blue)!important}.four-nav{grid-template-columns:repeat(4,1fr)}.four-nav button{font-size:10px;padding-left:2px;padding-right:2px}
+@media(max-width:390px){.form-grid.two{grid-template-columns:1fr}.board-pickers{grid-template-columns:repeat(3,1fr)}.result-hero h2{font-size:25px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 </style>
-  <title>PokerPilot v1.4</title>
 </head>
 <body>
-<div id="app" class="app">
+<div class="app">
   <header class="topbar">
-    <button class="brand" data-route="home" aria-label="На главную">
+    <button class="brand" data-route="home" aria-label="Главная">
       <span class="logo">PP</span>
-      <span><strong>PokerPilot</strong><small>v1.4 • Decision Engine</small></span>
+      <span><strong>PokerPilot</strong><small>v1.6 • Animated Coach & Hand Lab</small></span>
     </button>
-    <span id="topStatus" class="chip">$1/$3</span>
+    <span class="chip">$1/$3</span>
   </header>
 
   <main>
     <section id="screen-home" class="screen active">
       <div class="hero">
         <span class="eyebrow">Персональный покерный тренер</span>
-        <h1>Тренируй решения.<br>Не результаты.</h1>
-        <p>Позиции, диапазоны, пот-оддсы и реалистичная сессия Sycuan со скрытыми картами.</p>
+        <h1>Сначала решение.<br>Потом подсказка.</h1>
+        <p>Проверенные пот-оддсы, эквити против диапазона, сильные и условные ауты, EV и объяснение того, что именно ты упустил.</p>
       </div>
 
-      <h2 class="section-title">Режимы</h2>
+      <div class="section-title">Режим подсказок</div>
+      <div class="panel mode-settings">
+        <label><input type="radio" name="assistMode" value="exam"><span><b>Экзамен</b><small>Никакой математики до ответа.</small></span></label>
+        <label><input type="radio" name="assistMode" value="training" checked><span><b>Тренировка</b><small>Подсказки открываются только по запросу.</small></span></label>
+        <label><input type="radio" name="assistMode" value="review"><span><b>Разбор</b><small>Математика видна сразу, ответ не подсвечивается.</small></span></label>
+      </div>
+
+      <div class="section-title">Режимы</div>
       <div class="mode-list">
-        <button class="mode-card" data-route="study">
-          <span class="mode-icon">🧠</span><span><strong>Учебный режим</strong><small>Сложные решения с математикой и разбором.</small></span><b>›</b>
-        </button>
-        <button class="mode-card" data-route="ranges">
-          <span class="mode-icon">🎯</span><span><strong>Позиции и руки</strong><small>Быстрые упражнения на fold, call, raise и 3-bet.</small></span><b>›</b>
-        </button>
-        <button class="mode-card" data-route="live">
-          <span class="mode-icon">♠️</span><span><strong>Sycuan Live</strong><small>Полная сессия $1/$3 с банком, стеком и шоудауном.</small></span><b>›</b>
-        </button>
+        <button class="mode-card" data-route="analyzer"><span class="mode-icon">🔬</span><span><strong>Анализатор раздачи</strong><small>Введи свои карты, позицию и ситуацию — тренер предложит линию и объяснит математику.</small></span><b>›</b></button>
+        <button class="mode-card" data-route="study"><span class="mode-icon">🧠</span><span><strong>Учебные ситуации</strong><small>Постфлоп, ауты, эквити, EV и альтернативные линии.</small></span><b>›</b></button>
+        <button class="mode-card" data-route="ranges"><span class="mode-icon">🎯</span><span><strong>Позиции и диапазоны</strong><small>Открытия, изоляция, защита и игра против 3-бета.</small></span><b>›</b></button>
+        <button class="mode-card" data-route="live"><span class="mode-icon">♠️</span><span><strong>Sycuan Live</strong><small>Динамическая сессия со скрытыми картами и тренером.</small></span><b>›</b></button>
+        <button class="mode-card" data-route="coach"><span class="mode-icon">🧑‍🏫</span><span><strong>Отчёт тренера</strong><small>Слабые места, история решений и персональный план.</small></span><b>›</b></button>
       </div>
 
-      <h2 class="section-title">Прогресс</h2>
+      <div class="section-title">Прогресс</div>
       <div class="panel">
-        <div class="panel-head"><div><span class="tag">Локально на устройстве</span><h3>Твоя статистика</h3></div><button id="resetProgress" class="ghost small">Сбросить</button></div>
-        <div class="stats-grid">
-          <div class="stat"><small>Решений</small><strong id="statDecisions">0</strong></div>
+        <div class="stats-grid four">
+          <div class="stat"><small>Решения</small><strong id="statDecisions">0</strong></div>
           <div class="stat"><small>Точность</small><strong id="statAccuracy">—</strong></div>
-          <div class="stat"><small>Сессий</small><strong id="statSessions">0</strong></div>
+          <div class="stat"><small>Сессии</small><strong id="statSessions">0</strong></div>
+          <div class="stat"><small>Серия</small><strong id="statStreak">0</strong></div>
         </div>
         <p id="focusText" class="muted">Сыграй несколько ситуаций — здесь появится персональный фокус.</p>
+        <p class="muted">Учебные рекомендации используют exploit-модель live $1/$3 и показывают уверенность. Это не GTO-солвер и не гарантия выигрыша.</p><button id="resetProgress" class="ghost small">Сбросить статистику</button>
+      </div>
+    </section>
+
+
+    <section id="screen-analyzer" class="screen">
+      <button class="back" data-route="home">‹ Назад</button>
+      <div class="panel analyzer-panel">
+        <div class="panel-head"><div><span class="tag">Hand Lab</span><h3>Ручной анализ раздачи</h3></div><span class="chip">Coach</span></div>
+        <p class="muted">Заполни только известные данные. Конкретные карты соперника не требуются: расчёт строится против предполагаемого или заданного диапазона.</p>
+
+        <div class="form-grid two">
+          <label class="field">Улица<select id="anStreet"><option value="preflop">Префлоп</option><option value="flop">Флоп</option><option value="turn">Тёрн</option><option value="river">Ривер</option></select></label>
+          <label class="field">Твоя позиция<select id="anPosition"><option>UTG</option><option>UTG+1</option><option>MP</option><option>HJ</option><option selected>CO</option><option>BTN</option><option>SB</option><option>BB</option></select></label>
+        </div>
+
+        <div class="section-title compact">Твои карты</div>
+        <div class="card-picker-row"><select id="anHero1" class="card-select"></select><select id="anHero2" class="card-select"></select></div>
+
+        <div id="anBoardWrap" class="hidden">
+          <div class="section-title compact">Доска</div>
+          <div class="card-picker-row board-pickers">
+            <select id="anBoard1" class="card-select"></select><select id="anBoard2" class="card-select"></select><select id="anBoard3" class="card-select"></select><select id="anBoard4" class="card-select"></select><select id="anBoard5" class="card-select"></select>
+          </div>
+        </div>
+
+        <div class="form-grid two">
+          <label class="field">Ситуация<select id="anSituation"></select></label>
+          <label class="field">Тип соперника<select id="anVillain"><option value="nit">Тайтовый регуляр</option><option value="reg" selected>Регуляр</option><option value="passive">Пассивный лимпер</option><option value="aggro">Агрессивный</option><option value="station">Calling station</option><option value="wild">Хаотичный</option></select></label>
+          <label class="field">Банк до ставки соперника<input id="anPot" type="number" min="0" step="1" value="60" inputmode="decimal"></label>
+          <label class="field">Ставка / цена действия<input id="anBet" type="number" min="0" step="1" value="30" inputmode="decimal"></label>
+          <label class="field">Эффективный стек<input id="anStack" type="number" min="1" step="1" value="300" inputmode="decimal"></label>
+          <label class="field">Соперников в раздаче<select id="anOpponents"><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+          <label id="anLimpersField" class="field hidden">Лимперов перед тобой<select id="anLimpers"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4+</option></select></label>
+          <label id="anOpenerField" class="field hidden">Позиция рейзера<select id="anOpener"><option value="early">Ранняя (UTG–MP)</option><option value="late">Поздняя (HJ–BTN)</option></select></label>
+        </div>
+
+        <label class="field">Диапазон соперника — необязательно<input id="anRange" type="text" placeholder="Например: 99+,AQs+,AJo+,KQs"></label>
+        <p class="field-help">Оставь пустым — PokerPilot подберёт учебную live-модель по типу соперника и его действию.</p>
+        <label class="field">Что происходило до решения — необязательно<textarea id="anNotes" rows="3" placeholder="Например: HJ открыл $15, я 3-бет $55, он call; флоп чек-чек..."></textarea></label>
+        <button id="analyzeHand" class="primary wide analyze-button">Проанализировать раздачу</button>
+        <div id="analyzerError" class="feedback bad hidden"></div>
+      </div>
+
+      <div id="analyzerResult" class="panel analyzer-result hidden">
+        <div class="result-hero">
+          <span id="anConfidence" class="tag">Уверенность</span>
+          <small>РЕКОМЕНДАЦИЯ ТРЕНЕРА</small>
+          <h2 id="anRecommendation">—</h2>
+          <p id="anOneLine" class="muted"></p>
+        </div>
+        <div id="anVisual" class="analyzer-visual"></div>
+        <div id="anMath" class="math-box"></div>
+        <div class="analysis-sections">
+          <details open><summary>Почему это действие</summary><div id="anWhy"></div></details>
+          <details><summary>Что ты можешь упускать</summary><div id="anMissed"></div></details>
+          <details><summary>Почему не другие варианты</summary><div id="anAlternatives"></div></details>
+          <details><summary>Диапазон и ограничения модели</summary><div id="anModel"></div></details>
+        </div>
+        <button id="analyzeAgain" class="ghost wide">Изменить данные и пересчитать</button>
       </div>
     </section>
 
     <section id="screen-study" class="screen">
       <button class="back" data-route="home">‹ Назад</button>
-      <div class="panel">
-        <div class="panel-head"><div><span class="tag">Учебный режим</span><h3 id="studyTitle">Ситуация</h3></div><span id="studyCounter" class="chip">1/8</span></div>
+      <div class="panel decision-panel">
+        <div class="panel-head"><div><span class="tag">Учебный режим</span><h3 id="studyTitle">Ситуация</h3></div><span id="studyCounter" class="chip">1/1</span></div>
         <div id="studySpot"></div>
-        <div id="studyActions" class="actions"></div>
+        <div id="studyCoachTools" class="coach-tools">
+          <button id="studyHint" class="ghost">💡 Подсказка</button>
+          <button id="studyMathToggle" class="ghost">🧮 Математика</button>
+        </div>
+        <div id="studyHintBox" class="coach-box hidden"></div>
+        <div id="studyMath" class="math-box hidden"></div>
+        <div id="studyActions" class="actions neutral-actions"></div>
         <div id="studyFeedback" class="feedback hidden"></div>
+        <div id="studyCoach" class="coach-panel hidden">
+          <div class="coach-title">Тренер</div>
+          <div class="coach-questions">
+            <button data-coach-q="missed">Что я упустил?</button>
+            <button data-coach-q="alternatives">Почему не другие действия?</button>
+            <button data-coach-q="range">Какой диапазон у соперника?</button>
+            <button data-coach-q="line">Альтернативная линия</button>
+          </div>
+          <div id="studyCoachAnswer" class="coach-answer"></div>
+        </div>
         <button id="studyNext" class="primary wide hidden">Следующая ситуация</button>
       </div>
     </section>
 
     <section id="screen-ranges" class="screen">
       <button class="back" data-route="home">‹ Назад</button>
-      <div class="panel">
+      <div class="panel decision-panel">
         <div class="panel-head"><div><span class="tag">Позиции и руки</span><h3>Быстрый тест</h3></div><span id="rangeCounter" class="chip">1/10</span></div>
         <div id="rangeSpot"></div>
-        <div id="rangeActions" class="actions"></div>
+        <div id="rangeActions" class="actions neutral-actions"></div>
         <div id="rangeFeedback" class="feedback hidden"></div>
+        <div id="rangeCoach" class="coach-panel hidden">
+          <div class="coach-title">Тренер</div>
+          <div id="rangeCoachAnswer" class="coach-answer"></div>
+        </div>
         <button id="rangeNext" class="primary wide hidden">Следующая рука</button>
       </div>
+      <div class="panel"><span class="tag">Результат теста</span><h3>Точность по категориям</h3><div id="rangeScore" class="score-list">Ответь хотя бы на одну руку.</div></div>
+    </section>
+
+    <section id="screen-coach" class="screen">
+      <button class="back" data-route="home">‹ Назад</button>
       <div class="panel">
-        <div class="panel-head"><div><span class="tag">Результат теста</span><h3>Точность по категориям</h3></div></div>
-        <div id="rangeScore" class="score-list muted">Ответь хотя бы на одну руку.</div>
+        <span class="tag">PokerPilot Coach</span><h3>Персональный отчёт</h3>
+        <div id="coachSummary"></div>
+        <button id="startFocusTraining" class="primary wide">Начать тренировку слабого места</button>
       </div>
+      <div class="panel"><span class="tag">Последние решения</span><h3>История</h3><div id="historyList" class="history-list"></div></div>
     </section>
 
     <section id="screen-live" class="screen">
       <button class="back" data-route="home">‹ Назад</button>
-
       <div id="liveSetup" class="panel">
-        <div class="panel-head"><div><span class="tag">Sycuan Live</span><h3>Новая сессия $1/$3</h3></div></div>
-        <label class="field">Бай-ин
-          <select id="buyIn"><option value="200">$200</option><option value="300" selected>$300</option><option value="500">$500</option></select>
-        </label>
-        <label class="field">Стол
-          <select id="tableSize"><option value="6">6-max</option><option value="9" selected>9-max</option></select>
-        </label>
-        <label class="field">Характер стола
-          <select id="tableStyle"><option value="passive">Пассивный и лимповый</option><option value="mixed" selected>Обычный смешанный</option><option value="wild">Хаотичный и агрессивный</option></select>
-        </label>
+        <span class="tag">Sycuan Live</span><h3>Настройка сессии</h3>
+        <label class="field">Бай-ин<select id="buyIn"><option value="200">$200</option><option value="300" selected>$300</option><option value="500">$500</option></select></label>
+        <label class="field">Стол<select id="tableSize"><option value="6">6-max</option><option value="9" selected>9-max</option></select></label>
+        <label class="field">Характер стола<select id="tableStyle"><option value="normal">Смешанный</option><option value="passive">Пассивный</option><option value="wild">Хаотичный</option></select></label>
         <button id="startSession" class="primary wide">Сесть за стол</button>
       </div>
 
       <div id="liveGame" class="hidden">
-        <div class="panel session-bar">
-          <div class="stats-grid four">
-            <div class="stat"><small>Стек</small><strong id="liveStack">$300</strong></div>
-            <div class="stat"><small>Результат</small><strong id="liveProfit">+$0</strong></div>
-            <div class="stat"><small>Раздачи</small><strong id="liveHands">0</strong></div>
-            <div class="stat"><small>Тильт</small><strong id="liveTilt">Низкий</strong></div>
-          </div>
-        </div>
-
-        <div id="pokerTable" class="poker-table">
-          <div id="seats" class="seats"></div>
-          <div class="table-center">
-            <small id="streetLabel">Префлоп</small>
-            <strong id="potLabel">Банк $0</strong>
-            <div id="board" class="board"></div>
-          </div>
-        </div>
-
-        <div class="panel">
+        <div class="panel session-bar"><div class="stats-grid four"><div class="stat"><small>Стек</small><strong id="liveStack">$300</strong></div><div class="stat"><small>Результат</small><strong id="liveProfit">+$0</strong></div><div class="stat"><small>Раздачи</small><strong id="liveHands">0</strong></div><div class="stat"><small>Тильт</small><strong id="liveTilt">Низкий</strong></div></div></div>
+        <div id="pokerTable" class="poker-table"><div id="seats" class="seats"></div><div class="table-center"><small id="streetLabel">Префлоп</small><strong id="potLabel">Банк $0</strong><div id="board" class="board"></div></div></div>
+        <div class="panel decision-panel">
           <div class="panel-head"><div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle">Новая раздача</h3></div><span id="toCallChip" class="chip">К действию</span></div>
           <div id="heroCards" class="cards hero-cards"></div>
           <div id="actionLog" class="action-log"></div>
+          <div class="coach-tools"><button id="liveHint" class="ghost">💡 Тренер</button><button id="liveMathToggle" class="ghost">🧮 Ауты и шансы</button></div>
+          <div id="liveHintBox" class="coach-box hidden"></div>
           <div id="mathBox" class="math-box hidden"></div>
-
-          <div id="betSizer" class="bet-sizer hidden">
-            <label>Размер <strong id="betValue">$15</strong></label>
-            <input id="betRange" type="range" min="3" max="300" value="15" step="1">
-            <div class="quick-sizes">
-              <button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button>
-            </div>
-            <button id="confirmBet" class="primary wide">Подтвердить размер</button>
-          </div>
-
-          <div id="liveActions" class="actions"></div>
+          <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
+          <div id="liveActions" class="actions neutral-actions"></div>
           <div id="liveFeedback" class="feedback hidden"></div>
           <button id="nextHand" class="primary wide hidden">Следующая раздача</button>
           <button id="endSession" class="ghost wide">Закончить сессию</button>
@@ -145,305 +223,1455 @@
     </section>
   </main>
 
-  <nav class="bottom-nav">
-    <button data-route="home">Главная</button>
-    <button data-route="ranges">Диапазоны</button>
-    <button data-route="live">Live</button>
-  </nav>
+  <nav class="bottom-nav four-nav"><button data-route="home">Главная</button><button data-route="analyzer">Анализ</button><button data-route="ranges">Диапазоны</button><button data-route="live">Live</button></nav>
 </div>
 <script>
 'use strict';
 
-const $ = (s, root=document) => root.querySelector(s);
-const $$ = (s, root=document) => [...root.querySelectorAll(s)];
-const money = n => `${n<0?'-$':'$'}${Math.abs(Math.round(n))}`;
-const signedMoney = n => `${n>=0?'+':''}${money(n)}`;
-const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
-const sample = arr => arr[Math.floor(Math.random()*arr.length)];
-const STORAGE_KEY = 'pokerpilot_v1_4_progress';
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.PokerCore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  const SUITS = ['s', 'h', 'd', 'c'];
+  const SUIT_SYMBOL = { s: '♠', h: '♥', d: '♦', c: '♣' };
+  const RANKS = [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+  const RANK_TEXT = { 14: 'A', 13: 'K', 12: 'Q', 11: 'J', 10: 'T', 9: '9', 8: '8', 7: '7', 6: '6', 5: '5', 4: '4', 3: '3', 2: '2' };
+  const TEXT_RANK = { A: 14, K: 13, Q: 12, J: 11, T: 10, '10': 10, 9: 9, 8: 8, 7: 7, 6: 6, 5: 5, 4: 4, 3: 3, 2: 2 };
+  const HAND_NAMES = ['Старшая карта', 'Пара', 'Две пары', 'Сет', 'Стрит', 'Флеш', 'Фулл-хаус', 'Каре', 'Стрит-флеш'];
 
-const SUITS = ['s','h','d','c'];
-const SUIT_SYMBOL = {s:'♠',h:'♥',d:'♦',c:'♣'};
-const RANK_TEXT = {14:'A',13:'K',12:'Q',11:'J',10:'10',9:'9',8:'8',7:'7',6:'6',5:'5',4:'4',3:'3',2:'2'};
+  const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const cardId = c => `${c.r}${c.s}`;
+
+  function fullDeck() {
+    const deck = [];
+    for (const s of SUITS) for (let r = 2; r <= 14; r += 1) deck.push({ r, s });
+    return deck;
+  }
+
+  function shuffle(deck, rng = Math.random) {
+    const d = deck.slice();
+    for (let i = d.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(rng() * (i + 1));
+      [d[i], d[j]] = [d[j], d[i]];
+    }
+    return d;
+  }
+
+  function parseCard(text) {
+    const t = String(text).trim();
+    const suit = t.slice(-1).toLowerCase();
+    const rankText = t.slice(0, -1).toUpperCase();
+    const r = TEXT_RANK[rankText];
+    if (!r || !SUITS.includes(suit)) throw new Error(`Invalid card: ${text}`);
+    return { r, s: suit };
+  }
+
+  function cardText(c, tenAs10 = true) {
+    const rank = c.r === 10 && tenAs10 ? '10' : RANK_TEXT[c.r];
+    return `${rank}${SUIT_SYMBOL[c.s]}`;
+  }
+
+  function removeKnown(deck, cards) {
+    const ids = new Set(cards.map(cardId));
+    return deck.filter(c => !ids.has(cardId(c)));
+  }
+
+  function combinations(arr, k) {
+    const out = [];
+    function rec(start, cur) {
+      if (cur.length === k) {
+        out.push(cur.slice());
+        return;
+      }
+      for (let i = start; i <= arr.length - (k - cur.length); i += 1) {
+        cur.push(arr[i]);
+        rec(i + 1, cur);
+        cur.pop();
+      }
+    }
+    rec(0, []);
+    return out;
+  }
+
+  function compareEval(a, b) {
+    for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+      const d = (a[i] || 0) - (b[i] || 0);
+      if (d) return Math.sign(d);
+    }
+    return 0;
+  }
+
+  function eval5(cards) {
+    if (!Array.isArray(cards) || cards.length !== 5) throw new Error('eval5 requires exactly 5 cards');
+    const ranks = cards.map(c => c.r).sort((a, b) => b - a);
+    const counts = {};
+    for (const r of ranks) counts[r] = (counts[r] || 0) + 1;
+    const groups = Object.entries(counts)
+      .map(([r, c]) => ({ r: Number(r), c }))
+      .sort((a, b) => b.c - a.c || b.r - a.r);
+    const flush = cards.every(c => c.s === cards[0].s);
+    const uniqDesc = [...new Set(ranks)];
+    if (uniqDesc.includes(14)) uniqDesc.push(1);
+    let straightHigh = 0;
+    for (let i = 0; i <= uniqDesc.length - 5; i += 1) {
+      if (uniqDesc[i] - uniqDesc[i + 4] === 4) {
+        straightHigh = uniqDesc[i];
+        break;
+      }
+    }
+    if (flush && straightHigh) return [8, straightHigh];
+    if (groups[0].c === 4) return [7, groups[0].r, ...groups.filter(g => g.c === 1).map(g => g.r).slice(0, 1)];
+    if (groups[0].c === 3 && groups[1]?.c >= 2) return [6, groups[0].r, groups[1].r];
+    if (flush) return [5, ...ranks];
+    if (straightHigh) return [4, straightHigh];
+    if (groups[0].c === 3) return [3, groups[0].r, ...groups.filter(g => g.c === 1).map(g => g.r).slice(0, 2)];
+    const pairs = groups.filter(g => g.c === 2).map(g => g.r);
+    if (pairs.length >= 2) {
+      const kick = groups.filter(g => g.c === 1).map(g => g.r)[0];
+      return [2, pairs[0], pairs[1], kick];
+    }
+    if (pairs.length === 1) return [1, pairs[0], ...groups.filter(g => g.c === 1).map(g => g.r).slice(0, 3)];
+    return [0, ...ranks];
+  }
+
+  function best7(cards) {
+    if (!Array.isArray(cards) || cards.length < 5 || cards.length > 7) throw new Error('best7 requires 5 to 7 cards');
+    let best = null;
+    for (const five of combinations(cards, 5)) {
+      const e = eval5(five);
+      if (!best || compareEval(e, best) > 0) best = e;
+    }
+    return best;
+  }
+
+  function handName(evalResult) {
+    return HAND_NAMES[evalResult[0]];
+  }
+
+  function handClass(cards) {
+    let [a, b] = cards.slice().sort((x, y) => y.r - x.r);
+    if (a.r === b.r) return `${RANK_TEXT[a.r]}${RANK_TEXT[b.r]}`;
+    return `${RANK_TEXT[a.r]}${RANK_TEXT[b.r]}${a.s === b.s ? 's' : 'o'}`;
+  }
+
+  function canonicalCombo(cards) {
+    return cards.slice().sort((a, b) => b.r - a.r || SUITS.indexOf(a.s) - SUITS.indexOf(b.s));
+  }
+
+  const ALL_COMBOS = (() => {
+    const deck = fullDeck();
+    const out = [];
+    for (let i = 0; i < deck.length; i += 1) {
+      for (let j = i + 1; j < deck.length; j += 1) out.push(canonicalCombo([deck[i], deck[j]]));
+    }
+    return out;
+  })();
+
+  function expandRangeToken(token) {
+    let t = token.trim();
+    if (!t) return [];
+    const plus = t.endsWith('+');
+    if (plus) t = t.slice(0, -1);
+    const pairRange = t.match(/^([AKQJT98765432])([AKQJT98765432])-([AKQJT98765432])([AKQJT98765432])$/);
+    if (pairRange && pairRange[1] === pairRange[2] && pairRange[3] === pairRange[4]) {
+      const hi = TEXT_RANK[pairRange[1]];
+      const lo = TEXT_RANK[pairRange[3]];
+      const top = Math.max(hi, lo);
+      const bottom = Math.min(hi, lo);
+      return RANKS.filter(r => r <= top && r >= bottom).map(r => `${RANK_TEXT[r]}${RANK_TEXT[r]}`);
+    }
+    const pairMatch = t.match(/^([AKQJT98765432])\1$/);
+    if (pairMatch) {
+      const start = TEXT_RANK[pairMatch[1]];
+      const ranks = plus ? RANKS.filter(r => r >= start) : [start];
+      return ranks.map(r => `${RANK_TEXT[r]}${RANK_TEXT[r]}`);
+    }
+    const m = t.match(/^([AKQJT98765432])([AKQJT98765432])(s|o)$/);
+    if (!m) throw new Error(`Unsupported range token: ${token}`);
+    const high = TEXT_RANK[m[1]];
+    const low = TEXT_RANK[m[2]];
+    const suffix = m[3];
+    if (high <= low) throw new Error(`Range token must be high-card first: ${token}`);
+    if (!plus) return [`${RANK_TEXT[high]}${RANK_TEXT[low]}${suffix}`];
+    const out = [];
+    for (let kicker = low; kicker < high; kicker += 1) out.push(`${RANK_TEXT[high]}${RANK_TEXT[kicker]}${suffix}`);
+    return out;
+  }
+
+  function expandRange(rangeText) {
+    const classes = new Set();
+    String(rangeText || '')
+      .split(',')
+      .map(x => x.trim())
+      .filter(Boolean)
+      .forEach(token => expandRangeToken(token).forEach(x => classes.add(x)));
+    return classes;
+  }
+
+  function rangeCombos(rangeText, knownCards = []) {
+    const classes = expandRange(rangeText);
+    const known = new Set(knownCards.map(cardId));
+    return ALL_COMBOS.filter(combo => classes.has(handClass(combo)) && combo.every(c => !known.has(cardId(c))));
+  }
+
+  function potMath({ potBefore = 0, bet = 0, call = bet } = {}) {
+    const p = Math.max(0, Number(potBefore) || 0);
+    const b = Math.max(0, Number(bet) || 0);
+    const c = Math.max(0, Number(call) || 0);
+    const potNow = p + b;
+    const finalPot = potNow + c;
+    const requiredEquity = finalPot > 0 ? c / finalPot : 0;
+    return { potBefore: p, bet: b, call: c, potNow, finalPot, requiredEquity };
+  }
+
+  function callEV({ equity, potBefore = 0, bet = 0, call = bet } = {}) {
+    const q = clamp(Number(equity) || 0, 0, 1);
+    const m = potMath({ potBefore, bet, call });
+    // Relative to folding: when we win, we gain the pot already out there; when we lose, we lose the call.
+    const ev = q * m.potNow - (1 - q) * m.call;
+    return { ...m, equity: q, ev };
+  }
+
+  function exactHitProbability(outs, unseen, cardsToCome = 1) {
+    const n = clamp(Math.round(outs), 0, unseen);
+    const u = Math.max(0, Math.round(unseen));
+    const k = clamp(Math.round(cardsToCome), 0, u);
+    if (!u || !k || !n) return 0;
+    let miss = 1;
+    for (let i = 0; i < k; i += 1) miss *= (u - n - i) / (u - i);
+    return clamp(1 - miss, 0, 1);
+  }
+
+  function straightWindows() {
+    return [
+      [14, 5, 4, 3, 2],
+      [6, 5, 4, 3, 2],
+      [7, 6, 5, 4, 3],
+      [8, 7, 6, 5, 4],
+      [9, 8, 7, 6, 5],
+      [10, 9, 8, 7, 6],
+      [11, 10, 9, 8, 7],
+      [12, 11, 10, 9, 8],
+      [13, 12, 11, 10, 9],
+      [14, 13, 12, 11, 10]
+    ];
+  }
+
+  function analyzeOuts(hero, board) {
+    if (board.length < 3 || board.length >= 5) {
+      return { rawOuts: 0, strongOuts: 0, conditionalOuts: 0, unseen: 52 - hero.length - board.length, nextCard: 0, byRiver: 0, strongNextCard: 0, strongByRiver: 0, groups: [], warning: '' };
+    }
+    const known = [...hero, ...board];
+    const unseenCards = removeKnown(fullDeck(), known);
+    const unseenIds = new Set(unseenCards.map(cardId));
+    const strong = new Set();
+    const conditional = new Set();
+    const groups = [];
+    const current = best7(known);
+    const currentCategory = current[0];
+
+    const suitCount = {};
+    for (const c of known) suitCount[c.s] = (suitCount[c.s] || 0) + 1;
+    for (const s of SUITS) {
+      const suitedHero = hero.filter(c => c.s === s);
+      if (suitedHero.length && suitCount[s] === 4) {
+        const ids = unseenCards.filter(c => c.s === s).map(cardId);
+        const nutDraw = Math.max(...suitedHero.map(c => c.r)) === 14;
+        ids.forEach(id => (nutDraw ? strong : conditional).add(id));
+        groups.push({ key: 'flush', label: nutDraw ? 'Натсовый флеш' : 'Флеш (может быть доминирован)', outs: ids.length, quality: nutDraw ? 'strong' : 'conditional' });
+      }
+    }
+
+    const knownRanks = new Set(known.map(c => c.r));
+    const heroRanks = new Set(hero.map(c => c.r));
+    const missingRanks = new Set();
+    for (const window of straightWindows()) {
+      const present = window.filter(r => knownRanks.has(r));
+      const heroContributes = window.some(r => heroRanks.has(r));
+      if (heroContributes && present.length === 4) {
+        const missing = window.find(r => !knownRanks.has(r));
+        if (missing) missingRanks.add(missing);
+      }
+    }
+    if (missingRanks.size) {
+      let count = 0;
+      const straightIsConditional = currentCategory >= 3;
+      for (const r of missingRanks) {
+        for (const c of unseenCards.filter(x => x.r === r)) {
+          (straightIsConditional ? conditional : strong).add(cardId(c));
+          count += 1;
+        }
+      }
+      groups.push({ key: 'straight', label: missingRanks.size >= 2 ? 'Двусторонний стрит-дро' : 'Гатшот / стрит', outs: count, quality: straightIsConditional ? 'conditional' : 'strong' });
+    }
+    const boardMax = Math.max(...board.map(c => c.r));
+    if (currentCategory === 0) {
+      const overRanks = [...new Set(hero.filter(c => c.r > boardMax).map(c => c.r))];
+      if (overRanks.length) {
+        let count = 0;
+        for (const r of overRanks) {
+          for (const c of unseenCards.filter(x => x.r === r)) {
+            conditional.add(cardId(c));
+            count += 1;
+          }
+        }
+        groups.push({ key: 'overcards', label: overRanks.length === 2 ? 'Две оверкарты' : 'Оверкарта', outs: count, quality: 'conditional' });
+      }
+    }
+
+    if (currentCategory === 1) {
+      const ranks = hero.map(c => c.r);
+      const boardRanks = board.map(c => c.r);
+      if (ranks[0] === ranks[1]) {
+        const ids = unseenCards.filter(c => c.r === ranks[0]).map(cardId);
+        ids.forEach(id => strong.add(id));
+        if (ids.length) groups.push({ key: 'set', label: 'Сет', outs: ids.length, quality: 'strong' });
+      } else {
+        const pairedHole = ranks.find(r => boardRanks.includes(r));
+        const otherHole = ranks.find(r => r !== pairedHole);
+        if (pairedHole) {
+          const trips = unseenCards.filter(c => c.r === pairedHole).map(cardId);
+          trips.forEach(id => strong.add(id));
+          if (trips.length) groups.push({ key: 'trips', label: 'Трипс', outs: trips.length, quality: 'strong' });
+          if (otherHole && !boardRanks.includes(otherHole)) {
+            const twoPair = unseenCards.filter(c => c.r === otherHole).map(cardId);
+            twoPair.forEach(id => conditional.add(id));
+            if (twoPair.length) groups.push({ key: 'twoPair', label: 'Две пары', outs: twoPair.length, quality: 'conditional' });
+          }
+        }
+      }
+    }
+
+    if (currentCategory >= 2 && currentCategory <= 3) {
+      const upgrade = [];
+      for (const c of unseenCards) {
+        const next = best7([...known, c]);
+        if (compareEval(next, current) > 0 && next[0] >= 6) upgrade.push(cardId(c));
+      }
+      const unique = [...new Set(upgrade)];
+      unique.forEach(id => strong.add(id));
+      if (unique.length) groups.push({ key: 'boat', label: 'Фулл-хаус / каре', outs: unique.length, quality: 'strong' });
+    }
+
+    // Avoid double counting cards that appear in both groups.
+    for (const id of strong) conditional.delete(id);
+    const raw = new Set([...strong, ...conditional]);
+    const unseen = unseenCards.length;
+    const cardsToCome = board.length === 3 ? 2 : 1;
+    const rawOuts = raw.size;
+    const strongOuts = strong.size;
+    const conditionalOuts = conditional.size;
+    return {
+      rawOuts,
+      strongOuts,
+      conditionalOuts,
+      unseen,
+      nextCard: exactHitProbability(rawOuts, unseen, 1),
+      byRiver: exactHitProbability(rawOuts, unseen, cardsToCome),
+      strongNextCard: exactHitProbability(strongOuts, unseen, 1),
+      strongByRiver: exactHitProbability(strongOuts, unseen, cardsToCome),
+      groups,
+      warning: conditionalOuts ? 'Часть аутов условная: усиление не гарантирует выигрыш против диапазона соперника.' : ''
+    };
+  }
+
+  function sampleIndex(length, rng) {
+    return Math.floor(rng() * length);
+  }
+
+  function equityVsRange({ hero, board = [], range, trials = 5000, rng = Math.random, exactLimit = 140000 } = {}) {
+    const known = [...hero, ...board];
+    const knownIds = new Set(known.map(cardId));
+    const combos = Array.isArray(range)
+      ? range.filter(combo => combo.every(c => !knownIds.has(cardId(c))))
+      : rangeCombos(range, known);
+    if (!combos.length) {
+      return { equity: 0, win: 0, tie: 0, lose: 0, samples: 0, stderr: 0, ci95: 0, exact: true, method: 'exact', combos: 0 };
+    }
+    const missing = 5 - board.length;
+    let wins = 0;
+    let ties = 0;
+    let losses = 0;
+    let samples = 0;
+    let exactUsed = false;
+
+    const runOne = (villain, runout) => {
+      const he = best7([...hero, ...board, ...runout]);
+      const ve = best7([...villain, ...board, ...runout]);
+      const cmp = compareEval(he, ve);
+      if (cmp > 0) wins += 1;
+      else if (cmp === 0) ties += 1;
+      else losses += 1;
+      samples += 1;
+    };
+
+    if (missing === 0) {
+      for (const villain of combos) runOne(villain, []);
+      exactUsed = true;
+    } else if (missing === 1) {
+      let total = 0;
+      for (const villain of combos) total += 52 - known.length - villain.length;
+      if (total <= exactLimit) {
+        for (const villain of combos) {
+          const deck = removeKnown(fullDeck(), [...known, ...villain]);
+          for (const river of deck) runOne(villain, [river]);
+        }
+        exactUsed = true;
+      }
+    } else if (missing === 2) {
+      let total = 0;
+      for (const villain of combos) {
+        const remaining = 52 - known.length - villain.length;
+        total += remaining * (remaining - 1) / 2;
+        if (total > exactLimit) break;
+      }
+      if (total <= exactLimit) {
+        for (const villain of combos) {
+          const deck = removeKnown(fullDeck(), [...known, ...villain]);
+          for (let i = 0; i < deck.length - 1; i += 1) {
+            for (let j = i + 1; j < deck.length; j += 1) runOne(villain, [deck[i], deck[j]]);
+          }
+        }
+        exactUsed = true;
+      }
+    }
+
+    if (!exactUsed) {
+      const n = Math.max(500, Math.round(trials));
+      for (let i = 0; i < n; i += 1) {
+        const villain = combos[sampleIndex(combos.length, rng)];
+        const deck = shuffle(removeKnown(fullDeck(), [...known, ...villain]), rng);
+        runOne(villain, deck.slice(0, missing));
+      }
+    }
+
+    const equity = samples ? (wins + ties * 0.5) / samples : 0;
+    // For Monte Carlo this is a conservative Bernoulli approximation; exact enumerations have no sampling error.
+    const stderr = exactUsed || !samples ? 0 : Math.sqrt(Math.max(0, equity * (1 - equity) / samples));
+    return {
+      equity,
+      win: samples ? wins / samples : 0,
+      tie: samples ? ties / samples : 0,
+      lose: samples ? losses / samples : 0,
+      samples,
+      stderr,
+      ci95: 1.96 * stderr,
+      exact: exactUsed,
+      method: exactUsed ? 'exact' : 'montecarlo',
+      combos: combos.length
+    };
+  }
+
+  return {
+    SUITS,
+    SUIT_SYMBOL,
+    RANKS,
+    RANK_TEXT,
+    HAND_NAMES,
+    clamp,
+    cardId,
+    fullDeck,
+    shuffle,
+    parseCard,
+    cardText,
+    removeKnown,
+    combinations,
+    compareEval,
+    eval5,
+    best7,
+    handName,
+    handClass,
+    expandRangeToken,
+    expandRange,
+    rangeCombos,
+    potMath,
+    callEV,
+    exactHitProbability,
+    analyzeOuts,
+    equityVsRange
+  };
+});
+
+</script>
+<script>
+'use strict';
+
+const C = window.PokerCore;
+const $ = (s, root = document) => root.querySelector(s);
+const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+const money = n => `${n < 0 ? '-$' : '$'}${Math.abs(Math.round(Number(n) || 0))}`;
+const signedMoney = n => `${n >= 0 ? '+' : ''}${money(n)}`;
+const pct = n => `${Math.round((Number(n) || 0) * 100)}%`;
+const sample = arr => arr[Math.floor(Math.random() * arr.length)];
+const STORAGE_KEY = 'pokerpilot_v1_6_progress';
+const PREVIOUS_STORAGE_KEY = 'pokerpilot_v1_5_1_progress';
+const OLD_STORAGE_KEY = 'pokerpilot_v1_5_progress';
+const LEGACY_STORAGE_KEY = 'pokerpilot_v1_4_progress';
+
 const TYPES = {
-  nit:{name:'Тайтовый',short:'NIT',agg:.25,loose:-8,bluff:.08},
-  reg:{name:'Регуляр',short:'REG',agg:.52,loose:0,bluff:.18},
-  passive:{name:'Лимпер',short:'LIMP',agg:.18,loose:-12,bluff:.05},
-  aggro:{name:'Агрессивный',short:'AGGRO',agg:.78,loose:-8,bluff:.35},
-  new:{name:'Новичок',short:'NEW',agg:.36,loose:-15,bluff:.12},
-  wild:{name:'Хаотичный',short:'WILD',agg:.82,loose:-25,bluff:.48},
-  station:{name:'Calling station',short:'CALL',agg:.12,loose:-22,bluff:.03}
+  nit: { name: 'Тайтовый регуляр', short: 'NIT', aggression: 0.25, loose: -0.12, bluff: 0.06 },
+  reg: { name: 'Регуляр', short: 'REG', aggression: 0.50, loose: 0, bluff: 0.17 },
+  passive: { name: 'Пассивный лимпер', short: 'LIMP', aggression: 0.17, loose: 0.12, bluff: 0.04 },
+  aggro: { name: 'Агрессивный игрок', short: 'AGGRO', aggression: 0.78, loose: 0.10, bluff: 0.34 },
+  new: { name: 'Новичок', short: 'NEW', aggression: 0.35, loose: 0.17, bluff: 0.10 },
+  wild: { name: 'Хаотичный игрок', short: 'WILD', aggression: 0.84, loose: 0.28, bluff: 0.46 },
+  station: { name: 'Calling station', short: 'CALL', aggression: 0.12, loose: 0.24, bluff: 0.02 }
 };
+
+const GRADE = {
+  best: { points: 3, label: 'Лучшее действие', cls: 'good' },
+  good: { points: 2, label: 'Хорошее действие', cls: 'good' },
+  acceptable: { points: 1, label: 'Допустимо, но не оптимально', cls: 'warn' },
+  mistake: { points: 0, label: 'Ошибка', cls: 'bad' }
+};
+
+function defaultProgress() {
+  return {
+    decisions: 0,
+    scorePoints: 0,
+    maxPoints: 0,
+    sessions: 0,
+    streak: 0,
+    bestStreak: 0,
+    assistMode: 'training',
+    mistakes: {
+      too_tight: 0,
+      too_loose: 0,
+      passive: 0,
+      overplay: 0,
+      pot_odds: 0,
+      outs: 0,
+      sizing: 0,
+      position: 0,
+      range_reading: 0
+    },
+    history: []
+  };
+}
+
+function loadProgress() {
+  try {
+    const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || localStorage.getItem(PREVIOUS_STORAGE_KEY) || 'null');
+    if (current) return { ...defaultProgress(), ...current, mistakes: { ...defaultProgress().mistakes, ...(current.mistakes || {}) } };
+    const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
+    if (old) {
+      return {
+        ...defaultProgress(),
+        decisions: old.decisions || 0,
+        scorePoints: (old.correct || 0) * 3,
+        maxPoints: (old.decisions || 0) * 3,
+        sessions: old.sessions || 0,
+        mistakes: { ...defaultProgress().mistakes, ...(old.mistakes || {}) },
+        history: old.history || []
+      };
+    }
+  } catch (_) {}
+  return defaultProgress();
+}
 
 let progress = loadProgress();
 let studyIndex = 0;
-let rangeState = {number:0, correct:0, categories:{firstin:[0,0],limpers:[0,0],open:[0,0],threebet:[0,0]}, current:null};
+let currentStudy = null;
+let studyAnswered = false;
+let studyHintLevel = 0;
+let rangeState = { number: 0, correctPoints: 0, maxPoints: 0, categories: {}, current: null, answered: false };
 let session = null;
 
-function defaultProgress(){return {decisions:0,correct:0,sessions:0,mistakes:{too_tight:0,too_loose:0,overplay:0,passive:0},history:[]};}
-function loadProgress(){try{return {...defaultProgress(),...(JSON.parse(localStorage.getItem(STORAGE_KEY))||{})};}catch{return defaultProgress();}}
-function saveProgress(){localStorage.setItem(STORAGE_KEY,JSON.stringify(progress));renderProgress();}
-function recordDecision(correct, tag){progress.decisions++; if(correct) progress.correct++; if(tag) progress.mistakes[tag]=(progress.mistakes[tag]||0)+1; saveProgress();}
-function renderProgress(){
-  $('#statDecisions').textContent=progress.decisions;
-  $('#statAccuracy').textContent=progress.decisions?`${Math.round(progress.correct/progress.decisions*100)}%`:'—';
-  $('#statSessions').textContent=progress.sessions;
-  const m=progress.mistakes||{}; const entries=Object.entries(m).sort((a,b)=>b[1]-a[1]);
-  const labels={too_tight:'слишком тайтовые фолды',too_loose:'слишком широкие входы',overplay:'переигрывание одной пары',passive:'излишне пассивная игра'};
-  $('#focusText').textContent=entries[0]&&entries[0][1]>0?`Главный фокус: ${labels[entries[0][0]]}.`:'Сыграй несколько ситуаций — здесь появится персональный фокус.';
+function saveProgress() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch (_) {}
+  renderProgress();
 }
 
-function route(name){
-  $$('.screen').forEach(x=>x.classList.remove('active'));
+function addHistory(item) {
+  progress.history.unshift({ date: new Date().toISOString(), ...item });
+  progress.history = progress.history.slice(0, 60);
+}
+
+function recordDecision({ grade, tag = null, mode, title, choice, preferred }) {
+  const g = GRADE[grade] || GRADE.mistake;
+  progress.decisions += 1;
+  progress.scorePoints += g.points;
+  progress.maxPoints += 3;
+  if (g.points >= 2) progress.streak += 1;
+  else progress.streak = 0;
+  progress.bestStreak = Math.max(progress.bestStreak, progress.streak);
+  if (tag) progress.mistakes[tag] = (progress.mistakes[tag] || 0) + 1;
+  addHistory({ mode, title, choice, preferred, grade });
+  saveProgress();
+}
+
+function assistMode() {
+  return progress.assistMode || 'training';
+}
+
+function renderProgress() {
+  $('#statDecisions').textContent = progress.decisions;
+  $('#statAccuracy').textContent = progress.maxPoints ? `${Math.round(progress.scorePoints / progress.maxPoints * 100)}%` : '—';
+  $('#statSessions').textContent = progress.sessions;
+  $('#statStreak').textContent = progress.streak || 0;
+  const labels = {
+    too_tight: 'слишком тайтовые фолды', too_loose: 'слишком широкие входы', passive: 'излишне пассивная игра',
+    overplay: 'переигрывание руки', pot_odds: 'ошибки в пот-оддсах', outs: 'ошибки при подсчёте аутов', sizing: 'размеры ставок',
+    position: 'игра без учёта позиции', range_reading: 'чтение диапазона'
+  };
+  const top = Object.entries(progress.mistakes || {}).sort((a, b) => b[1] - a[1])[0];
+  $('#focusText').textContent = top && top[1] > 0 ? `Главный фокус: ${labels[top[0]]}. Тренер будет чаще возвращать такие ситуации.` : 'Сыграй несколько ситуаций — здесь появится персональный фокус.';
+  $$('input[name="assistMode"]').forEach(r => { r.checked = r.value === assistMode(); });
+}
+
+function route(name) {
+  $$('.screen').forEach(x => x.classList.remove('active'));
   $(`#screen-${name}`).classList.add('active');
-  $$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.route===name));
-  if(name==='study') renderStudy();
-  if(name==='ranges'&&!rangeState.current) nextRangeSpot();
-  if(name==='home') renderProgress();
-  window.scrollTo({top:0,behavior:'smooth'});
+  $$('.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.route === name));
+  if (name === 'home') renderProgress();
+  if (name === 'study') renderStudy();
+  if (name === 'ranges' && !rangeState.current) nextRangeSpot();
+  if (name === 'coach') renderCoachReport();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-$$('[data-route]').forEach(b=>b.addEventListener('click',()=>route(b.dataset.route)));
-$('#resetProgress').addEventListener('click',()=>{if(confirm('Сбросить всю статистику PokerPilot на этом устройстве?')){progress=defaultProgress();saveProgress();}});
 
-function newDeck(){
-  const d=[]; for(const s of SUITS) for(let r=2;r<=14;r++) d.push({r,s});
-  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}
-  return d;
-}
-function cardId(c){return `${c.r}${c.s}`;}
-function parseCard(t){const suit=[...t].pop();const rank=t.slice(0,-1);const rev={A:14,K:13,Q:12,J:11};return {r:rev[rank]||Number(rank),s:suit};}
-function cardHTML(c,small=false){const red=c.s==='h'||c.s==='d';return `<div class="playing-card ${red?'red':''} ${small?'small-card':''}"><span>${RANK_TEXT[c.r]}</span><span>${SUIT_SYMBOL[c.s]}</span></div>`;}
-function cardsHTML(cards,small=false){return cards.map(c=>cardHTML(c,small)).join('');}
-function removeKnown(deck, cards){const ids=new Set(cards.map(cardId)); return deck.filter(c=>!ids.has(cardId(c)));}
-function combinations(arr,k){const out=[];function rec(start,cur){if(cur.length===k){out.push(cur.slice());return;}for(let i=start;i<=arr.length-(k-cur.length);i++){cur.push(arr[i]);rec(i+1,cur);cur.pop();}}rec(0,[]);return out;}
-
-function eval5(cards){
-  const ranks=cards.map(c=>c.r).sort((a,b)=>b-a);
-  const counts={}; ranks.forEach(r=>counts[r]=(counts[r]||0)+1);
-  const groups=Object.entries(counts).map(([r,c])=>({r:+r,c})).sort((a,b)=>b.c-a.c||b.r-a.r);
-  const flush=cards.every(c=>c.s===cards[0].s);
-  const uniq=[...new Set(ranks)]; if(uniq.includes(14)) uniq.push(1);
-  let straightHigh=0; for(let i=0;i<=uniq.length-5;i++){if(uniq[i]-uniq[i+4]===4){straightHigh=uniq[i];break;}}
-  if(flush&&straightHigh) return [8,straightHigh];
-  if(groups[0].c===4) return [7,groups[0].r,...groups.filter(g=>g.c===1).map(g=>g.r).slice(0,1)];
-  if(groups[0].c===3&&groups[1]?.c>=2) return [6,groups[0].r,groups[1].r];
-  if(flush) return [5,...ranks];
-  if(straightHigh) return [4,straightHigh];
-  if(groups[0].c===3) return [3,groups[0].r,...groups.filter(g=>g.c===1).map(g=>g.r).slice(0,2)];
-  const pairs=groups.filter(g=>g.c===2).map(g=>g.r);
-  if(pairs.length>=2){const hi=pairs[0],lo=pairs[1],kick=groups.filter(g=>g.c===1).map(g=>g.r)[0];return [2,hi,lo,kick];}
-  if(pairs.length===1) return [1,pairs[0],...groups.filter(g=>g.c===1).map(g=>g.r).slice(0,3)];
-  return [0,...ranks];
-}
-function best7(cards){let best=null;for(const c of combinations(cards,5)){const e=eval5(c);if(!best||compareEval(e,best)>0)best=e;}return best;}
-function compareEval(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const d=(a[i]||0)-(b[i]||0);if(d)return Math.sign(d);}return 0;}
-function handName(e){return ['Старшая карта','Пара','Две пары','Сет','Стрит','Флеш','Фулл-хаус','Каре','Стрит-флеш'][e[0]];}
-
-function preflopScore(cards){
-  let [a,b]=cards.slice().sort((x,y)=>y.r-x.r); let score=0;
-  if(a.r===b.r) score=52+a.r*3;
-  else{
-    score=(a.r-2)*3+(b.r-2)*1.5;
-    if(a.s===b.s) score+=9;
-    const gap=a.r-b.r; if(gap===1)score+=8;else if(gap===2)score+=4;else if(gap>=4)score-=7;
-    if(a.r>=11&&b.r>=10)score+=10;
-    if(a.r===14)score+=7;
-    if(b.r<7&&gap>2)score-=5;
+$$('[data-route]').forEach(b => b.addEventListener('click', () => route(b.dataset.route)));
+$$('input[name="assistMode"]').forEach(r => r.addEventListener('change', () => {
+  progress.assistMode = r.value;
+  saveProgress();
+  if ($('#screen-study').classList.contains('active')) renderStudy();
+}));
+$('#resetProgress').addEventListener('click', () => {
+  if (confirm('Сбросить всю статистику PokerPilot на этом устройстве?')) {
+    progress = defaultProgress();
+    saveProgress();
   }
-  return clamp(Math.round(score),0,100);
-}
-function handCode(cards){let [a,b]=cards.slice().sort((x,y)=>y.r-x.r);return `${RANK_TEXT[a.r]}${RANK_TEXT[b.r]}${a.r===b.r?'':a.s===b.s?'s':'o'}`;}
-const OPEN_THRESHOLDS={UTG:72,'UTG+1':69,MP:65,LJ:61,HJ:56,CO:47,BTN:38,SB:48,BB:99};
-function preflopRecommendation(cards,pos,context){
-  const score=preflopScore(cards), base=OPEN_THRESHOLDS[pos]??55;
-  if(context.type==='firstin') return {best:score>=base?'raise':'fold',size:12,reason:score>=base?`${handCode(cards)} входит в учебный диапазон открытия из ${pos}.`:`${handCode(cards)} обычно слишком слаба для открытия из ${pos}.`,category:'firstin'};
-  if(context.type==='limpers'){
-    const late=['HJ','CO','BTN'].includes(pos); const suited=cards[0].s===cards[1].s;
-    if(score>=base-7||(late&&suited&&score>=37)) return {best:'raise',size:15+context.count*3,reason:'В позиции рука подходит для изоляции слабых лимперов.',category:'limpers'};
-    if(late&&suited&&score>=30) return {best:'call',size:3,reason:'Дешёвый колл допустим благодаря позиции и реализуемому эквити.',category:'limpers'};
-    return {best:'fold',reason:'Рука слишком часто будет доминирована в мультипоте.',category:'limpers'};
-  }
-  if(context.type==='open'){
-    if(score>=78) return {best:'raise',size:context.amount*3.3,reason:'Сильная рука получает вэлью через 3-бет.',category:'open'};
-    if(score>=54||(pos==='BB'&&score>=42)) return {best:'call',size:context.amount,reason:'У руки достаточно силы и реализуемого эквити для продолжения.',category:'open'};
-    return {best:'fold',reason:'Цена и диапазон открытия делают продолжение убыточным.',category:'open'};
-  }
-  if(context.type==='threebet'){
-    if(score>=88) return {best:'raise',size:'all-in',reason:'Премиальная рука может выставляться на вэлью.',category:'threebet'};
-    if(score>=70) return {best:'call',size:context.amount,reason:'Рука достаточно сильна, чтобы продолжить против 3-бета.',category:'threebet'};
-    return {best:'fold',reason:'Против 3-бета эта рука реализует слишком мало эквити.',category:'threebet'};
-  }
-  return {best:'fold',reason:'Нет достаточных оснований продолжать.',category:'firstin'};
-}
-
-function madeStrength(cards,board){
-  if(board.length<3) return preflopScore(cards)/100;
-  const e=best7([...cards,...board]); let n=[.12,.32,.5,.67,.75,.82,.9,.96,1][e[0]];
-  const boardRanks=board.map(c=>c.r), holeRanks=cards.map(c=>c.r);
-  if(e[0]===1){const pairRank=e[1]; if(holeRanks.includes(pairRank)){const boardMax=Math.max(...boardRanks);n+=pairRank===boardMax?.06:0;}}
-  return clamp(n,0,1);
-}
-function drawInfo(cards,board){
-  if(board.length<3||board.length>=5)return {flush:false,straight:false,outs:0};
-  const all=[...cards,...board]; const suitCounts={}; all.forEach(c=>suitCounts[c.s]=(suitCounts[c.s]||0)+1);
-  const flush=Object.values(suitCounts).some(n=>n===4);
-  const ranks=[...new Set(all.map(c=>c.r))];if(ranks.includes(14))ranks.push(1);ranks.sort((a,b)=>a-b);
-  let straight=false; for(let start=1;start<=10;start++){let have=0;for(let r=start;r<start+5;r++)if(ranks.includes(r))have++;if(have===4)straight=true;}
-  return {flush,straight,outs:(flush?9:0)+(straight?8:0)};
-}
-function rangeMinFromLine(line,type){let min={limp:25,open:43,call:37,threebet:72,bet:30,raise:60}[line]??35;return clamp(min+(TYPES[type]?.loose||0),12,90);}
-function equityVsRange(hero,board,minScore,type,trials=260){
-  let win=0,tie=0,done=0,guard=0;
-  const baseDeck=removeKnown(newDeck(),[...hero,...board]);
-  while(done<trials&&guard<trials*20){guard++;
-    const d=baseDeck.slice(); for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}
-    const villain=[d.pop(),d.pop()]; const score=preflopScore(villain);
-    const looseChance=type==='wild'?.42:type==='station'?.28:.12;
-    if(score<minScore&&Math.random()>looseChance)continue;
-    const run=board.slice();while(run.length<5)run.push(d.pop());
-    const cmp=compareEval(best7([...hero,...run]),best7([...villain,...run]));
-    if(cmp>0)win++;else if(cmp===0)tie++;done++;
-  }
-  return done?(win+tie*.5)/done:.5;
-}
-
-const STUDY_SPOTS=[
- {title:'Ривер: блеф-кетч',hero:['As','Js'],board:['Jd','8c','4s','9h','2d'],pot:327,toCall:110,line:'bet',type:'aggro',rangeMin:30,actions:['fold','call','raise'],best:'call',text:'Активный соперник ставит $110 после твоего чека на тёрне.',why:'Для колла требуется около 25%. AJ впереди части худших Jx и блефов.'},
- {title:'Флоп: вэлью и защита',hero:['Kh','Kd'],board:['Ts','7d','3c'],pot:52,toCall:0,line:'check',type:'passive',rangeMin:30,actions:['check','bet'],best:'bet',bet:35,text:'Пассивный соперник чекает в тебя.',why:'Оверпара должна собирать вэлью с Tx, карманных пар и случайных дро.'},
- {title:'Тёрн: опасная карта',hero:['Ah','Qh'],board:['Qd','9s','6s','Ts'],pot:124,toCall:80,line:'bet',type:'nit',rangeMin:58,actions:['fold','call','raise'],best:'fold',text:'Тайтовый игрок ставит крупно второй баррель.',why:'Против тайтового крупного диапазона одна пара часто позади; блефов мало.'},
- {title:'Флоп: натсовое флеш-дро',hero:['As','Ks'],board:['Qs','7s','2d'],pot:61,toCall:35,line:'bet',type:'reg',rangeMin:38,actions:['fold','call','raise'],best:'raise',text:'Регуляр ставит $35 в банк $61.',why:'Две оверкарты и натсовое флеш-дро дают сильное полублефовое повышение.'},
- {title:'Префлоп: изоляция',hero:['Ts','9s'],board:[],pot:10,toCall:3,line:'limp',type:'passive',rangeMin:24,actions:['fold','call','raise'],best:'raise',bet:18,text:'Ты на BTN, перед тобой два лимпера.',why:'T9s хорошо играет в позиции и подходит для изоляции.'},
- {title:'Ривер: тонкое вэлью',hero:['Ac','Jc'],board:['Jh','8d','4c','9s','2h'],pot:217,toCall:0,line:'check',type:'station',rangeMin:25,actions:['check','bet'],best:'bet',bet:70,text:'Calling station чекает третий раз.',why:'Против слабого пассивного игрока AJ получает колл от худших валетов и пар.'},
- {title:'Префлоп: дисциплина UTG',hero:['Kd','Tc'],board:[],pot:4,toCall:0,line:'firstin',type:'mixed',rangeMin:0,actions:['fold','raise'],best:'fold',text:'Полный стол, ты открываешь первым из UTG.',why:'KTo слишком часто доминирована и плохо играет без позиции.'},
- {title:'Тёрн: контроль банка',hero:['Ad','Jd'],board:['Js','8c','4h','9d'],pot:217,toCall:0,line:'check',type:'aggro',rangeMin:30,actions:['check','bet'],best:'check',text:'Активный соперник чекает после колла флопа.',why:'Чек сохраняет худшие руки и блефы; ставка тоже допустима, но чек упрощает ривер.'}
-];
-function actionLabel(a,spot){return {fold:'Fold',call:`Call ${money(spot.toCall)}`,raise:spot.bet?`Raise/Bet ${money(spot.bet)}`:'Raise',check:'Check',bet:`Bet ${money(spot.bet||Math.round(spot.pot*.55))}`}[a];}
-function actionClass(a,best){return `${a==='fold'?'fold':''} ${a===best?'main':''}`;}
-function renderStudy(){
-  const s=STUDY_SPOTS[studyIndex%STUDY_SPOTS.length];
-  $('#studyTitle').textContent=s.title; $('#studyCounter').textContent=`${studyIndex%STUDY_SPOTS.length+1}/${STUDY_SPOTS.length}`;
-  const hero=s.hero.map(parseCard),board=s.board.map(parseCard); const potOdds=s.toCall?s.toCall/(s.pot+s.toCall):0; const eq=board.length>=3?equityVsRange(hero,board,s.rangeMin,s.type,180):null;
-  $('#studySpot').innerHTML=`<div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length?`<div class="cards">${cardsHTML(board,true)}</div>`:''}<div class="spot-meta"><div class="stat"><small>Банк</small><strong>${money(s.pot)}</strong></div><div class="stat"><small>Цена</small><strong>${s.toCall?money(s.toCall):'—'}</strong></div><div class="stat"><small>${s.toCall?'Пот-оддсы':'Улица'}</small><strong>${s.toCall?`${Math.round(potOdds*100)}%`:(board.length===0?'Префлоп':board.length===3?'Флоп':board.length===4?'Тёрн':'Ривер')}</strong></div></div><p class="spot-question">${s.text}</p>${eq!==null?`<div class="math-box">Оценочное эквити против диапазона: <strong>${Math.round(eq*100)}%</strong>. Конкретные карты соперника неизвестны.</div>`:''}`;
-  $('#studyActions').innerHTML=s.actions.map(a=>`<button class="${actionClass(a,s.best)}" data-study-action="${a}">${actionLabel(a,s)}</button>`).join('');
-  $('#studyFeedback').className='feedback hidden'; $('#studyNext').classList.add('hidden');
-  $$('[data-study-action]').forEach(b=>b.addEventListener('click',()=>answerStudy(b.dataset.studyAction)));
-}
-function answerStudy(a){const s=STUDY_SPOTS[studyIndex%STUDY_SPOTS.length];const ok=a===s.best;let tag=null;if(!ok){if(a==='fold')tag='too_tight';else if(a==='raise'||a==='bet')tag='overplay';else tag='passive';}recordDecision(ok,tag);const f=$('#studyFeedback');f.className=`feedback ${ok?'good':'warn'}`;f.innerHTML=`<strong>${ok?'Лучшее действие.':'Решение можно улучшить.'}</strong><br>${s.why}<br><span class="muted">Рекомендуется: ${actionLabel(s.best,s)}.</span>`;$('#studyNext').classList.remove('hidden');$$('[data-study-action]').forEach(x=>x.disabled=true);}
-$('#studyNext').addEventListener('click',()=>{studyIndex++;renderStudy();});
-
-function randomRangeContext(){const r=Math.random();if(r<.34)return {type:'firstin'};if(r<.58)return {type:'limpers',count:Math.random()<.6?2:1};if(r<.86)return {type:'open',amount:sample([10,12,15])};return {type:'threebet',amount:sample([35,40,45])};}
-function randomPosition(size=9){return sample(size===9?['UTG','UTG+1','MP','LJ','HJ','CO','BTN','SB','BB']:['UTG','HJ','CO','BTN','SB','BB']);}
-function nextRangeSpot(){
-  const deck=newDeck(),cards=[deck.pop(),deck.pop()],pos=randomPosition(9),context=randomRangeContext(),rec=preflopRecommendation(cards,pos,context);
-  rangeState.number++;rangeState.current={cards,pos,context,rec};
-  $('#rangeCounter').textContent=`${((rangeState.number-1)%10)+1}/10`;
-  const ctx=context.type==='firstin'?'Все выбросили до тебя':context.type==='limpers'?`${context.count} лимпер${context.count>1?'а':''} до тебя`:context.type==='open'?`Перед тобой рейз до ${money(context.amount)}`:`Ты открылся, получил 3-бет до ${money(context.amount)}`;
-  $('#rangeSpot').innerHTML=`<div class="row"><div><span class="tag">${pos}</span><h3>${handCode(cards)}</h3></div><span class="chip">Эффективный стек $300</span></div><div class="cards hero-cards">${cardsHTML(cards)}</div><p class="spot-question">${ctx}. Что делать?</p>`;
-  const acts=context.type==='firstin'?['fold','raise']:context.type==='limpers'?['fold','call','raise']:context.type==='open'?['fold','call','raise']:['fold','call','raise'];
-  $('#rangeActions').innerHTML=acts.map(a=>`<button class="${actionClass(a,rec.best)}" data-range-action="${a}">${a==='fold'?'Fold':a==='call'?`Call${context.amount?' '+money(context.amount):' $3'}`:context.type==='threebet'?'4-bet / All-in':`Raise${rec.size&&typeof rec.size==='number'?' '+money(rec.size):''}`}</button>`).join('');
-  $('#rangeFeedback').className='feedback hidden';$('#rangeNext').classList.add('hidden');$$('[data-range-action]').forEach(b=>b.addEventListener('click',()=>answerRange(b.dataset.rangeAction)));renderRangeScore();
-}
-function answerRange(a){const {rec}=rangeState.current;const ok=a===rec.best;rangeState.categories[rec.category][1]++;if(ok){rangeState.correct++;rangeState.categories[rec.category][0]++;}let tag=null;if(!ok)tag=a==='fold'?'too_tight':a==='call'?'passive':'too_loose';recordDecision(ok,tag);const f=$('#rangeFeedback');f.className=`feedback ${ok?'good':'warn'}`;f.innerHTML=`<strong>${ok?'Правильно.':'Не оптимально.'}</strong><br>${rec.reason}<br><span class="muted">Лучшее действие: ${rec.best.toUpperCase()}${rec.size&&typeof rec.size==='number'?` до ${money(rec.size)}`:''}.</span>`;$('#rangeNext').classList.remove('hidden');$$('[data-range-action]').forEach(x=>x.disabled=true);renderRangeScore();}
-function renderRangeScore(){const names={firstin:'Открытие первым',limpers:'Против лимперов',open:'Против рейза',threebet:'Против 3-бета'};const rows=Object.entries(rangeState.categories).filter(([,v])=>v[1]>0);$('#rangeScore').innerHTML=rows.length?rows.map(([k,v])=>`<div class="score-row"><span>${names[k]}</span><strong>${Math.round(v[0]/v[1]*100)}%</strong></div>`).join(''):'Ответь хотя бы на одну руку.';}
-$('#rangeNext').addEventListener('click',nextRangeSpot);
-
-function positionsFor(n,button){const map=n===9?['BTN','SB','BB','UTG','UTG+1','MP','LJ','HJ','CO']:['BTN','SB','BB','UTG','HJ','CO'];const out=[];for(let i=0;i<n;i++){const off=(i-button+n)%n;out[i]=map[off];}return out;}
-function orderedFrom(start,n){return Array.from({length:n},(_,k)=>(start+k)%n);}
-function typePool(style){if(style==='passive')return ['passive','station','new','passive','reg','nit'];if(style==='wild')return ['wild','aggro','station','new','wild','reg'];return ['reg','passive','aggro','new','station','nit','wild'];}
-function createPlayers(n,buyIn,style){const pool=typePool(style);return Array.from({length:n},(_,i)=>i===0?{id:i,name:'YOU',type:'hero',stack:buyIn,cards:[],folded:false,contrib:0,streetContrib:0}:{id:i,name:TYPES[pool[(i-1)%pool.length]].short,type:pool[(i-1)%pool.length],stack:buyIn+sample([-60,-30,0,50,100]),cards:[],folded:false,contrib:0,streetContrib:0});}
-function startSession(){const buyIn=+$('#buyIn').value,n=+$('#tableSize').value,style=$('#tableStyle').value;session={initial:buyIn,buyIn,n,style,players:createPlayers(n,buyIn,style),button:Math.floor(Math.random()*n),hands:0,pot:0,board:[],deck:[],street:'preflop',hero:0,currentBet:0,toCall:0,awaiting:null,villain:null,log:[],decisionGrades:[],ended:false};$('#liveSetup').classList.add('hidden');$('#liveGame').classList.remove('hidden');progress.sessions++;saveProgress();dealLiveHand();}
-$('#startSession').addEventListener('click',startSession);
-
-function postBlind(idx,amount,label){const p=session.players[idx],paid=Math.min(amount,p.stack);p.stack-=paid;p.contrib+=paid;p.streetContrib+=paid;session.pot+=paid;log(`${p.name} ставит ${label} ${money(paid)}`);}
-function log(t){session.log.push(t);if(session.log.length>20)session.log.shift();renderLog();}
-function renderLog(){$('#actionLog').innerHTML=session.log.map(x=>`<p>${x}</p>`).join('');$('#actionLog').scrollTop=$('#actionLog').scrollHeight;}
-function dealLiveHand(){
-  if(session.players[0].stack<3){finishSession('Стек закончился.');return;}
-  session.hands++;session.button=(session.button+1)%session.n;session.deck=newDeck();session.board=[];session.pot=0;session.street='preflop';session.currentBet=3;session.toCall=0;session.awaiting=null;session.villain=null;session.log=[];session.players.forEach(p=>{p.cards=[session.deck.pop(),session.deck.pop()];p.folded=false;p.contrib=0;p.streetContrib=0;p.lastAction='';});
-  const sb=(session.button+1)%session.n,bb=(session.button+2)%session.n;postBlind(sb,1,'SB');postBlind(bb,3,'BB');
-  const order=orderedFrom((session.button+3)%session.n,session.n);const heroAt=order.indexOf(0);for(let i=0;i<heroAt;i++)aiPreflopBeforeHero(order[i]);
-  session.toCall=Math.max(0,session.currentBet-session.players[0].streetContrib);session.awaiting='hero-preflop';
-  log(`Твой ход: ${positionsFor(session.n,session.button)[0]} • ${handCode(session.players[0].cards)}`);renderLive();showHeroActions();
-}
-function aiPreflopBeforeHero(idx){const p=session.players[idx];if(p.stack<=0){p.folded=true;return;}const pos=positionsFor(session.n,session.button)[idx],score=preflopScore(p.cards),type=TYPES[p.type],facing=session.currentBet>3;
-  if(!facing){const threshold=(OPEN_THRESHOLDS[pos]??55)+type.loose;if(score>=threshold&&Math.random()<.72+type.agg*.2){const target=Math.min(p.stack+p.streetContrib,sample([10,12,15]));commitTo(p,target);session.currentBet=Math.max(session.currentBet,p.streetContrib);p.lastAction=`raise ${money(target)}`;log(`${p.name} рейз до ${money(target)}`);}else if(score>=25+type.loose&&Math.random()<(p.type==='passive'||p.type==='station'?.65:.22)){commitTo(p,3);p.lastAction='limp';log(`${p.name} лимп $3`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}
-  else{const need=session.currentBet-p.streetContrib;if(score>=74+type.loose&&Math.random()<type.agg*.35){const target=Math.min(p.stack+p.streetContrib,session.currentBet*3);commitTo(p,target);session.currentBet=p.streetContrib;p.lastAction='3-bet';log(`${p.name} 3-бет до ${money(target)}`);}else if(score>=44+type.loose&&need<=p.stack&&Math.random()<.45){commitTo(p,session.currentBet);p.lastAction='call';log(`${p.name} call ${money(need)}`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}
-}
-function commitTo(p,target){const add=clamp(target-p.streetContrib,0,p.stack);p.stack-=add;p.streetContrib+=add;p.contrib+=add;session.pot+=add;return add;}
-function heroCommitTo(target){return commitTo(session.players[0],target);}
-function activeOpponents(){return session.players.filter((p,i)=>i!==0&&!p.folded&&p.stack>=0);}
-
-function renderSeats(){const seats=$('#seats');seats.innerHTML='';const pos=positionsFor(session.n,session.button);session.players.forEach((p,i)=>{const angle=(-90+360*i/session.n)*Math.PI/180;const x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);const el=document.createElement('div');el.className=`seat ${i===0?'hero':''} ${p.folded?'folded':''} ${session.villain===i?'active-player':''}`;el.style.left=`calc(${x}% - 32px)`;el.style.top=`calc(${y}% - 30px)`;el.innerHTML=`<small>${pos[i]} • ${i===session.button?'D ':''}${p.type==='hero'?'YOU':TYPES[p.type].short}</small><strong>${money(p.stack)}</strong><em>${p.lastAction||''}</em>`;seats.appendChild(el);});}
-function streetText(){return {preflop:'Префлоп',flop:'Флоп',turn:'Тёрн',river:'Ривер',showdown:'Шоудаун'}[session.street];}
-function renderLive(){const hero=session.players[0],profit=hero.stack+hero.contrib-session.initial;$('#liveStack').textContent=money(hero.stack);$('#liveProfit').textContent=signedMoney(profit);$('#liveProfit').style.color=profit>=0?'var(--accent)':'var(--danger)';$('#liveHands').textContent=session.hands;const misses=session.decisionGrades.filter(x=>!x).length;$('#liveTilt').textContent=profit<-session.initial*.35||misses>=4?'Средний':'Низкий';$('#heroPosition').textContent=positionsFor(session.n,session.button)[0];$('#heroCards').innerHTML=cardsHTML(hero.cards);$('#board').innerHTML=cardsHTML(session.board,true);$('#streetLabel').textContent=streetText();$('#potLabel').textContent=`Банк ${money(session.pot)}`;$('#actionTitle').textContent=session.awaiting?.startsWith('hero')?'Твоё решение':'Раздача завершена';$('#toCallChip').textContent=session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';renderSeats();renderLog();}
-function showMath(){const hero=session.players[0];let html='';if(session.street==='preflop'){const line=session.currentBet>3?'open':'limp';const min=rangeMinFromLine(line,session.villain?session.players[session.villain].type:'reg');html=`Сила стартовой руки: <strong>${preflopScore(hero.cards)}/100</strong>. Решение зависит от позиции, цены и диапазона соперника.`;}else if(session.villain!==null){const v=session.players[session.villain],line=v.lastAction?.includes('raise')?'raise':v.lastAction?.includes('bet')?'bet':'call',min=rangeMinFromLine(line,v.type),eq=equityVsRange(hero.cards,session.board,min,v.type,220),odds=session.toCall?session.toCall/(session.pot+session.toCall):0;html=`Оценочное эквити против диапазона: <strong>${Math.round(eq*100)}%</strong>${session.toCall?`. Для колла требуется <strong>${Math.round(odds*100)}%</strong>.`:'.'}<br>Карты соперника остаются скрытыми.`;}$('#mathBox').innerHTML=html;$('#mathBox').classList.toggle('hidden',!html);}
-function showHeroActions(){renderLive();showMath();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');
-  const facing=session.toCall>0;let acts=[];
-  if(session.street==='preflop') acts=facing?['fold','call','raise']:['check','raise'];
-  else acts=facing?['fold','call','raise']:['check','bet','allin'];
-  acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.className=a==='fold'?'fold':(a==='call'||a==='bet'||a==='raise')?'main':a==='allin'?'allin':'';b.textContent=a==='fold'?'Fold':a==='call'?`Call ${money(session.toCall)}`:a==='check'?'Check':a==='allin'?'All-in':a==='bet'?'Bet':'Raise';b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});
-}
-function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0];const min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3;const max=hero.stack+hero.streetContrib;const def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
-$('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));
-$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min;const v=clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));
-$('#confirmBet').addEventListener('click',()=>{
-  const action=$('#betSizer').dataset.action;
-  if(action){handleHeroAction(action,+$('#betRange').value);$('#betSizer').classList.add('hidden');}
 });
 
-function evaluateHeroAction(action,amount=0){
-  const hero=session.players[0]; if(session.street==='preflop'){
-    const pos=positionsFor(session.n,session.button)[0];let context;if(session.currentBet<=3)context={type:activeOpponents().some(p=>p.lastAction==='limp')?'limpers':'firstin',count:activeOpponents().filter(p=>p.lastAction==='limp').length};else context={type:'open',amount:session.currentBet};const rec=preflopRecommendation(hero.cards,pos,context);return {ok:action===rec.best||(rec.best==='raise'&&action==='allin'&&preflopScore(hero.cards)>88),best:rec.best,why:rec.reason};
-  }
-  const v=session.villain!==null?session.players[session.villain]:null;const strength=madeStrength(hero.cards,session.board),draw=drawInfo(hero.cards,session.board);if(session.toCall){const min=rangeMinFromLine(v?.lastAction?.includes('raise')?'raise':'bet',v?.type||'reg'),eq=equityVsRange(hero.cards,session.board,min,v?.type||'reg',180),odds=session.toCall/(session.pot+session.toCall);let best=eq>=odds+.045?'call':'fold';if(strength>=.86||(strength>=.72&&draw.outs))best='raise';return {ok:action===best||(best==='call'&&action==='raise'&&strength>.82),best,why:`Оценочное эквити ${Math.round(eq*100)}%, необходимое для колла ${Math.round(odds*100)}%.`};}
-  let best=(strength>=.44||draw.outs>=8)?'bet':'check';if(strength>=.96)best='bet';return {ok:action===best||(best==='bet'&&action==='allin'&&strength>.9),best,why:`Сила готовой руки и дро оценивается в ${Math.round(strength*100)}/100${draw.outs?`, потенциальных аутов около ${draw.outs}`:''}.`};
+function cardHTML(c, small = false) {
+  const red = c.s === 'h' || c.s === 'd';
+  const rank = c.r === 10 ? '10' : C.RANK_TEXT[c.r];
+  return `<div class="playing-card ${red ? 'red' : ''} ${small ? 'small-card' : ''}"><span>${rank}</span><span>${C.SUIT_SYMBOL[c.s]}</span></div>`;
 }
-function decisionFeedback(grade,action){session.decisionGrades.push(grade.ok);let tag=null;if(!grade.ok)tag=action==='fold'?'too_tight':action==='call'||action==='check'?'passive':action==='raise'||action==='bet'||action==='allin'?'overplay':null;recordDecision(grade.ok,tag);const f=$('#liveFeedback');f.className=`feedback ${grade.ok?'good':'warn'}`;f.innerHTML=`<strong>${grade.ok?'Хорошее решение.':'Решение можно улучшить.'}</strong><br>${grade.why}<br><span class="muted">Модель предпочитает: ${grade.best.toUpperCase()}.</span>`;}
+function cardsHTML(cards, small = false) { return cards.map(c => cardHTML(c, small)).join(''); }
+function parseCards(arr) { return arr.map(C.parseCard); }
+function actionLabel(action, amount = 0) {
+  return ({ fold: 'Fold', check: 'Check', call: amount ? `Call ${money(amount)}` : 'Call', bet: amount ? `Bet ${money(amount)}` : 'Bet', raise: amount ? `Raise ${money(amount)}` : 'Raise', allin: 'All-in' })[action] || action;
+}
+function topGradeAction(grades) {
+  return Object.entries(grades).sort((a, b) => GRADE[b[1]].points - GRADE[a[1]].points)[0][0];
+}
+function mistakeTag(choice, scenario) {
+  if (scenario.tagByAction?.[choice]) return scenario.tagByAction[choice];
+  if (choice === 'fold') return 'too_tight';
+  if (choice === 'call' || choice === 'check') return 'passive';
+  if (choice === 'bet' || choice === 'raise' || choice === 'allin') return 'overplay';
+  return 'range_reading';
+}
 
-function handleHeroAction(action,manualAmount=null){
-  if(!session||!session.awaiting?.startsWith('hero'))return;
-  let amount=manualAmount;if((action==='bet'||action==='raise')&&amount===null){if($('#betSizer').classList.contains('hidden')){toggleSizer(action);return;}amount=+$('#betRange').value;}
-  const grade=evaluateHeroAction(action,amount||0);decisionFeedback(grade,action);const hero=session.players[0];
-  if(action==='fold'){hero.folded=true;hero.lastAction='fold';log('YOU fold');awardPot(session.villain??activeOpponents()[0]?.id,'Ты выбросил карты.');return;}
-  if(action==='check'){hero.lastAction='check';log('YOU check');session.awaiting=null;afterHeroPassive();return;}
-  if(action==='call'){const paid=heroCommitTo(hero.streetContrib+session.toCall);hero.lastAction=`call ${money(paid)}`;log(`YOU call ${money(paid)}`);session.toCall=0;session.awaiting=null;afterHeroCall();return;}
-  if(action==='allin'){amount=hero.stack+hero.streetContrib;action='bet';}
-  if(action==='bet'||action==='raise'){
-    amount=clamp(amount,hero.streetContrib+1,hero.stack+hero.streetContrib);const paid=heroCommitTo(amount);session.currentBet=Math.max(session.currentBet,hero.streetContrib);hero.lastAction=`${action} ${money(amount)}`;log(`YOU ${action} до ${money(amount)}`);session.awaiting=null;aiRespondToHeroBet(paid);return;
+const STUDY_SPOTS = [
+  {
+    id: 'river-aj-bluffcatch', title: 'Ривер: блеф-кетч', category: 'Ривер', position: 'CO', hero: ['As','Js'], board: ['Jd','8c','4s','9h','2d'],
+    potBefore: 217, bet: 110, villain: 'aggro', range: '99,88,44,22,J9s,AJs,AJo,KJs,QJs,JTs,QTs,T8s,76s,65s',
+    text: 'После твоего чека на тёрне активный соперник ставит $110 в банк $217.', actions: ['fold','call','raise'],
+    grades: { fold: 'mistake', call: 'best', raise: 'mistake' },
+    summary: 'AJ — слишком сильная верхняя часть твоего диапазона, чтобы выбрасывать против игрока с заметными блефами.',
+    key: 'Сравни цену колла не с силой отдельных вэлью-комбинаций, а со всем диапазоном ставки.',
+    missed: 'Ты можешь переоценить сеты и J9, забыв про худших валетов и промазавшие дро. Для колла требуется лишь около четверти банка.',
+    rangeNote: 'Вэлью: сеты и J9. Более слабое вэлью: KJ/QJ/JT. Блефы: промазавшие T8, 76, 65 и часть оверкарт.',
+    why: { fold: 'Фолд становится хорошим только против очень пассивного соперника, который почти не блефует.', call: 'Колл сохраняет блефы и худшие Jx. Это стандартный bluff-catch.', raise: 'Рейз изолирует тебя против более сильного вэлью: худшие руки часто выбросят.' },
+    alternative: 'Если бы соперник был пассивным calling station и внезапно поставил крупно, фолд стал бы гораздо ближе.'
+  },
+  {
+    id: 'flop-kk-value', title: 'Флоп: вэлью и защита', category: 'Флоп', position: 'HJ', hero: ['Kh','Kd'], board: ['Ts','7d','3c'],
+    potBefore: 52, bet: 0, villain: 'passive', range: '22-99,ATs,KTs,QTs,JTs,T9s,98s,87s,ATo,KTo,QTo,JTo',
+    text: 'Пассивный соперник чекает в тебя. Эффективный стек $240.', actions: ['check','bet'], betSize: 35,
+    grades: { check: 'acceptable', bet: 'best' },
+    summary: 'Оверпара получает три улицы вэлью от Tx и карманных пар.', key: 'Спроси: какие худшие руки готовы платить?',
+    missed: 'Чек не защищает тебя от проигрыша — он просто бесплатно отдаёт карту и упускает коллы от худших рук.',
+    rangeNote: 'У пассивного коллера много Tx, 99–44 и suited connectors. Сильных рук мало: TT/77/33.',
+    why: { check: 'Допустим как редкий слоуплей, но на сухой доске обычно теряет вэлью.', bet: 'Ставка около 55–70% банка получает коллы от множества худших рук.' },
+    alternative: 'Против агрессивного соперника чек иногда полезен, чтобы спровоцировать ставку на тёрне.'
+  },
+  {
+    id: 'turn-aq-nit', title: 'Тёрн: топ-пара против тайтового барреля', category: 'Тёрн', position: 'BTN', hero: ['Ah','Qh'], board: ['Qd','9s','6s','Ts'],
+    potBefore: 124, bet: 80, villain: 'nit', range: 'QQ,TT,99,66,AKs,AQs,AJs,KQs,KJs,QTs,JTs,87s',
+    text: 'Тайтовый игрок ставит $80 в банк $124 второй улицей.', actions: ['fold','call','raise'],
+    grades: { fold: 'best', call: 'acceptable', raise: 'mistake' },
+    summary: 'Против узкого диапазона крупного второго барреля одна пара часто находится позади.',
+    key: 'Тип соперника и размер второй ставки важнее абсолютной красоты AQ.',
+    missed: 'Ты можешь считать все флеш-дро блефами, но у тайтового игрока их немного, а готовых сильных рук много.',
+    rangeNote: 'Сеты, две пары, готовые стриты и сильные комбодро. Чистых блефов почти нет.',
+    why: { fold: 'Эксплойтный фолд экономит деньги против недостаточно блефующего диапазона.', call: 'Колл допустим с дополнительными ридами или против более агрессивной версии игрока.', raise: 'Рейз выбивает блефы и получает продолжение почти только от рук сильнее.' },
+    alternative: 'Против AGGRO с тем же размером ставки колл станет значительно лучше.'
+  },
+  {
+    id: 'flop-nfd', title: 'Флоп: натсовое флеш-дро', category: 'Флоп', position: 'BTN', hero: ['As','Ks'], board: ['Qs','7s','2d'],
+    potBefore: 61, bet: 35, villain: 'reg', range: 'QQ,77,22,AQs,AQo,KQs,QJs,QTs,JJ-TT,AJs,ATs,KJs,JTs,T9s,98s',
+    text: 'Регуляр ставит $35 в банк $61. За спиной $210.', actions: ['fold','call','raise'], raiseSize: 110,
+    grades: { fold: 'mistake', call: 'good', raise: 'best' },
+    summary: 'Натсовое флеш-дро с двумя оверкартами — сильное комбодро.',
+    key: 'Разделяй сырые ауты и чистые: 9 пик сильные, A/K могут быть условными.',
+    missed: 'На экране раньше ошибочно показывалось 36% пот-оддсов. Правильно: $35 / ($61 + $35 + $35) ≈ 26.7%.',
+    rangeNote: 'В диапазоне есть топ-пары, сеты, карманные пары и собственные дро. Против него у AKs много эквити и fold equity.',
+    why: { fold: 'Фолд теряет руку с высокой долей банка и хорошей ценой.', call: 'Колл прибыльный и сохраняет слабые блефы. Это хорошая линия.', raise: 'Рейз создаёт fold equity и может выставляться против рук, где у тебя много аутов.' },
+    alternative: 'На позиции колл часто проще и снижает дисперсию; против игрока, который слишком много фолдит, рейз ещё лучше.', tagByAction: { fold: 'pot_odds' }
+  },
+  {
+    id: 'flop-oesd', title: 'Флоп: двусторонний стрит-дро', category: 'Флоп', position: 'BB', hero: ['8s','7d'], board: ['6c','5h','Ks'],
+    potBefore: 48, bet: 24, villain: 'reg', range: 'AA-77,AKs,AQs,KQs,KJs,QJs,JTs,AKo,KQo',
+    text: 'Соперник ставит половину банка. У тебя OESD.', actions: ['fold','call','raise'],
+    grades: { fold: 'mistake', call: 'best', raise: 'good' },
+    summary: 'Восемь прямых стрит-аутов дают достаточно шансов для продолжения.', key: 'Сначала посчитай 4 и 9: четыре четвёрки и четыре девятки.',
+    missed: 'Вероятность закрыться на следующей карте — 8/47 ≈ 17%; к риверу — около 31.5%, если ауты чистые.',
+    rangeNote: 'Ставка содержит пары Kx, оверпары и часть оверкарт. Рейз может выбить воздух, но колл реализует эквити дешевле.',
+    why: { fold: 'Цена слишком хорошая для фолда восьмиаутного дро.', call: 'Колл получает корректную прямую цену с потенциальными implied odds.', raise: 'Полублеф допустим, особенно против высокой частоты c-bet, но увеличивает дисперсию.' },
+    alternative: 'На тёрне без усиления продолжение зависит от размера второй ставки и новых дополнительных аутов.', tagByAction: { fold: 'outs' }
+  },
+  {
+    id: 'river-thin-value', title: 'Ривер: тонкое вэлью', category: 'Ривер', position: 'BTN', hero: ['Ac','Jc'], board: ['Jh','8d','4c','9s','2h'],
+    potBefore: 217, bet: 0, villain: 'station', range: 'TT-33,AJs,AJo,KJs,KJo,QJs,QJo,JTs,JTo,T9s,98s,87s',
+    text: 'Calling station чекает третий раз. Эффективный стек $180.', actions: ['check','bet'], betSize: 70,
+    grades: { check: 'acceptable', bet: 'best' },
+    summary: 'Против игрока, который слишком много коллирует, AJ добирает с худших Jx и пар.', key: 'Тонкое вэлью зависит от того, кто способен заколлировать хуже.',
+    missed: 'Страх редких двух пар не должен отменять прибыль от множества коллов с KJ/QJ/JT/TT.',
+    rangeNote: 'После трёх чеков диапазон сильно смещён к одной паре и слабым showdown-рукам.',
+    why: { check: 'Чек гарантирует шоудаун, но недобирает против типичного station.', bet: 'Небольшая ставка $60–80 получает достаточно коллов хуже.' },
+    alternative: 'Против тайтового регуляра, который фолдит KJ/QJ, чек становится лучше.'
+  },
+  {
+    id: 'turn-top-pair-control', title: 'Тёрн: топ-пара и контроль банка', category: 'Тёрн', position: 'CO', hero: ['Ad','Jd'], board: ['Js','8c','4h','9d'],
+    potBefore: 217, bet: 0, villain: 'aggro', range: '99-22,AJs,AJo,KJs,KJo,QJs,QJo,JTs,JTo,T9s,98s,87s,QTs,T8s',
+    text: 'Активный соперник чекает после колла флопа. За спиной $195.', actions: ['check','bet'], betSize: 70,
+    grades: { check: 'best', bet: 'good' },
+    summary: 'Обе линии разумны: чек защищает диапазон и провоцирует ривер, ставка добирает и защищает.',
+    key: 'Не каждое сильное решение имеет один-единственный правильный ответ.',
+    missed: 'После чека нужно быть готовым чаще ловить блеф на безопасном ривере; иначе чек теряет смысл.',
+    rangeNote: 'У соперника остаются худшие Jx, пары, T9/98 и дро QT/T8.',
+    why: { check: 'Контролирует банк и сохраняет блефы агрессивного игрока.', bet: 'Получает вэлью и защиту, но иногда сталкивается с неприятным рейзом.' },
+    alternative: 'Если выбрал чек и пришёл бланковый ривер с половинной ставкой, AJ обычно должен чаще коллировать.'
+  },
+  {
+    id: 'flop-set-wet', title: 'Флоп: сет на мокрой доске', category: 'Флоп', position: 'MP', hero: ['9h','9d'], board: ['9s','8s','7c'],
+    potBefore: 72, bet: 0, villain: 'station', range: 'TT+,99-55,AKs,AQs,AJs,A9s,K9s,Q9s,J9s,T9s,98s,87s,76s',
+    text: 'Два соперника чекают. Доска содержит много стритов и дро.', actions: ['check','bet'], betSize: 60,
+    grades: { check: 'mistake', bet: 'best' },
+    summary: 'Сет очень силён, но доска динамичная: ставь крупнее на вэлью и защиту.', key: 'На мокрой доске размер должен наказывать дро и собирать с двух пар.',
+    missed: 'Слоуплей даёт бесплатную карту десяткам T/J/6/пиковых комбинаций.', rangeNote: 'Пары+дро, две пары, готовые стриты и флеш-дро.',
+    why: { check: 'Слишком опасно против нескольких диапазонов.', bet: 'Ставка 70–90% банка получает много коллов и уменьшает бесплатную реализацию эквити.' },
+    alternative: 'Если получишь крупный рейз, не автоматически фолди: у сета есть redraw к фулл-хаусу.'
+  },
+  {
+    id: 'river-flush-value', title: 'Ривер: натсовый флеш', category: 'Ривер', position: 'BTN', hero: ['Ah','5h'], board: ['Kh','8h','3c','2s','Jh'],
+    potBefore: 160, bet: 75, villain: 'passive', range: 'KQs,KTs,QTs,88,33,KJs,KJo,QJs,QJo,KTo',
+    text: 'Пассивный соперник ставит $75 в банк $160.', actions: ['call','raise'], raiseSize: 210,
+    grades: { call: 'good', raise: 'best' },
+    summary: 'С натсовым флешем нужно искать дополнительное вэлью, а не просто закрывать действие.', key: 'Какие худшие флеши и сильные пары способны оплатить рейз?',
+    missed: 'Пассивность соперника усиливает его ставку, но твоя рука блокирует только натс, а не все худшие флеши.', rangeNote: 'Худшие флеши, сеты и сильные две пары.',
+    why: { call: 'Безопасно и прибыльно, но часто недобирает.', raise: 'Рейз получает оплату от худших флешей; размер должен оставить им возможность колла.' },
+    alternative: 'Против очень тайтового игрока можно выбрать меньший рейз вместо олл-ина.'
+  },
+  {
+    id: 'flop-underpair', title: 'Флоп: андерпара против крупной ставки', category: 'Флоп', position: 'CO', hero: ['8h','8d'], board: ['Ks','Qd','4c'],
+    potBefore: 45, bet: 35, villain: 'nit', range: 'AA-TT,AKs,AQs,KQs,AKo,AQo,KQo',
+    text: 'Тайтовый префлоп-рейзер ставит $35 в банк $45.', actions: ['fold','call','raise'],
+    grades: { fold: 'best', call: 'mistake', raise: 'mistake' },
+    summary: '88 плохо реализует эквити на K-Q-high против сильного диапазона крупной ставки.', key: 'Шоудаун-вэлью не равно способности выдержать несколько улиц давления.',
+    missed: 'Даже если впереди AJ/JT, будущие ставки и оверкарты делают реализацию эквити плохой.', rangeNote: 'Сильные Kx/Qx, оверпары и некоторые сильные дро.',
+    why: { fold: 'Сохраняет стек в плохом диапазонном матче.', call: 'Часто приводит к угадыванию на тёрне без чистых аутов.', raise: 'Превращает руку с шоудаун-вэлью в дорогой блеф против сильного диапазона.' },
+    alternative: 'Против маленькой ставки 25–30% банка и широкого BTN диапазона один колл был бы допустим.'
+  },
+  {
+    id: 'turn-two-pair-raise', title: 'Тёрн: две пары против ставки', category: 'Тёрн', position: 'BTN', hero: ['Qh','9h'], board: ['Qs','9c','4d','7s'],
+    potBefore: 95, bet: 55, villain: 'station', range: 'QQ,99,77,44,AQs,AQo,AJs,ATs,KQs,KQo,QJs,QJo,QTs,T8s,86s',
+    text: 'Calling station ставит $55. За спиной $230.', actions: ['fold','call','raise'], raiseSize: 165,
+    grades: { fold: 'mistake', call: 'good', raise: 'best' },
+    summary: 'Две пары впереди множества Qx и дро; против station нужно строить большой банк.', key: 'Не бойся редких сетов настолько, чтобы упускать вэлью с широкого диапазона.',
+    missed: 'Колл оставляет деньги на столе и позволяет дро увидеть ривер по удобной цене.', rangeNote: 'Топ-пары, дро, редкие сеты и нижние две пары.',
+    why: { fold: 'Слишком сильная рука для фолда.', call: 'Хорошо сохраняет блефы, но недобирает против Qx.', raise: 'Извлекает максимум с худших готовых рук и дро.' },
+    alternative: 'Против NIT, который почти не ставит Qx, колл становится предпочтительнее рейза.'
+  },
+  {
+    id: 'river-missed-draw', title: 'Ривер: промазавшее дро', category: 'Ривер', position: 'BTN', hero: ['Ah','5h'], board: ['Ks','Qh','7h','2c','2d'],
+    potBefore: 180, bet: 0, villain: 'reg', range: 'AQs,AQo,KJs,KJo,QJs,QJo,JJ-88,JTs,T9s,98s',
+    text: 'Соперник чекает ривер после двух чек-коллов. У тебя туз-хай.', actions: ['check','bet'], betSize: 130,
+    grades: { check: 'good', bet: 'best' },
+    summary: 'Туз-хай почти не выигрывает шоудаун, а крупная ставка атакует Qx и средние пары.', key: 'Хороший блеф имеет мало showdown value и блокирует сильные продолжения.',
+    missed: 'A♥ блокирует часть натсовых флеш-дро, которые могли бы сами промазать, но также блокирует сильные Ax — это не идеальный, но рабочий кандидат.', rangeNote: 'После чек-коллов: Qx, Kx, средние пары и промазавшие дро.',
+    why: { check: 'Допустим против игрока, который редко фолдит одну пару.', bet: 'Крупный полярный бет может выбить значительную часть Qx/пар без блокировки твоего выигрыша.' },
+    alternative: 'Против calling station не блефуй: чек и сдавайся.'
+  },
+  {
+    id: 'turn-combo-draw', title: 'Тёрн: комбодро против олл-ина', category: 'Тёрн', position: 'CO', hero: ['Js','Ts'], board: ['9s','8d','2s','Kh'],
+    potBefore: 150, bet: 145, villain: 'aggro', range: 'AA,KK,99,88,22,AKs,AKo,AQs,AJs,ATs,K9s,QJs,QTs',
+    text: 'Агрессивный соперник идёт почти олл-ин $145 в банк $150.', actions: ['fold','call'],
+    grades: { fold: 'mistake', call: 'best' },
+    summary: 'Флеш-дро плюс двусторонний стрит-дро создают много пересекающихся, но сильных аутов.', key: 'Не складывай 9+8 вслепую: часть пик одновременно закрывает и стрит, и флеш.',
+    missed: 'Ауты нужно объединять по конкретным картам, чтобы не считать одни и те же карты дважды.', rangeNote: 'Сильные готовые руки и сильные дро. Против агрессивного игрока возможны и полублефы.',
+    why: { fold: 'Отказывается от слишком большой доли банка при хорошей цене.', call: 'При корректном дедуплицированном подсчёте комбодро обычно имеет достаточно эквити.' },
+    alternative: 'Если часть аутов даёт сопернику более высокий флеш, их нужно дисконтировать.' , tagByAction: { fold: 'outs' }
+  },
+  {
+    id: 'river-overbet', title: 'Ривер: топ-пара против овербета', category: 'Ривер', position: 'BB', hero: ['Kc','Qc'], board: ['Kh','8d','5s','3c','2h'],
+    potBefore: 120, bet: 180, villain: 'nit', range: 'AA,KK,88,55,33,22,AKs,AKo,K8s,76s,54s',
+    text: 'Тайтовый игрок ставит $180 в банк $120.', actions: ['fold','call'],
+    grades: { fold: 'best', call: 'mistake' },
+    summary: 'Овербет от тайтового игрока требует очень сильного bluff-catching диапазона.', key: 'Чем больше ставка, тем меньше блефов нужно теоретически, но live NIT часто всё равно недоблефовывает.',
+    missed: 'KQ выглядит сильно в абсолюте, но плохо стоит против полярного диапазона AK/сетов/двух пар.', rangeNote: 'Сильное вэлью и очень мало естественных промазавших дро.',
+    why: { fold: 'Эксплойтно правильно против недостатка блефов.', call: 'Требует доказательств, что соперник способен овербетить воздух.' },
+    alternative: 'Против WILD с известными овербет-блефами KQ может стать коллом.'
+  },
+  {
+    id: 'turn-nfd-price', title: 'Тёрн: натсовое флеш-дро и цена', category: 'Тёрн', position: 'BTN', hero: ['As','Qs'], board: ['Ks','8s','3d','2c'],
+    potBefore: 100, bet: 25, villain: 'passive', range: 'KK,88,33,22,AKs,KQs,KJs,KTs,QQ-JJ,QJs,JTs,T9s',
+    text: 'Пассивный соперник ставит $25 в банк $100. Осталась одна карта.', actions: ['fold','call','raise'], raiseSize: 95,
+    grades: { fold: 'mistake', call: 'best', raise: 'acceptable' },
+    summary: 'Натсовое флеш-дро получает прямую цену: для колла нужно около 16.7%, а девять пик приходят примерно в 19.6% случаев.',
+    key: 'На тёрне не используй правило «умножить на четыре»: осталась только одна карта.',
+    missed: 'Девять флеш-аутов — сильные. Тузы могут быть дополнительными условными аутами, но не гарантируют победу.',
+    rangeNote: 'Сильные Kx, сеты, карманные пары и часть дро. Пассивный тип делает рейз-полублеф менее привлекательным.',
+    why: { fold: 'Фолд отдаёт прибыльную прямую цену.', call: 'Колл дешёво реализует натсовое дро и сохраняет слабые руки соперника.', raise: 'Полублеф возможен, но пассивный диапазон ставки обычно сильнее и реже фолдит.' },
+    alternative: 'Если ставка была бы $75 в тот же банк, прямых пот-оддсов для девяти аутов уже не хватало бы без implied odds.', tagByAction: { fold: 'pot_odds' }
+  },
+  {
+    id: 'flop-gutshot-overs', title: 'Флоп: гатшот и две оверкарты', category: 'Флоп', position: 'CO', hero: ['Ah','Kh'], board: ['Qd','Js','4c'],
+    potBefore: 60, bet: 20, villain: 'reg', range: 'QQ,JJ,44,AQs,AQo,KQs,KQo,QJs,QJo,TT-88,ATs,KTs,T9s,AJs',
+    text: 'Регуляр ставит $20 в банк $60. Эффективный стек $260.', actions: ['fold','call','raise'], raiseSize: 75,
+    grades: { fold: 'mistake', call: 'best', raise: 'acceptable' },
+    summary: 'Четыре десятки закрывают натсовый стрит; A и K дают условные пары. Маленькая ставка оставляет достаточно эквити для колла.',
+    key: 'Не складывай все десять карт как чистые ауты: A и K иногда улучшают соперника до двух пар или уже доминированы.',
+    missed: 'Чистая основа — четыре десятки. Шесть оверкарт нужно дисконтировать и проверять через эквити против диапазона.',
+    rangeNote: 'Qx, Jx, сеты, средние пары и стрит-дро. Против всего диапазона AK имеет больше эквити, чем показывают только четыре чистых аута.',
+    why: { fold: 'Слишком тайтово против ставки треть банка.', call: 'Колл сохраняет блефы и реализует эквити в позиции.', raise: 'Полублеф возможен, но не обязателен: часть диапазона соперника хорошо продолжает.' },
+    alternative: 'Против крупной ставки и тайтового диапазона условные A/K становятся менее ценными.', tagByAction: { fold: 'outs' }
+  },
+  {
+    id: 'turn-set-connected', title: 'Тёрн: сет на четырёхстритовой доске', category: 'Тёрн', position: 'BTN', hero: ['8h','8d'], board: ['8s','7s','6d','9h'],
+    potBefore: 120, bet: 70, villain: 'station', range: 'TT,99,77,66,55,A9s,T9s,98s,87s,76s,65s,AKs,AQs,AJs,KQs',
+    text: 'Calling station ставит $70 в банк $120 на тёрне, который закрыл много стритов.', actions: ['fold','call','raise'], raiseSize: 220,
+    grades: { fold: 'mistake', call: 'best', raise: 'acceptable' },
+    summary: 'Сет всё ещё имеет высокое эквити и redraw к фулл-хаусу, но рейз часто изолирует против готовых стритов.',
+    key: 'Карта, которая делает тебе стрит на общей доске, не обязательно является чистым аутом против диапазона.',
+    missed: 'Десять карт к фулл-хаусу/каре сильнее, чем 5/T, которые создают ещё более координированную доску и могут лишь делить банк или проигрывать.',
+    rangeNote: 'Готовые стриты, две пары, пары+дро, сеты и флеш-дро. Station способен ставить не только натс.',
+    why: { fold: 'Слишком тайтово с сетом, redraw и хорошей долей банка.', call: 'Сохраняет блефы и худшие руки, не раздувая банк против стритов.', raise: 'Вэлью от худших возможно, но крупный рейз часто получает продолжение от очень сильной части диапазона.' },
+    alternative: 'На спарившемся ривере можно агрессивно добирать; на 5/T без спаривания чаще контролируй банк.', tagByAction: { fold: 'range_reading' }
+  },
+  {
+    id: 'river-qq-aggro', title: 'Ривер: оверпара против агрессивной ставки', category: 'Ривер', position: 'BTN', hero: ['Qh','Qd'], board: ['Js','8c','7h','4d','2s'],
+    potBefore: 160, bet: 90, villain: 'aggro', range: 'JJ,88,77,44,22,J8s,J7s,87s,AJs,KJs,QJs,JTs,T9s,96s,65s,AQo,AKo',
+    text: 'Агрессивный соперник ставит $90 в банк $160 после твоего чека на тёрне.', actions: ['fold','call','raise'], raiseSize: 250,
+    grades: { fold: 'mistake', call: 'best', raise: 'mistake' },
+    summary: 'QQ бьёт все Jx и промазавшие дро; против широкого агрессивного диапазона это уверенный bluff-catch.',
+    key: 'Считай комбинации хуже, которые ставят, а не только сеты и две пары.',
+    missed: 'После твоего чека соперник получает стимул ставить Jx тонко и превращать промазавшие T9/96/65 в блеф.',
+    rangeNote: 'Вэлью сильнее: сеты и две пары. Вэлью хуже: Jx. Блефы: промазавшие стрит-дро и оверкарты.',
+    why: { fold: 'Отдаёт слишком сильную руку против игрока с высокой частотой блефа.', call: 'Сохраняет блефы и худшее вэлью.', raise: 'Худшие руки почти всегда выбросят, а лучшие продолжат.' },
+    alternative: 'Против NIT с той же линией и размером фолд был бы значительно ближе.'
   }
+];
+
+function computeStudyMath(s, trials = 14000) {
+  const hero = parseCards(s.hero);
+  const board = parseCards(s.board || []);
+  const pot = C.potMath({ potBefore: s.potBefore || 0, bet: s.bet || 0, call: s.bet || 0 });
+  const outs = C.analyzeOuts(hero, board);
+  let equity = null;
+  if (s.range && board.length >= 3) equity = C.equityVsRange({ hero, board, range: s.range, trials });
+  const ev = equity && s.bet ? C.callEV({ equity: equity.equity, potBefore: s.potBefore, bet: s.bet }) : null;
+  return { hero, board, pot, outs, equity, ev };
 }
-function chooseVillain(){const candidates=activeOpponents();if(!candidates.length)return null;return candidates.sort((a,b)=>preflopScore(b.cards)-preflopScore(a.cards))[0].id;}
-function processAfterHeroPreflop(){
-  const order=orderedFrom((session.button+3)%session.n,session.n),heroAt=order.indexOf(0);for(let i=heroAt+1;i<order.length;i++){const p=session.players[order[i]];if(p.folded)continue;const need=session.currentBet-p.streetContrib,score=preflopScore(p.cards),type=TYPES[p.type];if(need===0){p.lastAction='check';continue;}if(score>=43+type.loose&&need<=p.stack&&Math.random()<.48){commitTo(p,session.currentBet);p.lastAction=`call ${money(need)}`;log(`${p.name} call ${money(need)}`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}
-  session.villain=chooseVillain();if(session.villain===null){awardPot(0,'Все соперники выбросили.');return;}
-  // Keep only one postflop opponent while preserving dead money.
-  session.players.forEach((p,i)=>{if(i!==0&&i!==session.villain&&!p.folded){p.folded=true;p.lastAction='fold';}});beginFlop();
+
+function mathHTML(math, s) {
+  const cells = [];
+  if (s.bet) {
+    cells.push(`<div class="math-cell"><small>Банк до ставки</small><strong>${money(math.pot.potBefore)}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Банк сейчас</small><strong>${money(math.pot.potNow)}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Финальный банк после колла</small><strong>${money(math.pot.finalPot)}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Минимальное эквити</small><strong>${pct(math.pot.requiredEquity)}</strong></div>`);
+  }
+  if (math.equity) {
+    const method = math.equity.exact ? 'Точный перебор' : `Monte Carlo • ${math.equity.samples.toLocaleString('ru-RU')} сим.`;
+    const interval = math.equity.exact ? 'без ошибки выборки' : `95%: ±${(math.equity.ci95 * 100).toFixed(1)} п.п.`;
+    cells.push(`<div class="math-cell"><small>Эквити против диапазона</small><strong>${pct(math.equity.equity)}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Победа / ничья / проигрыш</small><strong>${pct(math.equity.win)} / ${pct(math.equity.tie)} / ${pct(math.equity.lose)}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Метод расчёта</small><strong>${method}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Погрешность</small><strong>${interval}</strong></div>`);
+  }
+  if (math.outs.rawOuts) {
+    cells.push(`<div class="math-cell"><small>Чистые / сильные ауты</small><strong>${math.outs.strongOuts}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Условные ауты</small><strong>${math.outs.conditionalOuts}</strong></div>`);
+    cells.push(`<div class="math-cell"><small>Попасть в сильный аут на следующей карте</small><strong>${pct(math.outs.strongNextCard)}</strong></div>`);
+    if (math.board.length === 3) cells.push(`<div class="math-cell"><small>Попасть в сильный аут к риверу</small><strong>${pct(math.outs.strongByRiver)}</strong></div>`);
+    if (math.outs.conditionalOuts) cells.push(`<div class="math-cell"><small>Любой текущий сырой аут${math.board.length === 3 ? ' к риверу' : ''}</small><strong>${pct(math.outs.byRiver)}</strong></div>`);
+  }
+  const groups = math.outs.groups.map(g => `<span class="out-pill ${g.quality === 'conditional' ? 'conditional' : ''}">${g.label}: ${g.outs}</span>`).join('');
+  let evLine = '';
+  if (math.ev) {
+    const label = math.board.length === 5 ? 'EV колла' : 'Прямой EV колла без моделирования будущих ставок';
+    evLine = `<p><strong>${label}: ${signedMoney(math.ev.ev)}</strong>. ${math.board.length < 5 ? 'На флопе и тёрне реальный EV также зависит от будущих ставок, позиции, implied odds и реализации эквити.' : ''}</p>`;
+  }
+  return `<div class="math-grid">${cells.join('')}</div>${groups ? `<div class="outs-list">${groups}</div>` : ''}${math.outs.warning ? `<p class="muted">${math.outs.warning}</p>` : ''}${evLine}<p class="muted">Важно: аут — это карта, которая улучшает руку; это не всегда карта, которая гарантирует победу. Эквити считается против заданной модели диапазона, а не против известных скрытых карт.</p>`;
 }
-function afterHeroCall(){if(session.street==='preflop')processAfterHeroPreflop();else advanceStreet();}
-function afterHeroPassive(){if(session.street==='preflop')processAfterHeroPreflop();else if(heroActsFirstPostflop())aiActsAfterHeroCheck();else advanceStreet();}
-function heroActsFirstPostflop(){if(session.villain===null)return true;const order=orderedFrom((session.button+1)%session.n,session.n);return order.indexOf(0)<order.indexOf(session.villain);}
-function beginFlop(){session.street='flop';session.board.push(session.deck.pop(),session.deck.pop(),session.deck.pop());resetStreet();startPostflopAction();}
+
+function renderStudy() {
+  currentStudy = STUDY_SPOTS[studyIndex % STUDY_SPOTS.length];
+  studyAnswered = false;
+  studyHintLevel = 0;
+  const s = currentStudy;
+  const hero = parseCards(s.hero);
+  const board = parseCards(s.board || []);
+  const pot = C.potMath({ potBefore: s.potBefore || 0, bet: s.bet || 0 });
+  $('#studyTitle').textContent = s.title;
+  $('#studyCounter').textContent = `${studyIndex % STUDY_SPOTS.length + 1}/${STUDY_SPOTS.length}`;
+  $('#studySpot').innerHTML = `<div class="row"><span class="tag">${s.position} • ${s.category}</span><span class="chip">${TYPES[s.villain]?.name || 'Соперник'}</span></div><div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length ? `<div class="cards">${cardsHTML(board, true)}</div>` : ''}<div class="spot-meta"><div class="stat"><small>Банк до ставки</small><strong>${money(s.potBefore || 0)}</strong></div><div class="stat"><small>Ставка</small><strong>${s.bet ? money(s.bet) : '—'}</strong></div><div class="stat"><small>Банк сейчас</small><strong>${money(pot.potNow)}</strong></div></div><p class="spot-question">${s.text}</p>`;
+  $('#studyActions').innerHTML = s.actions.map(a => `<button data-study-action="${a}">${actionLabel(a, a === 'call' ? s.bet : a === 'bet' ? s.betSize : a === 'raise' ? s.raiseSize : 0)}</button>`).join('');
+  $('#studyFeedback').className = 'feedback hidden';
+  $('#studyCoach').classList.add('hidden');
+  $('#studyCoachAnswer').innerHTML = '';
+  $('#studyHintBox').classList.add('hidden');
+  $('#studyMath').classList.add('hidden');
+  $('#studyNext').classList.add('hidden');
+  $('#studyHint').textContent = '💡 Подсказка';
+  $$('[data-study-action]').forEach(b => b.addEventListener('click', () => answerStudy(b.dataset.studyAction)));
+  if (assistMode() === 'review') showStudyMath();
+}
+
+function showStudyMath() {
+  const box = $('#studyMath');
+  box.innerHTML = 'Считаю диапазон и ауты…';
+  box.classList.remove('hidden');
+  setTimeout(() => { box.innerHTML = mathHTML(computeStudyMath(currentStudy), currentStudy); }, 20);
+}
+
+$('#studyHint').addEventListener('click', () => {
+  if (!currentStudy || studyAnswered) return;
+  studyHintLevel += 1;
+  const box = $('#studyHintBox');
+  box.classList.remove('hidden');
+  if (studyHintLevel === 1) box.innerHTML = `<strong>Ключевой вопрос:</strong> ${currentStudy.key}`;
+  else if (studyHintLevel === 2) box.innerHTML = `<strong>Что посчитать:</strong> банк после ставки, цену колла, диапазон соперника и чистоту аутов. Правильное действие всё ещё не показано.`;
+  else box.innerHTML = `<strong>Последняя подсказка:</strong> ${currentStudy.missed}`;
+  $('#studyHint').textContent = `💡 Подсказка ${Math.min(studyHintLevel + 1, 3)}`;
+});
+$('#studyMathToggle').addEventListener('click', () => {
+  if (assistMode() === 'exam' && !studyAnswered) {
+    $('#studyHintBox').classList.remove('hidden');
+    $('#studyHintBox').innerHTML = 'В режиме «Экзамен» математика открывается после ответа.';
+    return;
+  }
+  showStudyMath();
+});
+
+function answerStudy(choice) {
+  if (studyAnswered) return;
+  studyAnswered = true;
+  const s = currentStudy;
+  const grade = s.grades[choice] || 'mistake';
+  const preferred = topGradeAction(s.grades);
+  recordDecision({ grade, tag: grade === 'mistake' ? mistakeTag(choice, s) : null, mode: 'study', title: s.title, choice, preferred });
+  const g = GRADE[grade];
+  const f = $('#studyFeedback');
+  f.className = `feedback ${g.cls}`;
+  f.innerHTML = `<strong>${g.label}.</strong><br>${s.summary}<br><span class="muted">Ты выбрал: ${actionLabel(choice, choice === 'call' ? s.bet : choice === 'bet' ? s.betSize : choice === 'raise' ? s.raiseSize : 0)}. Предпочтительная линия: ${actionLabel(preferred, preferred === 'call' ? s.bet : preferred === 'bet' ? s.betSize : preferred === 'raise' ? s.raiseSize : 0)}.</span>`;
+  $$('[data-study-action]').forEach(b => {
+    b.disabled = true;
+    const a = b.dataset.studyAction;
+    if (a === choice) b.classList.add(grade === 'best' || grade === 'good' ? 'selected-correct' : 'selected-wrong');
+    if (a === preferred) b.classList.add('reveal-best');
+    else if (s.grades[a] === 'good') b.classList.add('good-choice');
+  });
+  $('#studyCoach').classList.remove('hidden');
+  $('#studyCoachAnswer').innerHTML = `<strong>Что произошло:</strong> ${s.missed}`;
+  $('#studyNext').classList.remove('hidden');
+  showStudyMath();
+}
+
+$$('[data-coach-q]').forEach(b => b.addEventListener('click', () => {
+  if (!currentStudy || !studyAnswered) return;
+  const q = b.dataset.coachQ;
+  const s = currentStudy;
+  if (q === 'missed') $('#studyCoachAnswer').innerHTML = `<strong>Что ты мог упустить:</strong> ${s.missed}`;
+  if (q === 'range') $('#studyCoachAnswer').innerHTML = `<strong>Диапазон:</strong> ${s.rangeNote}<br><span class="muted">Модель комбинаций: ${s.range || 'определяется по линии'}</span>`;
+  if (q === 'line') $('#studyCoachAnswer').innerHTML = `<strong>Альтернативная линия:</strong> ${s.alternative}`;
+  if (q === 'alternatives') $('#studyCoachAnswer').innerHTML = Object.entries(s.why).map(([a, text]) => `<p><strong>${actionLabel(a)}:</strong> ${text}</p>`).join('');
+}));
+$('#studyNext').addEventListener('click', () => { studyIndex += 1; renderStudy(); });
+
+// ----- Preflop range trainer -----
+const OPEN_RANGES = {
+  UTG: '77+,AJs+,KQs,AQo+',
+  'UTG+1': '66+,ATs+,KQs,AJo+,KQo',
+  MP: '55+,A9s+,KTs+,QTs+,JTs,T9s,AJo+,KQo',
+  LJ: '44+,A8s+,KTs+,QTs+,J9s+,T9s,98s,ATo+,KQo',
+  HJ: '33+,A5s+,A8s+,K9s+,Q9s+,J9s+,T8s+,98s,87s,ATo+,KJo+,QJo',
+  CO: '22+,A2s+,K7s+,Q8s+,J8s+,T8s+,97s+,86s+,76s,65s,A8o+,KTo+,QTo+,JTo',
+  BTN: '22+,A2s+,K2s+,Q5s+,J7s+,T7s+,96s+,85s+,75s+,64s+,54s,A7o+,K9o+,Q9o+,J9o+,T9o',
+  SB: '22+,A2s+,K5s+,Q8s+,J8s+,T8s+,97s+,86s+,76s,A8o+,KTo+,QTo+,JTo'
+};
+const ISO_RANGES = {
+  UTG: '88+,AJs+,KQs,AQo+', MP: '66+,ATs+,KQs,AJo+,KQo', HJ: '55+,A8s+,KTs+,QTs+,JTs,T9s,AJo+,KQo',
+  CO: '44+,A5s+,A8s+,K9s+,Q9s+,J9s+,T8s+,98s,87s,ATo+,KJo+,QJo',
+  BTN: '22+,A2s+,K7s+,Q8s+,J8s+,T8s+,97s+,86s+,76s,65s,A8o+,KTo+,QTo+,JTo',
+  SB: '66+,A8s+,KTs+,QTs+,JTs,AJo+,KQo'
+};
+const DEFEND_VS_EARLY = { raise: 'QQ+,AKs,AKo', call: '22-JJ,AQs,AJs,KQs,AQo' };
+const DEFEND_VS_LATE = { raise: 'TT+,AQs+,AJo+,KQs', call: '22-99,A2s+,K9s+,QTs+,JTs,T9s,98s,AJo,KQo' };
+const VS_3BET = { raise: 'QQ+,AKs,AKo', call: 'JJ-TT,AQs,AJs,KQs,AQo' };
+
+function classInRange(cards, text) { return C.expandRange(text).has(C.handClass(cards)); }
+function comboFromClass(code) { return sample(C.rangeCombos(code)); }
+function randomPosition() { return sample(['UTG','UTG+1','MP','LJ','HJ','CO','BTN','SB','BB']); }
+function boundaryHand(rangeText, shouldBeIn) {
+  const classes = C.expandRange(rangeText);
+  const candidates = C.fullDeck();
+  const combos = [];
+  for (let i = 0; i < candidates.length; i += 1) for (let j = i + 1; j < candidates.length; j += 1) {
+    const pair = [candidates[i], candidates[j]];
+    if (classes.has(C.handClass(pair)) === shouldBeIn) combos.push(pair);
+  }
+  return sample(combos);
+}
+
+function buildRangeSpot() {
+  const r = Math.random();
+  if (r < 0.37) {
+    let pos = randomPosition(); if (pos === 'BB') pos = 'CO';
+    const range = OPEN_RANGES[pos] || OPEN_RANGES.CO;
+    const inRange = Math.random() < 0.52;
+    const cards = boundaryHand(range, inRange);
+    return { category: 'firstin', pos, cards, context: 'Все выбросили до тебя.', actions: ['fold','raise'], grades: inRange ? { fold:'mistake',raise:'best' } : { fold:'best',raise:'mistake' }, preferred: inRange ? 'raise' : 'fold', size: pos === 'BTN' ? 10 : 12, reason: inRange ? `${C.handClass(cards)} входит в базовый live-диапазон открытия из ${pos}.` : `${C.handClass(cards)} находится за пределами базового диапазона ${pos}.`, coach: inRange ? 'Позиция позволяет открывать эту комбинацию прибыльно против типичного $1/$3 стола.' : 'За спиной достаточно игроков, а рука часто доминирована или плохо реализует эквити.', range };
+  }
+  if (r < 0.62) {
+    let pos = sample(['MP','HJ','CO','BTN','SB']);
+    const range = ISO_RANGES[pos];
+    const inRange = Math.random() < 0.56;
+    const cards = boundaryHand(range, inRange);
+    const limpers = sample([1,2,3]);
+    return { category: 'limpers', pos, cards, context: `${limpers} лимпер${limpers > 1 ? 'а' : ''} до тебя.`, actions: ['fold','call','raise'], grades: inRange ? { fold:'mistake',call:'acceptable',raise:'best' } : { fold:'best',call:'mistake',raise:'mistake' }, preferred: inRange ? 'raise' : 'fold', size: 12 + limpers * 3, reason: inRange ? 'Рука подходит для изоляции слабых диапазонов.' : 'Мультипот и риск доминации делают вход убыточным.', coach: 'Изоляционный размер: примерно $12 плюс $3 за каждого лимпера, с поправкой на стол.', range };
+  }
+  if (r < 0.86) {
+    const legalResponses = {
+      UTG: ['MP','LJ','HJ','CO','BTN','SB','BB'],
+      MP: ['HJ','CO','BTN','SB','BB'],
+      CO: ['BTN','SB','BB'],
+      BTN: ['SB','BB']
+    };
+    const opener = sample(Object.keys(legalResponses));
+    const pos = sample(legalResponses[opener]);
+    const chart = ['UTG','MP'].includes(opener) ? DEFEND_VS_EARLY : DEFEND_VS_LATE;
+    const bucket = sample(['raise','call','fold']);
+    let cards;
+    if (bucket === 'raise') cards = boundaryHand(chart.raise, true);
+    else if (bucket === 'call') {
+      const callCombos = C.rangeCombos(chart.call).filter(c => !classInRange(c, chart.raise));
+      cards = sample(callCombos);
+    } else {
+      const all = C.fullDeck(); const combos = [];
+      for (let i=0;i<all.length;i++) for(let j=i+1;j<all.length;j++){const c=[all[i],all[j]];if(!classInRange(c,chart.raise)&&!classInRange(c,chart.call))combos.push(c);} cards=sample(combos);
+    }
+    return { category: 'open', pos, cards, context: `${opener} открывает до $12.`, actions: ['fold','call','raise'], grades: bucket === 'raise' ? {fold:'mistake',call:'good',raise:'best'} : bucket === 'call' ? {fold:'mistake',call:'best',raise:'acceptable'} : {fold:'best',call:'mistake',raise:'mistake'}, preferred: bucket, size: 42, reason: bucket === 'raise' ? 'Рука достаточно сильна для 3-бета на вэлью/инициативу.' : bucket === 'call' ? 'Рука входит в диапазон продолжения, но не обязана раздувать банк.' : 'Против этого открытия рука недостаточно хорошо реализует эквити.', coach: `Чем раньше позиция открытия, тем сильнее его диапазон и уже твоя защита.`, range: `${chart.raise} | call: ${chart.call}` };
+  }
+  const pos = sample(['CO','BTN','SB']);
+  const bucket = sample(['raise','call','fold']);
+  let cards;
+  if (bucket === 'raise') cards = boundaryHand(VS_3BET.raise, true);
+  else if (bucket === 'call') cards = sample(C.rangeCombos(VS_3BET.call).filter(c => !classInRange(c, VS_3BET.raise)));
+  else {
+    const all=C.fullDeck(), combos=[];for(let i=0;i<all.length;i++)for(let j=i+1;j<all.length;j++){const c=[all[i],all[j]];if(!classInRange(c,VS_3BET.raise)&&!classInRange(c,VS_3BET.call))combos.push(c);}cards=sample(combos);
+  }
+  return { category: 'threebet', pos, cards, context: 'Ты открылся до $12 и получил 3-бет до $42.', actions: ['fold','call','raise'], grades: bucket === 'raise' ? {fold:'mistake',call:'good',raise:'best'} : bucket === 'call' ? {fold:'acceptable',call:'best',raise:'mistake'} : {fold:'best',call:'mistake',raise:'mistake'}, preferred: bucket, size: 115, reason: bucket === 'raise' ? 'Премиальная рука может 4-бетить на вэлью.' : bucket === 'call' ? 'Рука сохраняет доминируемые комбинации и реализует эквити в позиции.' : 'Против 3-бета эта рука слишком часто доминирована.', coach: 'Учитывай позицию, размер 3-бета и эффективный стек; не защищайся только потому, что уже вложил $12.', range: `${VS_3BET.raise} | call: ${VS_3BET.call}` };
+}
+
+function nextRangeSpot() {
+  rangeState.number += 1;
+  rangeState.current = buildRangeSpot();
+  rangeState.answered = false;
+  const s = rangeState.current;
+  $('#rangeCounter').textContent = `${((rangeState.number - 1) % 10) + 1}/10`;
+  $('#rangeSpot').innerHTML = `<div class="row"><div><span class="tag">${s.pos}</span><h3>${C.handClass(s.cards)}</h3></div><span class="chip">Эффективный стек $300</span></div><div class="cards hero-cards">${cardsHTML(s.cards)}</div><p class="spot-question">${s.context} Что делать?</p>`;
+  $('#rangeActions').innerHTML = s.actions.map(a => `<button data-range-action="${a}">${actionLabel(a, a === 'call' ? (s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3) : a === 'raise' ? s.size : 0)}</button>`).join('');
+  $('#rangeFeedback').className = 'feedback hidden';
+  $('#rangeCoach').classList.add('hidden');
+  $('#rangeNext').classList.add('hidden');
+  $$('[data-range-action]').forEach(b => b.addEventListener('click', () => answerRange(b.dataset.rangeAction)));
+  renderRangeScore();
+}
+
+function answerRange(choice) {
+  if (rangeState.answered) return;
+  rangeState.answered = true;
+  const s = rangeState.current;
+  const grade = s.grades[choice] || 'mistake';
+  const preferred = s.preferred;
+  rangeState.maxPoints += 3;
+  rangeState.correctPoints += GRADE[grade].points;
+  if (!rangeState.categories[s.category]) rangeState.categories[s.category] = [0, 0];
+  rangeState.categories[s.category][0] += GRADE[grade].points;
+  rangeState.categories[s.category][1] += 3;
+  recordDecision({ grade, tag: grade === 'mistake' ? (choice === 'fold' ? 'too_tight' : choice === 'call' ? 'passive' : 'too_loose') : null, mode: 'ranges', title: `${s.pos} ${C.handClass(s.cards)}`, choice, preferred });
+  const f = $('#rangeFeedback');
+  f.className = `feedback ${GRADE[grade].cls}`;
+  f.innerHTML = `<strong>${GRADE[grade].label}.</strong><br>${s.reason}<br><span class="muted">Базовая линия: ${actionLabel(preferred, preferred === 'raise' ? s.size : 0)}.</span>`;
+  $$('[data-range-action]').forEach(b => {
+    b.disabled = true;
+    const a = b.dataset.rangeAction;
+    if (a === choice) b.classList.add(GRADE[grade].points >= 2 ? 'selected-correct' : 'selected-wrong');
+    if (a === preferred) b.classList.add('reveal-best');
+  });
+  $('#rangeCoach').classList.remove('hidden');
+  $('#rangeCoachAnswer').innerHTML = `<strong>Почему:</strong> ${s.coach}<br><span class="muted">Учебный диапазон: ${s.range}</span>`;
+  $('#rangeNext').classList.remove('hidden');
+  renderRangeScore();
+}
+
+function renderRangeScore() {
+  const names = { firstin:'Открытие первым', limpers:'Против лимперов', open:'Против рейза', threebet:'Против 3-бета' };
+  const rows = Object.entries(rangeState.categories);
+  $('#rangeScore').innerHTML = rows.length ? rows.map(([k,v]) => `<div class="score-row"><span>${names[k]}</span><strong>${Math.round(v[0]/v[1]*100)}%</strong></div>`).join('') : 'Ответь хотя бы на одну руку.';
+}
+$('#rangeNext').addEventListener('click', nextRangeSpot);
+
+// ----- Coach report -----
+function renderCoachReport() {
+  const labels = { too_tight:'Слишком тайтовые фолды',too_loose:'Слишком широкие входы',passive:'Пассивные коллы/чеки',overplay:'Переигрывание рук',pot_odds:'Пот-оддсы',outs:'Подсчёт аутов',sizing:'Размеры ставок',position:'Позиция',range_reading:'Чтение диапазона' };
+  const entries = Object.entries(progress.mistakes).sort((a,b)=>b[1]-a[1]);
+  const top = entries[0];
+  const accuracy = progress.maxPoints ? Math.round(progress.scorePoints/progress.maxPoints*100) : 0;
+  const plans = {
+    too_tight: 'Перед фолдом посчитай минимальное эквити и перечисли естественные блефы. Не сравнивай руку только с натсами.',
+    too_loose: 'Сначала проверь позицию, доминацию и сколько игроков остаётся за спиной. Вложенные раньше деньги не оправдывают плохой колл.',
+    passive: 'Перед чеком назови минимум три худшие руки, которые готовы платить. Если они есть — ищи вэлью и подходящий размер.',
+    overplay: 'Спроси, какие худшие руки продолжат против рейза. Если ответ — почти никакие, чаще выбирай call или fold.',
+    pot_odds: 'Формула: цена колла / финальный банк после твоего колла. Затем сравни с эквити, а не с вероятностью одного конкретного аута.',
+    outs: 'Считай конкретные карты, убирай пересечения и отдельно помечай условные ауты, которые могут улучшить, но не гарантируют победу.',
+    sizing: 'Определи цель ставки: вэлью, защита или блеф. Размер выбирай по диапазону, текстуре доски и SPR.',
+    position: 'В позиции можно лучше реализовать эквити и контролировать размер банка; без позиции диапазон должен быть строже.',
+    range_reading: 'Строй диапазон от префлопа и сужай его после каждого действия. Тип игрока меняет частоту блефов и тонкого вэлью.'
+  };
+  const plan = top && top[1] ? plans[top[0]] : 'Сыграй не менее 10 решений, чтобы тренер построил персональный план.';
+  $('#coachSummary').innerHTML = `<div class="coach-summary-card"><h4>Общая точность: ${progress.maxPoints ? accuracy+'%' : '—'}</h4><p class="muted">${progress.decisions} решений, лучшая серия ${progress.bestStreak || 0}.</p></div><div class="coach-summary-card"><h4>${top && top[1] ? `Главное слабое место: ${labels[top[0]]}` : 'Данных пока мало'}</h4><p class="muted">${top && top[1] ? `Зафиксировано ${top[1]} ошибок. ${plan}` : plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
+  $('#historyList').innerHTML = progress.history.length ? progress.history.slice(0,15).map(h => `<div class="history-item"><strong>${h.title || h.mode}</strong><small>${new Date(h.date).toLocaleString('ru-RU')} • ${GRADE[h.grade]?.label || ''} • ${String(h.choice || '').toUpperCase()}</small></div>`).join('') : '<p class="muted">История пока пуста.</p>';
+}
+$('#startFocusTraining').addEventListener('click', () => {
+  const top = Object.entries(progress.mistakes || {}).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const focusMap = {
+    too_tight: ['river-aj-bluffcatch','flop-nfd','flop-oesd','turn-combo-draw'],
+    too_loose: ['flop-underpair','turn-aq-nit','river-overbet'],
+    passive: ['flop-kk-value','river-thin-value','flop-set-wet','river-flush-value'],
+    overplay: ['turn-aq-nit','flop-underpair','river-overbet'],
+    pot_odds: ['flop-nfd','flop-oesd','turn-combo-draw'],
+    outs: ['flop-nfd','flop-oesd','turn-combo-draw','flop-set-wet'],
+    sizing: ['flop-kk-value','river-thin-value','flop-set-wet','river-flush-value'],
+    position: ['turn-top-pair-control','river-thin-value'],
+    range_reading: ['river-aj-bluffcatch','turn-aq-nit','flop-underpair','river-overbet']
+  };
+  const ids = focusMap[top] || [];
+  const candidates = STUDY_SPOTS.map((s,i)=>({s,i})).filter(x=>ids.includes(x.s.id));
+  if(candidates.length) studyIndex = sample(candidates).i;
+  route('study');
+});
+
+// ----- Live session -----
+function positionsFor(n, button) {
+  const map = n === 9 ? ['BTN','SB','BB','UTG','UTG+1','MP','LJ','HJ','CO'] : ['BTN','SB','BB','UTG','HJ','CO'];
+  const out = [];
+  for (let i=0;i<n;i++) out[i] = map[(i-button+n)%n];
+  return out;
+}
+function orderedFrom(start,n){return Array.from({length:n},(_,k)=>(start+k)%n);}
+function typePool(style){if(style==='passive')return ['passive','station','new','passive','reg','nit'];if(style==='wild')return ['wild','aggro','station','new','wild','reg'];return ['reg','passive','aggro','new','station','nit','wild'];}
+function createPlayers(n,buyIn,style){const pool=typePool(style);return Array.from({length:n},(_,i)=>i===0?{id:i,name:'YOU',type:'hero',stack:buyIn,cards:[],folded:false,contrib:0,streetContrib:0}:{id:i,name:TYPES[pool[(i-1)%pool.length]].short,type:pool[(i-1)%pool.length],stack:Math.max(80,buyIn+sample([-60,-30,0,50,100])),cards:[],folded:false,contrib:0,streetContrib:0});}
+function startSession(){const buyIn=+$('#buyIn').value,n=+$('#tableSize').value,style=$('#tableStyle').value;session={initial:buyIn,n,style,players:createPlayers(n,buyIn,style),button:Math.floor(Math.random()*n),hands:0,pot:0,board:[],deck:[],street:'preflop',currentBet:0,toCall:0,awaiting:null,villain:null,log:[],decisionGrades:[]};$('#liveSetup').classList.add('hidden');$('#liveGame').classList.remove('hidden');progress.sessions++;saveProgress();dealLiveHand();}
+$('#startSession').addEventListener('click',startSession);
+function log(t){session.log.push(t);if(session.log.length>24)session.log.shift();renderLog();}
+function renderLog(){$('#actionLog').innerHTML=session.log.map(x=>`<p>${x}</p>`).join('');$('#actionLog').scrollTop=$('#actionLog').scrollHeight;}
+function commitTo(p,target){const add=C.clamp(target-p.streetContrib,0,p.stack);p.stack-=add;p.streetContrib+=add;p.contrib+=add;session.pot+=add;return add;}
+function postBlind(idx,amount,label){const p=session.players[idx],paid=Math.min(amount,p.stack);p.stack-=paid;p.contrib+=paid;p.streetContrib+=paid;session.pot+=paid;log(`${p.name} ставит ${label} ${money(paid)}`);}
+function activeOpponents(){return session.players.filter((p,i)=>i!==0&&!p.folded&&p.stack>=0);}
+function preflopPower(cards){const cls=C.handClass(cards);let p=0;if(cls.length===2){const r=C.RANK_TEXT;const rank=cards[0].r;p=55+rank*3;}else{const hi=Math.max(...cards.map(c=>c.r)),lo=Math.min(...cards.map(c=>c.r));p=(hi-2)*3+(lo-2)*1.5+(cards[0].s===cards[1].s?8:0)+(hi-lo<=2?6:0)+(hi===14?6:0);}return C.clamp(p,0,100);}
+function dealLiveHand(){if(!session||session.players[0].stack<3){finishSession('Стек закончился.');return;}session.hands++;session.button=(session.button+1)%session.n;session.deck=C.shuffle(C.fullDeck());session.board=[];session.pot=0;session.street='preflop';session.currentBet=3;session.toCall=0;session.awaiting=null;session.villain=null;session.log=[];session.players.forEach(p=>{p.cards=[session.deck.pop(),session.deck.pop()];p.folded=false;p.contrib=0;p.streetContrib=0;p.lastAction='';});const sb=(session.button+1)%session.n,bb=(session.button+2)%session.n;postBlind(sb,1,'SB');postBlind(bb,3,'BB');const order=orderedFrom((session.button+3)%session.n,session.n),heroAt=order.indexOf(0);for(let i=0;i<heroAt;i++)aiPreflopBeforeHero(order[i]);session.toCall=Math.max(0,session.currentBet-session.players[0].streetContrib);session.awaiting='hero-preflop';log(`Твой ход: ${positionsFor(session.n,session.button)[0]} • ${C.handClass(session.players[0].cards)}`);renderLive();showHeroActions();}
+function aiPreflopBeforeHero(idx){const p=session.players[idx];if(p.stack<=0){p.folded=true;return;}const pos=positionsFor(session.n,session.button)[idx],type=TYPES[p.type],facing=session.currentBet>3;let openRange=OPEN_RANGES[pos]||OPEN_RANGES.CO;if(type.loose>0&&['CO','BTN','SB'].includes(pos))openRange=OPEN_RANGES.BTN;const inOpen=classInRange(p.cards,openRange);if(!facing){if(inOpen&&Math.random()<0.72+type.aggression*.2){const target=Math.min(p.stack+p.streetContrib,sample([10,12,15]));commitTo(p,target);session.currentBet=Math.max(session.currentBet,p.streetContrib);p.lastAction=`raise ${money(target)}`;log(`${p.name} рейз до ${money(target)}`);}else if((p.type==='passive'||p.type==='station'||p.type==='wild')&&preflopPower(p.cards)>24&&Math.random()<0.55){commitTo(p,3);p.lastAction='limp';log(`${p.name} лимп $3`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}else{const need=session.currentBet-p.streetContrib;if(preflopPower(p.cards)>78&&Math.random()<type.aggression*.4){const target=Math.min(p.stack+p.streetContrib,session.currentBet*3);commitTo(p,target);session.currentBet=p.streetContrib;p.lastAction=`3-bet ${money(target)}`;log(`${p.name} 3-бет до ${money(target)}`);}else if(preflopPower(p.cards)>43-type.loose*40&&need<=p.stack&&Math.random()<0.5){commitTo(p,session.currentBet);p.lastAction=`call ${money(need)}`;log(`${p.name} call ${money(need)}`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}}
+function chooseVillain(){const c=activeOpponents();if(!c.length)return null;return c.sort((a,b)=>preflopPower(b.cards)-preflopPower(a.cards))[0].id;}
+function processAfterHeroPreflop(){const order=orderedFrom((session.button+3)%session.n,session.n),heroAt=order.indexOf(0);for(let i=heroAt+1;i<order.length;i++){const p=session.players[order[i]];if(p.folded)continue;const need=session.currentBet-p.streetContrib;if(need===0){p.lastAction='check';continue;}if(preflopPower(p.cards)>42-TYPES[p.type].loose*35&&Math.random()<0.5){commitTo(p,session.currentBet);p.lastAction=`call ${money(need)}`;log(`${p.name} call ${money(need)}`);}else{p.folded=true;p.lastAction='fold';log(`${p.name} fold`);}}session.villain=chooseVillain();if(session.villain===null){awardPot(0,'Все соперники выбросили.');return;}session.players.forEach((p,i)=>{if(i!==0&&i!==session.villain&&!p.folded){p.folded=true;p.lastAction='fold';}});beginFlop();}
 function resetStreet(){session.currentBet=0;session.toCall=0;session.players.forEach(p=>p.streetContrib=0);}
-function advanceStreet(){if(session.street==='flop'){session.street='turn';session.board.push(session.deck.pop());resetStreet();startPostflopAction();}else if(session.street==='turn'){session.street='river';session.board.push(session.deck.pop());resetStreet();startPostflopAction();}else if(session.street==='river')showdown();}
+function beginFlop(){session.street='flop';session.board.push(session.deck.pop(),session.deck.pop(),session.deck.pop());resetStreet();startPostflopAction();}
+function advanceStreet(){if(session.street==='flop'){session.street='turn';session.board.push(session.deck.pop());resetStreet();startPostflopAction();}else if(session.street==='turn'){session.street='river';session.board.push(session.deck.pop());resetStreet();startPostflopAction();}else showdown();}
+function heroActsFirstPostflop(){const order=orderedFrom((session.button+1)%session.n,session.n);return order.indexOf(0)<order.indexOf(session.villain);}
+function madeCategory(cards,board){return C.best7([...cards,...board])[0];}
+function handSignal(cards,board){const cat=madeCategory(cards,board),outs=C.analyzeOuts(cards,board);return C.clamp(cat/8+(outs.strongOuts/15)*.25,0,1);}
 function startPostflopAction(){renderLive();if(heroActsFirstPostflop()){session.awaiting='hero-postflop';log(`Твой ход на ${streetText().toLowerCase()}`);showHeroActions();}else aiLeadsIntoHero();}
-function aiLeadsIntoHero(){const v=session.players[session.villain],str=madeStrength(v.cards,session.board),draw=drawInfo(v.cards,session.board),type=TYPES[v.type];const betProb=clamp(type.agg*.45+str*.52+(draw.outs?0.14:0),.08,.92);if(Math.random()<betProb){const size=Math.min(v.stack,Math.max(3,Math.round(session.pot*sample(str>.78?[.55,.75,1]:[.33,.5,.65]))));commitTo(v,size);session.currentBet=v.streetContrib;session.toCall=size;v.lastAction=`bet ${money(size)}`;log(`${v.name} bet ${money(size)}`);}else{v.lastAction='check';log(`${v.name} check`);session.toCall=0;}session.awaiting='hero-postflop';showHeroActions();}
-function aiActsAfterHeroCheck(){const v=session.players[session.villain],str=madeStrength(v.cards,session.board),draw=drawInfo(v.cards,session.board),type=TYPES[v.type];if(Math.random()<clamp(type.agg*.4+str*.5+(draw.outs?.12:0),.06,.88)){const size=Math.min(v.stack,Math.max(3,Math.round(session.pot*sample([.4,.55,.7]))));commitTo(v,size);session.currentBet=size;session.toCall=size;v.lastAction=`bet ${money(size)}`;log(`${v.name} bet ${money(size)}`);session.awaiting='hero-postflop';showHeroActions();}else{v.lastAction='check';log(`${v.name} check`);advanceStreet();}}
-function aiRespondToHeroBet(){const v=session.players[session.villain??chooseVillain()];if(!v){awardPot(0,'Все выбросили.');return;}session.villain=v.id;session.players.forEach((p,i)=>{if(i!==0&&i!==v.id&&!p.folded){p.folded=true;p.lastAction='fold';}});const need=session.currentBet-v.streetContrib;if(need>=v.stack){commitTo(v,v.stack+v.streetContrib);v.lastAction='all-in call';log(`${v.name} call all-in`);runoutShowdown();return;}const str=session.street==='preflop'?preflopScore(v.cards)/100:madeStrength(v.cards,session.board),draw=drawInfo(v.cards,session.board),type=TYPES[v.type],potOdds=need/(session.pot+need),continueScore=str+(draw.outs?Math.min(.18,draw.outs*.012):0)+type.loose/-160;
-  if(continueScore<potOdds+.1&&Math.random()>type.bluff*.25){v.folded=true;v.lastAction='fold';log(`${v.name} fold`);awardPot(0,'Соперник выбросил карты.');return;}
-  if(str>.88&&v.stack>need*2&&Math.random()<type.agg*.45){const target=Math.min(v.stack+v.streetContrib,Math.max(session.currentBet*2,session.currentBet+Math.round(session.pot*.45)));commitTo(v,target);session.currentBet=v.streetContrib;session.toCall=session.currentBet-session.players[0].streetContrib;v.lastAction=`raise ${money(target)}`;log(`${v.name} raise до ${money(target)}`);session.awaiting='hero-postflop';showHeroActions();return;}
-  commitTo(v,session.currentBet);v.lastAction=`call ${money(need)}`;log(`${v.name} call ${money(need)}`);if(session.street==='preflop')beginFlop();else advanceStreet();
+function aiLeadsIntoHero(){const v=session.players[session.villain],type=TYPES[v.type],sig=handSignal(v.cards,session.board),draw=C.analyzeOuts(v.cards,session.board);const p=C.clamp(type.aggression*.35+sig*.55+(draw.strongOuts?0.12:0)+type.bluff*.18,0.06,0.92);if(Math.random()<p){const frac=sample(sig>.7?[.55,.75,1]:[.33,.5,.65]);const size=Math.min(v.stack,Math.max(3,Math.round(session.pot*frac)));commitTo(v,size);session.currentBet=v.streetContrib;session.toCall=size;v.lastAction=`bet ${money(size)}`;log(`${v.name} bet ${money(size)}`);}else{v.lastAction='check';log(`${v.name} check`);session.toCall=0;}session.awaiting='hero-postflop';showHeroActions();}
+function aiActsAfterHeroCheck(){const v=session.players[session.villain],type=TYPES[v.type],sig=handSignal(v.cards,session.board),draw=C.analyzeOuts(v.cards,session.board);if(Math.random()<C.clamp(type.aggression*.32+sig*.52+(draw.strongOuts?.12:0)+type.bluff*.12,.05,.88)){const size=Math.min(v.stack,Math.max(3,Math.round(session.pot*sample([.4,.55,.7]))));commitTo(v,size);session.currentBet=size;session.toCall=size;v.lastAction=`bet ${money(size)}`;log(`${v.name} bet ${money(size)}`);session.awaiting='hero-postflop';showHeroActions();}else{v.lastAction='check';log(`${v.name} check`);advanceStreet();}}
+function lineRangeFor(type,line){const t=type||'reg';if(line==='raise')return t==='wild'?'55+,A8s+,KTs+,QTs+,JTs,T9s,AJo+,KQo':'99+,AQs+,AKo';if(line==='bet'){if(t==='nit')return '22+,AJs+,KQs,AQo+';if(t==='wild')return '22+,A2s+,K7s+,Q8s+,J8s+,T8s+,97s+,86s+,A8o+,KTo+,QTo+,JTo';return '22+,A8s+,KTs+,QTs+,JTs,T9s,AJo+,KQo';}return '22+,A2s+,K9s+,QTs+,JTs,T9s,98s,AJo,KQo';}
+function currentLiveMath(trials=2200){const hero=session.players[0];if(session.street==='preflop')return {preflop:true,power:preflopPower(hero.cards),position:positionsFor(session.n,session.button)[0]};const v=session.players[session.villain],line=v?.lastAction?.includes('raise')?'raise':v?.lastAction?.includes('bet')?'bet':'call',range=lineRangeFor(v?.type,line),equity=C.equityVsRange({hero:hero.cards,board:session.board,range,trials}),outs=C.analyzeOuts(hero.cards,session.board),required=session.toCall?session.toCall/(session.pot+session.toCall):0;return {preflop:false,equity,outs,required,range,villain:v};}
+function liveMathHTML(m){if(m.preflop)return `<div class="math-grid"><div class="math-cell"><small>Сила руки</small><strong>${Math.round(m.power)}/100</strong></div><div class="math-cell"><small>Позиция</small><strong>${m.position}</strong></div></div><p class="muted">Префлоп-рекомендация строится по позиции, действиям до тебя и базовым live-диапазонам $1/$3.</p>`;const groups=m.outs.groups.map(g=>`<span class="out-pill ${g.quality==='conditional'?'conditional':''}">${g.label}: ${g.outs}</span>`).join('');const method=m.equity.exact?'точный перебор':`${m.equity.samples.toLocaleString('ru-RU')} сим.`;return `<div class="math-grid"><div class="math-cell"><small>Эквити против диапазона</small><strong>${pct(m.equity.equity)}</strong></div><div class="math-cell"><small>Нужно для колла</small><strong>${session.toCall?pct(m.required):'—'}</strong></div><div class="math-cell"><small>Победа / ничья / проигрыш</small><strong>${pct(m.equity.win)} / ${pct(m.equity.tie)} / ${pct(m.equity.lose)}</strong></div><div class="math-cell"><small>Метод</small><strong>${method}</strong></div><div class="math-cell"><small>Сильные / условные ауты</small><strong>${m.outs.strongOuts||0} / ${m.outs.conditionalOuts||0}</strong></div><div class="math-cell"><small>Сильный аут: следующая карта</small><strong>${m.outs.strongOuts?pct(m.outs.strongNextCard):'—'}</strong></div>${session.board.length===3?`<div class="math-cell"><small>Сильный аут к риверу</small><strong>${m.outs.strongOuts?pct(m.outs.strongByRiver):'—'}</strong></div>`:''}</div>${groups?`<div class="outs-list">${groups}</div>`:''}<p class="muted">Диапазон модели: ${m.range}. Ауты показывают улучшение, а эквити — реальную долю банка против диапазона. Live-рекомендация является учебной exploit-моделью, а не GTO-солвером.</p>`;}
+function evaluateLiveAction(action,amount=0){
+  const hero=session.players[0];
+  if(session.street==='preflop'){
+    const pos=positionsFor(session.n,session.button)[0],limpers=activeOpponents().filter(p=>p.lastAction==='limp').length;
+    let rec;
+    if(session.currentBet<=3){
+      const range=limpers?(ISO_RANGES[pos]||OPEN_RANGES[pos]||OPEN_RANGES.CO):(OPEN_RANGES[pos]||OPEN_RANGES.CO);
+      const inR=classInRange(hero.cards,range);
+      rec={best:inR?'raise':'fold',confidence:inR?'средняя':'средняя',why:inR?`${C.handClass(hero.cards)} входит в учебный диапазон ${limpers?'изоляции':'открытия'} из ${pos}.`:`${C.handClass(hero.cards)} обычно слишком слаба из ${pos} в базовой 9-max live-модели.`};
+      if(pos==='BB'&&session.toCall===0)rec={best:'check',confidence:'высокая',why:'На BB можно бесплатно увидеть флоп.'};
+    }else{
+      const opener=session.players.find((p,i)=>i!==0&&!p.folded&&p.lastAction?.includes('raise'));
+      const openerPos=positionsFor(session.n,session.button)[opener?.id];
+      const chart=['UTG','UTG+1','MP'].includes(openerPos)?DEFEND_VS_EARLY:DEFEND_VS_LATE;
+      const raise=classInRange(hero.cards,chart.raise),call=classInRange(hero.cards,chart.call);
+      rec={best:raise?'raise':call?'call':'fold',confidence:raise||!call?'средняя':'низкая',why:raise?'Рука входит в базовый 3-бет диапазон.':call?'Рука достаточно сильна для продолжения, но точная линия зависит от позиции и типа соперника.':'Рука не входит в базовый диапазон продолжения.'};
+    }
+    let grade=action===rec.best?'best':'mistake';
+    if(rec.best==='raise'&&action==='call')grade='acceptable';
+    if(rec.confidence==='низкая'&&((rec.best==='call'&&action==='fold')||(rec.best==='fold'&&action==='call')))grade='acceptable';
+    return {grade,best:rec.best,confidence:rec.confidence,why:rec.why};
+  }
+
+  const m=currentLiveMath(1800),cat=madeCategory(hero.cards,session.board),draw=m.outs;
+  const edge=m.equity.equity-m.required;
+  const confidence=Math.abs(edge)>=.12?'высокая':Math.abs(edge)>=.05?'средняя':'низкая';
+  if(session.toCall){
+    let best=edge>=-.015?'call':'fold';
+    const valueRaise=(cat>=3&&m.equity.equity>=.58)||(cat>=2&&draw.strongOuts>=8&&m.equity.equity>=.55)||(m.equity.equity>=.74&&m.villain?.type!=='nit');
+    if(valueRaise)best='raise';
+    let grade=action===best?'best':'mistake';
+    if(best==='raise'&&action==='call')grade='good';
+    if(best==='call'&&action==='raise'&&m.equity.equity>=m.required+.10)grade='good';
+    if(confidence==='низкая'&&((best==='call'&&action==='fold')||(best==='fold'&&action==='call')))grade='acceptable';
+    return {grade,best,confidence,math:m,why:`Эквити ${pct(m.equity.equity)}, минимально нужно ${pct(m.required)}. Запас: ${(edge*100).toFixed(1)} п.п. ${draw.strongOuts?`Сильных аутов: ${draw.strongOuts}; условных: ${draw.conditionalOuts}.`:''}`};
+  }
+
+  let best='check';
+  if(cat>=3||m.equity.equity>=.60||draw.strongOuts>=8)best='bet';
+  let grade=action===best?'best':'mistake';
+  if(best==='bet'&&action==='check'&&(m.equity.equity<.67||cat===1))grade='acceptable';
+  if(best==='check'&&action==='bet'&&(m.equity.equity>=.45||draw.strongOuts>=4))grade='acceptable';
+  const noBetConfidence=(m.equity.equity>=.67||m.equity.equity<=.38||cat>=3)?'средняя':'низкая';
+  return {grade,best,confidence:noBetConfidence,math:m,why:`Готовая комбинация: ${C.handName(C.best7([...hero.cards,...session.board]))}. Эквити против модели диапазона: ${pct(m.equity.equity)}. ${draw.strongOuts?`Сильных аутов: ${draw.strongOuts}.`:''}`};
 }
+function renderSeats(){const seats=$('#seats');seats.innerHTML='';const pos=positionsFor(session.n,session.button);session.players.forEach((p,i)=>{const angle=(-90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);const el=document.createElement('div');el.className=`seat ${i===0?'hero':''} ${p.folded?'folded':''} ${session.villain===i?'active-player':''}`;el.style.left=`calc(${x}% - 32px)`;el.style.top=`calc(${y}% - 30px)`;el.innerHTML=`<small>${pos[i]} • ${i===session.button?'D ':''}${p.type==='hero'?'YOU':TYPES[p.type].short}</small><strong>${money(p.stack)}</strong><em>${p.lastAction||''}</em>`;seats.appendChild(el);});}
+function streetText(){return {preflop:'Префлоп',flop:'Флоп',turn:'Тёрн',river:'Ривер',showdown:'Шоудаун'}[session.street];}
+function renderLive(){const hero=session.players[0],profit=hero.stack+hero.contrib-session.initial;$('#liveStack').textContent=money(hero.stack);$('#liveProfit').textContent=signedMoney(profit);$('#liveProfit').style.color=profit>=0?'var(--accent)':'var(--danger)';$('#liveHands').textContent=session.hands;const misses=session.decisionGrades.filter(x=>x<2).length;$('#liveTilt').textContent=profit<-session.initial*.35||misses>=4?'Средний':'Низкий';$('#heroPosition').textContent=positionsFor(session.n,session.button)[0];$('#heroCards').innerHTML=cardsHTML(hero.cards);$('#board').innerHTML=cardsHTML(session.board,true);$('#streetLabel').textContent=streetText();$('#potLabel').textContent=`Банк ${money(session.pot)}`;$('#actionTitle').textContent=session.awaiting?.startsWith('hero')?'Твоё решение':'Раздача завершена';$('#toCallChip').textContent=session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';renderSeats();renderLog();}
+function showLiveMath(precomputed=null){const box=$('#mathBox');box.innerHTML='Считаю…';box.classList.remove('hidden');setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);}
+function showHeroActions(){renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
+function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
+$('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
+$('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
+function handleHeroAction(action,amount=0){if(!session||!session.awaiting?.startsWith('hero'))return;if((action==='bet'||action==='raise')&&!amount){toggleSizer(action);return;}const evaluation=evaluateLiveAction(action,amount);session.decisionGrades.push(GRADE[evaluation.grade].points);recordDecision({grade:evaluation.grade,tag:evaluation.grade==='mistake'?(action==='fold'?'too_tight':action==='call'||action==='check'?'passive':'overplay'):null,mode:'live',title:`${streetText()} • ${C.handClass(session.players[0].cards)}`,choice:action,preferred:evaluation.best});const f=$('#liveFeedback');f.className=`feedback ${GRADE[evaluation.grade].cls}`;f.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;showLiveMath(evaluation.math||null);const hero=session.players[0];if(action==='fold'){hero.folded=true;hero.lastAction='fold';log('YOU fold');awardPot(session.villain??activeOpponents()[0]?.id,'Ты выбросил карты.');return;}if(action==='check'){hero.lastAction='check';log('YOU check');session.awaiting=null;if(session.street==='preflop')processAfterHeroPreflop();else if(heroActsFirstPostflop())aiActsAfterHeroCheck();else advanceStreet();return;}if(action==='call'){const paid=commitTo(hero,hero.streetContrib+session.toCall);hero.lastAction=`call ${money(paid)}`;log(`YOU call ${money(paid)}`);session.toCall=0;session.awaiting=null;if(session.street==='preflop')processAfterHeroPreflop();else advanceStreet();return;}if(action==='allin'){amount=hero.stack+hero.streetContrib;action='bet';}if(action==='bet'||action==='raise'){amount=C.clamp(amount,hero.streetContrib+1,hero.stack+hero.streetContrib);commitTo(hero,amount);session.currentBet=Math.max(session.currentBet,hero.streetContrib);hero.lastAction=`${action} ${money(amount)}`;log(`YOU ${action} до ${money(amount)}`);session.awaiting=null;$('#betSizer').classList.add('hidden');aiRespondToHeroBet();}}
+function aiRespondToHeroBet(){const v=session.players[session.villain??chooseVillain()];if(!v){awardPot(0,'Все выбросили.');return;}session.villain=v.id;session.players.forEach((p,i)=>{if(i!==0&&i!==v.id&&!p.folded){p.folded=true;p.lastAction='fold';}});const need=session.currentBet-v.streetContrib;if(need>=v.stack){commitTo(v,v.stack+v.streetContrib);v.lastAction='all-in call';log(`${v.name} call all-in`);runoutShowdown();return;}const sig=session.street==='preflop'?preflopPower(v.cards)/100:handSignal(v.cards,session.board),draw=C.analyzeOuts(v.cards,session.board),type=TYPES[v.type],potOdds=need/(session.pot+need),continueScore=sig+Math.min(.18,draw.strongOuts*.014)+type.loose;if(continueScore<potOdds+.10&&Math.random()>type.bluff*.25){v.folded=true;v.lastAction='fold';log(`${v.name} fold`);awardPot(0,'Соперник выбросил карты.');return;}if(sig>.78&&v.stack>need*2&&Math.random()<type.aggression*.42){const target=Math.min(v.stack+v.streetContrib,Math.max(session.currentBet*2,session.currentBet+Math.round(session.pot*.42)));commitTo(v,target);session.currentBet=v.streetContrib;session.toCall=session.currentBet-session.players[0].streetContrib;v.lastAction=`raise ${money(target)}`;log(`${v.name} raise до ${money(target)}`);session.awaiting='hero-postflop';showHeroActions();return;}commitTo(v,session.currentBet);v.lastAction=`call ${money(need)}`;log(`${v.name} call ${money(need)}`);if(session.street==='preflop')beginFlop();else advanceStreet();}
 function runoutShowdown(){while(session.board.length<5)session.board.push(session.deck.pop());session.street='river';renderLive();showdown();}
 function awardPot(winnerId,message){const winner=session.players[winnerId];if(winner)winner.stack+=session.pot;log(`${message} ${winnerId===0?'Ты выигрываешь':'Банк забирает '+winner.name}: ${money(session.pot)}.`);session.pot=0;endHand();}
-function showdown(){session.street='showdown';const hero=session.players[0],v=session.players[session.villain];const he=best7([...hero.cards,...session.board]),ve=best7([...v.cards,...session.board]),cmp=compareEval(he,ve);log(`Шоудаун: YOU — ${handName(he)}; ${v.name} ${handCode(v.cards)} — ${handName(ve)}.`);if(cmp>0){hero.stack+=session.pot;log(`Ты выигрываешь ${money(session.pot)}.`);}else if(cmp<0){v.stack+=session.pot;log(`${v.name} выигрывает ${money(session.pot)}.`);}else{const half=Math.floor(session.pot/2);hero.stack+=half;v.stack+=session.pot-half;log('Банк разделён.');}session.pot=0;renderLive();endHand();}
-function endHand(){session.players.forEach(p=>{p.contrib=0;p.streetContrib=0;});session.awaiting=null;renderLive();$('#liveActions').innerHTML='';$('#mathBox').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#nextHand').classList.remove('hidden');$('#actionTitle').textContent='Раздача завершена';}
-$('#nextHand').addEventListener('click',dealLiveHand);
-function finishSession(reason='Сессия завершена.'){if(!session)return;const result=session.players[0].stack-session.initial;progress.history.unshift({date:new Date().toISOString(),hands:session.hands,result});progress.history=progress.history.slice(0,20);saveProgress();alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.`);session=null;$('#liveGame').classList.add('hidden');$('#liveSetup').classList.remove('hidden');route('home');}
-$('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?'))finishSession();});
-
-// Register offline support only when served from HTTPS/localhost.
+function showdown(){session.street='showdown';const hero=session.players[0],v=session.players[session.villain],he=C.best7([...hero.cards,...session.board]),ve=C.best7([...v.cards,...session.board]),cmp=C.compareEval(he,ve);log(`Шоудаун: YOU — ${C.handName(he)}; ${v.name} ${C.handClass(v.cards)} — ${C.handName(ve)}.`);if(cmp>0){hero.stack+=session.pot;log(`Ты выигрываешь ${money(session.pot)}.`);}else if(cmp<0){v.stack+=session.pot;log(`${v.name} выигрывает ${money(session.pot)}.`);}else{const half=Math.floor(session.pot/2);hero.stack+=half;v.stack+=session.pot-half;log('Банк разделён.');}session.pot=0;renderLive();endHand();}
+function endHand(){session.players.forEach(p=>{p.contrib=0;p.streetContrib=0;});session.awaiting=null;renderLive();$('#liveActions').innerHTML='';$('#betSizer').classList.add('hidden');$('#nextHand').classList.remove('hidden');$('#actionTitle').textContent='Раздача завершена';}
+$('#nextHand').addEventListener('click',dealLiveHand);function finishSession(reason='Сессия завершена.'){if(!session)return;const result=session.players[0].stack-session.initial;addHistory({mode:'session',title:`Sycuan Live • ${session.hands} рук`,choice:signedMoney(result),preferred:'',grade:result>=0?'good':'acceptable'});saveProgress();alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.`);session=null;$('#liveGame').classList.add('hidden');$('#liveSetup').classList.remove('hidden');route('home');}$('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?'))finishSession();});
 
 
+// ----- v1.6 animations -----
+function installMotion() {
+  document.addEventListener('pointerdown', e => {
+    const target = e.target.closest('button,.mode-card');
+    if (!target || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    target.classList.add('ripple-host');
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'tap-ripple';
+    ripple.style.left = `${e.clientX - rect.left}px`;
+    ripple.style.top = `${e.clientY - rect.top}px`;
+    ripple.style.width = ripple.style.height = `${Math.max(rect.width, rect.height) / 2}px`;
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }, { passive: true });
+}
+
+// ----- Hand Lab: manual scenario analyzer -----
+const ANALYZER_SITUATIONS = {
+  preflop: [
+    ['firstin','Все выбросили до тебя'],['limpers','Перед тобой лимперы'],['vs_raise_early','Против рейза из ранней позиции'],
+    ['vs_raise_late','Против рейза из поздней позиции'],['vs_3bet','Ты открылся и получил 3-бет'],['blind_defense','Защита BB против BTN']
+  ],
+  postflop: [
+    ['checked_to','До тебя чекнули'],['facing_bet','Против ставки'],['facing_raise','Ты поставил и получил рейз'],['after_check','После твоего чека соперник ставит']
+  ]
+};
+const ANALYZER_DEFAULTS = { hero1:'As', hero2:'Ks', board:['Qs','7s','2d','',''] };
+
+function analyzerCardOptions(includeEmpty=false) {
+  const ranks = [14,13,12,11,10,9,8,7,6,5,4,3,2];
+  const opts = includeEmpty ? '<option value="">—</option>' : '';
+  return opts + ranks.flatMap(r => C.SUITS.map(s => {
+    const c={r,s}; const red=s==='h'||s==='d';
+    return `<option value="${r}${s}">${C.cardText(c)}</option>`;
+  })).join('');
+}
+function analyzerValueToCard(v){ if(!v) return null; const m=String(v).match(/^(14|13|12|11|10|[2-9])([shdc])$/); return m?{r:Number(m[1]),s:m[2]}:null; }
+function analyzerCardToValue(c){return c?`${c.r}${c.s}`:'';}
+function initAnalyzer() {
+  const heroOpts=analyzerCardOptions(false), boardOpts=analyzerCardOptions(true);
+  $('#anHero1').innerHTML=heroOpts; $('#anHero2').innerHTML=heroOpts;
+  for(let i=1;i<=5;i++) $(`#anBoard${i}`).innerHTML=boardOpts;
+  $('#anHero1').value='14s'; $('#anHero2').value='13s';
+  ['12s','7s','2d','',''].forEach((v,i)=>$(`#anBoard${i+1}`).value=v ? ({Q:12}[v[0]]||Number(v.slice(0,-1)))+v.slice(-1) : '');
+  updateAnalyzerStreet();
+  $('#anStreet').addEventListener('change',updateAnalyzerStreet);
+  $('#anSituation').addEventListener('change',updateAnalyzerContextFields);
+  $('#analyzeHand').addEventListener('click',runAnalyzer);
+  $('#analyzeAgain').addEventListener('click',()=>{ $('#analyzerResult').classList.add('hidden'); $('#analyzeHand').scrollIntoView({behavior:'smooth',block:'center'}); });
+}
+function updateAnalyzerStreet(){
+  const street=$('#anStreet').value, post=street!=='preflop';
+  $('#anBoardWrap').classList.toggle('hidden',!post);
+  const list=post?ANALYZER_SITUATIONS.postflop:ANALYZER_SITUATIONS.preflop;
+  $('#anSituation').innerHTML=list.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');
+  const count={preflop:0,flop:3,turn:4,river:5}[street];
+  for(let i=1;i<=5;i++){
+    const el=$(`#anBoard${i}`); el.disabled=i>count; el.closest?.('.card-select');
+    el.style.display=i<=count?'block':'none';
+  }
+  $('#anPot').value=post?60:4; $('#anBet').value=post?30:12;
+  updateAnalyzerContextFields();
+}
+function updateAnalyzerContextFields(){
+  const sit=$('#anSituation').value;
+  $('#anLimpersField').classList.toggle('hidden',sit!=='limpers');
+  $('#anOpenerField').classList.toggle('hidden',!['vs_raise_early','vs_raise_late','blind_defense'].includes(sit));
+  if(sit==='vs_raise_early') $('#anOpener').value='early';
+  if(['vs_raise_late','blind_defense'].includes(sit)) $('#anOpener').value='late';
+  const noBet=['firstin','limpers','checked_to'].includes(sit);
+  if(noBet) $('#anBet').value=0;
+}
+function analyzerKnownCards(){
+  const street=$('#anStreet').value, count={preflop:0,flop:3,turn:4,river:5}[street];
+  const hero=[analyzerValueToCard($('#anHero1').value),analyzerValueToCard($('#anHero2').value)];
+  const board=[]; for(let i=1;i<=count;i++) board.push(analyzerValueToCard($(`#anBoard${i}`).value));
+  return {hero,board};
+}
+function validateAnalyzerCards(hero,board){
+  $$('.card-select').forEach(x=>x.classList.remove('invalid'));
+  if(hero.some(x=>!x)||board.some(x=>!x)) return 'Выбери все необходимые карты для этой улицы.';
+  const vals=[...hero,...board].map(C.cardId); const dup=vals.find((x,i)=>vals.indexOf(x)!==i);
+  if(dup){
+    $$('.card-select').forEach(sel=>{const c=analyzerValueToCard(sel.value);if(c&&C.cardId(c)===dup)sel.classList.add('invalid');});
+    return 'Одна и та же карта выбрана дважды. В колоде каждая карта только одна.';
+  }
+  return '';
+}
+function multiwayEquity({hero,board,range,opponents=1,trials=6500}){
+  if(opponents<=1) return C.equityVsRange({hero,board,range,trials});
+  const known=[...hero,...board], combos=C.rangeCombos(range,known); if(!combos.length) return {equity:0,win:0,tie:0,lose:0,samples:0,stderr:0,ci95:0,exact:false,method:'montecarlo',combos:0};
+  let eq=0,w=0,t=0,l=0,samples=0;
+  for(let n=0;n<trials;n++){
+    const used=new Set(known.map(C.cardId)), villains=[];
+    for(let k=0;k<opponents;k++){
+      const legal=combos.filter(c=>c.every(x=>!used.has(C.cardId(x)))); if(!legal.length) break;
+      const v=sample(legal); villains.push(v); v.forEach(x=>used.add(C.cardId(x)));
+    }
+    if(villains.length!==opponents) continue;
+    const deck=C.shuffle(C.removeKnown(C.fullDeck(),[...known,...villains.flat()])); const run=deck.slice(0,5-board.length);
+    const he=C.best7([...hero,...board,...run]); const evals=villains.map(v=>C.best7([...v,...board,...run]));
+    const comps=evals.map(e=>C.compareEval(he,e));
+    if(comps.some(c=>c<0)){l++;}
+    else {const tied=comps.filter(c=>c===0).length;if(tied){t++;eq+=1/(tied+1);}else{w++;eq+=1;}}
+    samples++;
+  }
+  const equity=samples?eq/samples:0, stderr=samples?Math.sqrt(Math.max(0,equity*(1-equity)/samples)):0;
+  return {equity,win:samples?w/samples:0,tie:samples?t/samples:0,lose:samples?l/samples:0,samples,stderr,ci95:1.96*stderr,exact:false,method:'montecarlo',combos:combos.length};
+}
+function analyzerDefaultRange(type,situation){
+  const line=situation==='facing_raise'?'raise':(['facing_bet','after_check'].includes(situation)?'bet':'call');
+  return lineRangeFor(type,line);
+}
+function analyzerTexture(board){
+  if(board.length<3)return {wet:false,paired:false,flushy:false,connected:false};
+  const suits={}; board.forEach(c=>suits[c.s]=(suits[c.s]||0)+1);
+  const ranks=board.map(c=>c.r), uniq=[...new Set(ranks)].sort((a,b)=>a-b);
+  const paired=uniq.length<board.length, flushy=Math.max(...Object.values(suits))>=3;
+  let connected=false; for(let i=0;i<uniq.length;i++)for(let j=i+1;j<uniq.length;j++)if(Math.abs(uniq[i]-uniq[j])<=4)connected=true;
+  return {wet:flushy||connected,paired,flushy,connected};
+}
+function analyzerPreflop(data){
+  const cls=C.handClass(data.hero), pos=data.position, sit=data.situation, bet=data.bet||12, inPos=!['SB','BB','UTG','UTG+1'].includes(pos);
+  let best='fold', size=0, range='', confidence='высокая', why='', missed='', alternatives='';
+  if(sit==='firstin'){
+    range=OPEN_RANGES[pos]||OPEN_RANGES.CO; best=classInRange(data.hero,range)?'raise':'fold'; size=12;
+    why=best==='raise'?`${cls} входит в учебный диапазон открытия из ${pos}. Рейз забирает инициативу и не приглашает весь стол дешёво посмотреть флоп.`:`${cls} не входит в базовый диапазон открытия из ${pos}: слишком много игроков остаётся за спиной и рука часто доминируется.`;
+    missed=`Позиция определяет, сколько неизвестных диапазонов остаётся за спиной. Одна и та же рука может быть fold из UTG и raise с BTN.`;
+  }else if(sit==='limpers'){
+    range=ISO_RANGES[pos]||OPEN_RANGES[pos]||OPEN_RANGES.CO; best=classInRange(data.hero,range)?'raise':'fold'; const limpers=Number($('#anLimpers').value)||1; size=15+Math.max(0,limpers-1)*3;
+    why=best==='raise'?`${cls} достаточно сильна для изоляции. Крупный live-размер сокращает поле и строит банк против слабых диапазонов лимпа.`:`Оверлимп иногда возможен с подходящими suited руками, но базовая модель не советует раздувать мультипот этой комбинацией.`;
+    alternatives=`Call допустим только если рука хорошо играет мультивей, игроки за спиной пассивны и рейз почти никого не выбивает.`;
+  }else if(['vs_raise_early','vs_raise_late','blind_defense'].includes(sit)){
+    const early=sit==='vs_raise_early'||$('#anOpener').value==='early'; const chart=early?DEFEND_VS_EARLY:DEFEND_VS_LATE;
+    range=`3-bet: ${chart.raise}; call: ${chart.call}`;
+    if(classInRange(data.hero,chart.raise)){best='raise';size=Math.round(bet*(inPos?3:4));why=`${cls} входит в диапазон 3-бета против ${early?'раннего':'позднего'} открытия.`;}
+    else if(classInRange(data.hero,chart.call)){best='call';why=`${cls} имеет достаточно эквити и играбельности для продолжения против этого диапазона открытия.`;}
+    else {best='fold';why=`${cls} слишком часто доминируется и плохо реализует эквити против ${early?'сильного раннего':'заданного'} диапазона.`;}
+    missed=`Учитывай не только свои карты, но и позицию рейзера, размер открытия, игроков за спиной и возможность squeeze.`;
+  }else{
+    range=`4-bet: ${VS_3BET.raise}; call: ${VS_3BET.call}`;
+    if(classInRange(data.hero,VS_3BET.raise)){best='raise';size=Math.min(data.stack,Math.round(bet*2.5));why=`${cls} достаточно сильна для 4-бета на вэлью.`;}
+    else if(classInRange(data.hero,VS_3BET.call)){best='call';why=`${cls} входит в узкий диапазон продолжения против 3-бета.`;confidence='средняя';}
+    else {best='fold';why=`Против 3-бета ${cls} недостаточно сильна: уже вложенные деньги не должны заставлять защищать плохую руку.`;}
+    missed='Глубина стеков и размер 3-бета сильно меняют решение. При коротком стеке часть call превращается в push/fold.';
+  }
+  if(!alternatives) alternatives=best==='fold'?'Call или raise потребуют более благоприятных позиций, ридов или более слабого диапазона соперника.':best==='call'?'Fold слишком тайтов, а рейз обычно выбивает доминируемые руки и получает продолжение от сильнейшей части диапазона.':'Call оставляет больше игроков и отдаёт инициативу; fold выбрасывает прибыльную часть диапазона.';
+  const recommendation=best==='raise'?`RAISE до ${money(Math.max(3,size))}`:best.toUpperCase();
+  return {recommendation,best,confidence,range,why,missed,alternatives,oneLine:`${cls} • ${pos} • ${why}`,math:null,model:'Префлоп-решение основано на базовых exploit-диапазонах live $1/$3. Оно не заменяет GTO-решение для точной структуры рейка, стеков и состава стола.'};
+}
+function analyzerPostflop(data){
+  const range=data.customRange||analyzerDefaultRange(data.villain,data.situation);
+  let equity; try{equity=multiwayEquity({hero:data.hero,board:data.board,range,opponents:data.opponents,trials:data.opponents>1?7500:10000});}catch(e){throw new Error(`Не удалось прочитать диапазон: ${e.message}`);}
+  if(!equity.samples) throw new Error('После удаления известных карт в диапазоне соперника не осталось комбинаций. Проверь диапазон.');
+  const outs=C.analyzeOuts(data.hero,data.board), hand=C.best7([...data.hero,...data.board]), cat=hand[0], handName=C.handName(hand), tex=analyzerTexture(data.board);
+  const facing=!['checked_to'].includes(data.situation), required=facing&&data.bet>0?C.potMath({potBefore:data.pot,bet:data.bet,call:data.bet}).requiredEquity:0;
+  const edge=equity.equity-required, spr=data.pot>0?data.stack/(data.pot+(facing?data.bet:0)):99;
+  let best='check', size=0, confidence='средняя', why='', missed='', alternatives='';
+  if(facing){
+    const extra=data.situation==='facing_raise'?.035:0;
+    if(equity.equity+0.005<required+extra){best='fold';confidence=Math.abs(edge)>.08?'высокая':'средняя';}
+    else {best='call';confidence=Math.abs(edge)>.08?'высокая':'средняя';}
+    const valueRaise=(cat>=4&&equity.equity>.62)||(cat>=3&&equity.equity>.70&&data.villain!=='nit');
+    const semiRaise=data.board.length<5&&outs.strongOuts>=8&&equity.equity>=Math.max(.42,required+.10)&&spr>1.1&&data.villain!=='station';
+    if(valueRaise||semiRaise){best='raise';size=Math.min(data.stack,Math.max(data.bet*3,Math.round((data.pot+data.bet)*.72+data.bet)));confidence=valueRaise?'высокая':'средняя';}
+    if(best==='fold') why=`Твоё equity ${pct(equity.equity)} ниже необходимого ${pct(required)}${data.situation==='facing_raise'?' и против рейза нужен дополнительный запас':''}. Продолжение без достаточных implied odds будет убыточным.`;
+    if(best==='call') why=`Цена требует ${pct(required)}, модель даёт ${pct(equity.equity)}. Колл сохраняет блефы и не изолирует тебя против сильнейшей части диапазона.`;
+    if(best==='raise') why=cat>=4?`${handName} находится высоко в диапазоне и может добирать вэлью крупным рейзом.`:`Сильное дро имеет ${outs.strongOuts} сильных аутов, достаточно equity и fold equity для полублефа.`;
+    alternatives=best==='fold'?'Call станет лучше против более широкого и блефового диапазона либо при меньшей ставке. Raise сейчас требует слишком оптимистичных предположений.':best==='call'?'Fold отдаёт положительный математический колл; raise часто выбивает блефы и получает продолжение от сильных рук.':`Call снижает дисперсию и сохраняет диапазон соперника; fold слишком тайтов при текущих шансах.`;
+  }else{
+    const strongMade=cat>=2, value=cat>=1&&equity.equity>=.60, semi=data.board.length<5&&outs.strongOuts>=8&&equity.equity>=.42;
+    if(strongMade||value||semi){best='bet';size=Math.min(data.stack,Math.max(3,Math.round(data.pot*(tex.wet?.70:.55))));confidence=(cat>=3||equity.equity>.68)?'высокая':'средняя';}
+    else {best='check';confidence=equity.equity<.42?'средняя':'низкая';}
+    why=best==='bet'?`${handName} / ${pct(equity.equity)} equity позволяют ставить ${strongMade?'на вэлью и защиту':semi?'как полублеф':'тонко на вэлью'}. ${tex.wet?'Динамичная доска поддерживает более крупный размер.':'На спокойной доске достаточно среднего размера.'}`:`У руки нет уверенного вэлью-бета, а ставка недостаточно часто выбивает лучшую часть диапазона. Чек сохраняет equity и контролирует банк.`;
+    missed=best==='bet'?'Перед ставкой перечисли худшие руки, которые заплатят, и лучшие руки, которые могут сделать рейз.':'Чек не означает сдачу: он может защищать диапазон и позволять реализовать equity.';
+    alternatives=best==='bet'?'Check допустим против агрессивного игрока для провокации, но рискует упустить вэлью или бесплатную карту.':'Bet становится лучше при большей fold equity, более сильном дро или большем количестве худших рук для колла.';
+  }
+  if(!missed) missed=`Ауты (${outs.strongOuts} сильных и ${outs.conditionalOuts} условных) показывают шанс улучшиться, но не равны вероятности победы. Equity уже учитывает диапазон соперника и возможные ран-ауты.`;
+  const recommendation=best==='raise'?`RAISE до ${money(size)}`:best==='bet'?`BET ${money(size)}`:best.toUpperCase();
+  const method=equity.exact?'точный перебор':`${equity.samples.toLocaleString('ru-RU')} симуляций`;
+  const math={equity,outs,required,edge,spr,handName,range,method};
+  const model=`Диапазон: ${range}. ${data.opponents>1?`Equity рассчитано Monte Carlo против ${data.opponents} соперников с одинаковой моделью диапазона. `:''}Реальное решение зависит от точных частот блефа, рейка, теллсов и истории. ${data.notes?`Твоя заметка: «${data.notes}».`:''}`;
+  return {recommendation,best,confidence,range,why,missed,alternatives,oneLine:`${handName} • equity ${pct(equity.equity)}${facing?` • нужно ${pct(required)}`:''}`,math,model};
+}
+function analyzerMathHTML(m){
+  if(!m)return '<p class="muted">На префлопе ключевыми являются диапазон, позиция, размер рейза и глубина стеков; постфлоп-аутов ещё нет.</p>';
+  const o=m.outs,e=m.equity,groups=o.groups.map(g=>`<span class="out-pill ${g.quality==='conditional'?'conditional':''}">${g.label}: ${g.outs}</span>`).join('');
+  return `<div class="math-grid"><div class="math-cell"><small>Текущая комбинация</small><strong>${m.handName}</strong></div><div class="math-cell"><small>Эквити против диапазона</small><strong>${pct(e.equity)}</strong></div><div class="math-cell"><small>Победа / ничья / поражение</small><strong>${pct(e.win)} / ${pct(e.tie)} / ${pct(e.lose)}</strong></div><div class="math-cell"><small>Нужно для колла</small><strong>${m.required?pct(m.required):'—'}</strong></div><div class="math-cell"><small>Запас equity</small><strong>${m.required?`${(m.edge*100).toFixed(1)} п.п.`:'—'}</strong></div><div class="math-cell"><small>SPR</small><strong>${m.spr.toFixed(1)}</strong></div><div class="math-cell"><small>Сильные / условные ауты</small><strong>${o.strongOuts} / ${o.conditionalOuts}</strong></div><div class="math-cell"><small>Попадание следующей картой</small><strong>${o.strongOuts?pct(o.strongNextCard):'—'}</strong></div>${o.strongOuts&&o.byRiver?`<div class="math-cell"><small>К риверу с флопа</small><strong>${pct(o.strongByRiver)}</strong></div>`:''}<div class="math-cell"><small>Метод расчёта</small><strong>${m.method}</strong></div></div>${groups?`<div class="outs-list">${groups}</div>`:''}<p class="muted">Ауты — вероятность улучшить комбинацию. Equity — ожидаемая доля банка против диапазона; именно её сравнивают с пот-оддсами.</p>`;
+}
+function runAnalyzer(){
+  const error=$('#analyzerError'); error.className='feedback bad hidden';
+  try{
+    const {hero,board}=analyzerKnownCards(),cardError=validateAnalyzerCards(hero,board); if(cardError)throw new Error(cardError);
+    const data={street:$('#anStreet').value,position:$('#anPosition').value,situation:$('#anSituation').value,villain:$('#anVillain').value,pot:Math.max(0,Number($('#anPot').value)||0),bet:Math.max(0,Number($('#anBet').value)||0),stack:Math.max(1,Number($('#anStack').value)||1),opponents:Math.max(1,Number($('#anOpponents').value)||1),customRange:$('#anRange').value.trim(),notes:$('#anNotes').value.trim(),hero,board};
+    if(data.street!=='preflop'&&['facing_bet','facing_raise','after_check'].includes(data.situation)&&data.bet<=0)throw new Error('Для этой ситуации укажи размер ставки или рейза соперника.');
+    const result=data.street==='preflop'?analyzerPreflop(data):analyzerPostflop(data);
+    $('#anRecommendation').textContent=result.recommendation; $('#anOneLine').textContent=result.oneLine;
+    const conf=$('#anConfidence');conf.textContent=`Уверенность: ${result.confidence}`;conf.className=`tag confidence-${result.confidence==='высокая'?'high':result.confidence==='средняя'?'medium':'low'}`;
+    $('#anVisual').innerHTML=`<div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length?`<div class="board">${cardsHTML(board,true)}</div>`:''}`;
+    $('#anMath').innerHTML=analyzerMathHTML(result.math);
+    $('#anWhy').innerHTML=`<p>${result.why}</p>`; $('#anMissed').innerHTML=`<p>${result.missed}</p>`; $('#anAlternatives').innerHTML=`<p>${result.alternatives}</p>`; $('#anModel').innerHTML=`<p>${result.model}</p>`;
+    const box=$('#analyzerResult'); box.classList.remove('hidden','reveal'); requestAnimationFrame(()=>box.classList.add('reveal')); setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'start'}),80);
+  }catch(e){error.textContent=e.message||String(e);error.classList.remove('hidden');}
+}
+
+initAnalyzer();
+installMotion();
 renderProgress();
 route('home');
 
