@@ -1,0 +1,143 @@
+@keyframes dashboardReveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes staggerReveal {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes modeTransition {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes dialogIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes progressGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes answerCorrect {
+  0% { transform: scale(0.98); opacity: 0.7; }
+  60% { transform: scale(1.015); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes answerIncorrect {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-4px); }
+  70% { transform: translateX(4px); }
+}
+
+@keyframes moduleUnlock {
+  from { opacity: 0.65; transform: translateY(5px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes positionSelect {
+  0% { transform: scale(0.93); }
+  65% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cardDeal {
+  from { opacity: 0; transform: translateY(-16px) rotate(-4deg) scale(0.92); }
+  to { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
+}
+
+@keyframes chipToPot {
+  from { opacity: 0.45; transform: translate3d(-18px, 12px, 0) scale(0.8); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes potToWinner {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to { opacity: 0; transform: translate3d(24px, 20px, 0) scale(0.78); }
+}
+
+@keyframes loadingSpin {
+  to { transform: rotate(1turn); }
+}
+
+#screen-home.active .dashboard-shell {
+  animation: dashboardReveal var(--motion-duration-slow) var(--motion-ease-emphasized) both;
+}
+
+.dashboard-mode-card,
+.dashboard-stat-grid .stat-card {
+  animation: staggerReveal var(--motion-duration-medium) var(--motion-ease-emphasized) both;
+  animation-delay: calc(var(--reveal-order, 0) * 45ms);
+}
+
+.screen.active:not(#screen-home) {
+  animation: modeTransition var(--motion-duration-medium) var(--motion-ease-standard) both;
+}
+
+.ui-dialog[open] {
+  animation: dialogIn var(--motion-duration-medium) var(--motion-ease-emphasized) both;
+}
+
+.ui-progress > i,
+.learning-meter > i,
+.learning-exam-progress > i {
+  animation: progressGrow var(--motion-duration-slow) var(--motion-ease-emphasized) both;
+}
+
+.selected-correct {
+  animation: answerCorrect var(--motion-duration-medium) var(--motion-ease-emphasized);
+}
+
+.selected-wrong {
+  animation: answerIncorrect var(--motion-duration-medium) var(--motion-ease-standard);
+}
+
+.learning-module-card.completed,
+.learning-module-card.coming-soon {
+  animation-name: moduleUnlock;
+}
+
+.learning-position-seat.is-selected {
+  animation: positionSelect var(--motion-duration-medium) var(--motion-ease-emphasized);
+}
+
+.playing-card {
+  animation: cardDeal var(--motion-duration-medium) var(--motion-ease-emphasized) both;
+  animation-delay: calc(var(--deal-index, 0) * 55ms);
+}
+
+.is-chip-to-pot {
+  animation: chipToPot var(--motion-duration-medium) var(--motion-ease-emphasized);
+}
+
+.is-pot-to-winner {
+  animation: potToWinner var(--motion-duration-slow) var(--motion-ease-standard);
+}
+
+.is-loading::after {
+  animation: loadingSpin 0.8s linear infinite;
+}
+
+.ui-toast {
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

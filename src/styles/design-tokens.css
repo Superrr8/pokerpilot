@@ -1,0 +1,137 @@
+:root {
+  color-scheme: dark;
+
+  /* App canvas and surfaces */
+  --app-bg: #070b0f;
+  --app-bg-deep: #04070a;
+  --app-bg-accent: #0d1b17;
+  --surface-base: #0c1217;
+  --surface-elevated: #111a20;
+  --surface-raised: #172229;
+  --surface-glass: rgba(17, 27, 33, 0.78);
+  --surface-glass-strong: rgba(19, 31, 37, 0.9);
+  --surface-interactive: rgba(255, 255, 255, 0.045);
+
+  /* Content and borders */
+  --text-primary: #f3f7f5;
+  --text-secondary: #a9b8b2;
+  --text-tertiary: #74837e;
+  --text-on-accent: #04120d;
+  --border-default: rgba(207, 230, 220, 0.13);
+  --border-subtle: rgba(207, 230, 220, 0.08);
+  --border-strong: rgba(207, 230, 220, 0.24);
+
+  /* Brand and semantic color */
+  --accent: #69d9a7;
+  --accent-hover: #82e4b9;
+  --accent-strong: #31b77d;
+  --accent-soft: rgba(105, 217, 167, 0.12);
+  --status-success: #72dca9;
+  --status-warning: #e4bd6a;
+  --status-danger: #eb7d82;
+  --status-info: #80aee8;
+  --status-purple: #b69ae8;
+
+  /* Poker surfaces */
+  --felt-base: #123f33;
+  --felt-highlight: #1c5b47;
+  --felt-edge: #252c2b;
+  --card-white: #f7f6f2;
+  --card-ink: #121817;
+  --card-red: #c83f47;
+  --chip-gold: #d1aa5e;
+
+  /* Shadows and blur */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 18px 48px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.4);
+  --shadow-focus: 0 0 0 3px rgba(105, 217, 167, 0.25);
+  --blur-glass: 18px;
+
+  /* Shape */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Typography */
+  --font-family-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-display: clamp(2rem, 5vw, 3.6rem);
+  --line-height-tight: 1.08;
+  --line-height-body: 1.55;
+  --letter-spacing-label: 0.09em;
+
+  /* Layers */
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-navigation: 40;
+  --z-toast: 80;
+  --z-modal: 100;
+
+  /* Motion */
+  --motion-duration-instant: 90ms;
+  --motion-duration-fast: 160ms;
+  --motion-duration-medium: 280ms;
+  --motion-duration-slow: 460ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Backward-compatible aliases for existing screens. */
+  --color-bg: var(--app-bg);
+  --color-bg-elevated: var(--surface-elevated);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-warning: var(--status-warning);
+  --color-danger: var(--status-danger);
+  --color-info: var(--status-info);
+  --color-purple: var(--status-purple);
+  --surface-1: var(--surface-elevated);
+  --surface-2: var(--surface-raised);
+  --surface-3: rgba(34, 49, 57, 0.74);
+  --shadow-card: var(--shadow-md);
+  --shadow-soft: var(--shadow-sm);
+  --radius-control: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --motion-fast: var(--motion-duration-fast);
+  --motion-medium: var(--motion-duration-medium);
+  --motion-slow: var(--motion-duration-slow);
+  --ease-standard: var(--motion-ease-standard);
+
+  --bg: var(--app-bg);
+  --panel: var(--surface-elevated);
+  --panel2: var(--surface-raised);
+  --line: var(--border-default);
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+  --accent2: var(--accent-strong);
+  --warn: var(--status-warning);
+  --danger: var(--status-danger);
+  --blue: var(--status-info);
+  --purple: var(--status-purple);
+  --shadow: var(--shadow-md);
+  --motion-med: var(--motion-duration-medium);
+}
+

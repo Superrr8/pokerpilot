@@ -1,0 +1,410 @@
+#screen-learning {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+#screen-learning .learning-header {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(69, 231, 163, 0.16), transparent 42%),
+    linear-gradient(145deg, var(--surface-glass), var(--surface-1));
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(14px);
+}
+
+.learning-header-row,
+.learning-result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.learning-sound-toggle {
+  min-width: 92px;
+  padding: 9px 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.learning-module-grid,
+.learning-list,
+.learning-example-grid,
+.learning-errors {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.learning-module-card {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 48%),
+    var(--surface-1);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
+  text-align: left;
+  overflow-wrap: break-word;
+  animation: learningCardIn var(--motion-medium) var(--ease-standard) both;
+  animation-delay: calc(var(--learning-order, 0) * 45ms);
+}
+
+.learning-module-card.locked {
+  opacity: 0.55;
+  filter: saturate(0.65);
+}
+
+.learning-module-card.completed {
+  border-color: var(--border-strong);
+}
+
+.learning-module-card.coming-soon {
+  border-color: rgba(244, 200, 97, 0.34);
+  animation: moduleUnlock var(--motion-slow) var(--ease-standard) both;
+}
+
+.learning-module-number {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-weight: 1000;
+}
+
+.learning-module-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.learning-module-copy strong {
+  letter-spacing: -0.015em;
+}
+
+.learning-module-copy small,
+.learning-example small,
+.learning-row small {
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.learning-status {
+  max-width: 76px;
+  color: var(--text-tertiary);
+  font-size: 10px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.learning-meter,
+.learning-exam-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.learning-meter i,
+.learning-exam-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--color-accent-strong), var(--color-accent));
+  animation: examProgress var(--motion-medium) var(--ease-standard) both;
+}
+
+.learning-row {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) 14px;
+  gap: var(--space-3);
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  color: var(--text-primary);
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.learning-row > span:nth-child(2) {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.learning-lesson {
+  animation: learningLessonIn var(--motion-medium) var(--ease-standard) both;
+}
+
+.learning-lesson p,
+.learning-example p {
+  font-size: 13px;
+  line-height: 1.62;
+}
+
+.learning-example {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: rgba(255, 255, 255, 0.025);
+  overflow-wrap: break-word;
+}
+
+.learning-choices {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+}
+
+.learning-choice {
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  text-align: left;
+  overflow-wrap: break-word;
+}
+
+.learning-choice.selected-correct {
+  border-color: var(--color-accent);
+  background: rgba(69, 231, 163, 0.16);
+  animation: answerCorrect var(--motion-medium) var(--ease-standard);
+}
+
+.learning-choice.selected-wrong {
+  border-color: var(--color-danger);
+  background: rgba(255, 125, 131, 0.14);
+  animation: answerIncorrect var(--motion-medium) var(--ease-standard);
+}
+
+.learning-exam-button {
+  margin-top: var(--space-4);
+}
+
+.learning-poker-table-wrap {
+  margin: var(--space-4) 0;
+}
+
+.learning-poker-table {
+  position: relative;
+  width: min(100%, 360px);
+  height: 245px;
+  margin: 0 auto;
+  border: 10px solid #3b2b21;
+  border-radius: 48%;
+  background:
+    radial-gradient(circle at center, rgba(70, 207, 145, 0.2), transparent 55%),
+    linear-gradient(145deg, #176346, #0c402d);
+  box-shadow: inset 0 0 38px rgba(0, 0, 0, 0.35), var(--shadow-soft);
+}
+
+.learning-table-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(244, 251, 247, 0.72);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.learning-position-seat {
+  position: absolute;
+  width: 58px;
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 8px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 13px;
+  background: #10231b;
+  color: var(--text-primary);
+  font-size: 11px;
+  font-weight: 1000;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.28);
+}
+
+.learning-position-seat[data-position-id="UTG"] { left: 7%; top: 14%; }
+.learning-position-seat[data-position-id="HJ"] { left: 7%; bottom: 14%; }
+.learning-position-seat[data-position-id="CO"] { left: 50%; bottom: -2px; transform: translateX(-50%); }
+.learning-position-seat[data-position-id="BTN"] { right: 7%; bottom: 14%; }
+.learning-position-seat[data-position-id="SB"] { right: 7%; top: 14%; }
+.learning-position-seat[data-position-id="BB"] { left: 50%; top: -2px; transform: translateX(-50%); }
+
+.learning-position-seat.is-selected {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #04130d;
+  box-shadow: 0 0 0 4px rgba(69, 231, 163, 0.16), 0 10px 24px rgba(0, 0, 0, 0.32);
+  animation: positionSelect var(--motion-medium) var(--ease-standard);
+}
+
+.learning-position-info {
+  min-height: 142px;
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+}
+
+.learning-position-info h4 {
+  margin: 0 0 var(--space-2);
+}
+
+.learning-hand-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: var(--space-3);
+}
+
+.learning-hand-tags span {
+  padding: 5px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+#screen-learning button {
+  transition:
+    transform var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) ease,
+    background var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    opacity var(--motion-fast) ease;
+}
+
+#screen-learning button:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+#screen-learning button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+#screen-learning button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.985);
+}
+
+#screen-learning button:disabled,
+#screen-learning [aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.learning-choice:disabled {
+  opacity: 0.92;
+}
+
+@keyframes learningCardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes learningLessonIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes positionSelect {
+  0% { transform: scale(0.9); }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes answerCorrect {
+  0% { transform: scale(0.98); }
+  55% { transform: scale(1.02); }
+  100% { transform: none; }
+}
+
+@keyframes answerIncorrect {
+  0%, 100% { transform: translateX(0); }
+  35% { transform: translateX(-4px); }
+  70% { transform: translateX(4px); }
+}
+
+@keyframes examProgress {
+  from { transform: scaleX(0); transform-origin: left; }
+  to { transform: scaleX(1); transform-origin: left; }
+}
+
+@keyframes moduleUnlock {
+  from { opacity: 0.55; box-shadow: none; }
+  to { opacity: 1; box-shadow: 0 0 0 1px rgba(244, 200, 97, 0.16), var(--shadow-soft); }
+}
+
+@media (max-width: 390px) {
+  #screen-learning .learning-header,
+  .learning-module-card,
+  .learning-example,
+  .learning-position-info {
+    padding: var(--space-3);
+  }
+
+  .learning-module-card {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
+  .learning-status {
+    grid-column: 2;
+    max-width: none;
+    text-align: left;
+  }
+
+  .learning-poker-table {
+    width: min(100%, 330px);
+    height: 226px;
+  }
+
+  .learning-position-seat {
+    width: 52px;
+    min-height: 39px;
+  }
+
+  .learning-result-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #screen-learning *,
+  #screen-learning *::before,
+  #screen-learning *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

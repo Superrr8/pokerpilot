@@ -1,0 +1,20 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary output
+*.log
+*.tmp
+*.temp
+coverage/
+.nyc_output/
+
+# Dependency folders are not application assets
+node_modules/
+
