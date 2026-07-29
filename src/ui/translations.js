@@ -20,7 +20,18 @@
     'profile.unrated': 'Без рейтинга',
     'profile.unranked': 'Без ранга',
     'profile.saved': 'Профиль сохранён',
-    'profile.saveError': 'Не удалось сохранить профиль на устройстве'
+    'profile.saveError': 'Не удалось сохранить профиль на устройстве',
+    'decisionQuality.title': 'Decision Quality',
+    'decisionQuality.excellent': 'Отличное решение',
+    'decisionQuality.good': 'Хорошее решение',
+    'decisionQuality.acceptable': 'Допустимое решение',
+    'decisionQuality.mistake': 'Ошибка',
+    'decisionQuality.blunder': 'Серьёзная ошибка',
+    'decisionQuality.unrated': 'Недостаточно данных',
+    'decisionQuality.provisional': 'Предварительная оценка',
+    'decisionQuality.forming': 'Оценка формируется',
+    'decisionQuality.established': 'Оценка сформирована',
+    'decisionQuality.minimumSample': 'Сыграйте минимум одно оцениваемое решение'
   });
 
   function t(key, fallback = key) {

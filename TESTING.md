@@ -47,6 +47,19 @@ Profile Foundation: версионируемый store, XP, адаптер су�
 node --test tests/profile-store.test.cjs tests/profile-statistics-adapter.test.cjs tests/profile-ui-contract.test.cjs
 ```
 
+Decision Quality Engine: формула, 24 контрольных решения, история,
+аналитика и UI-контракты:
+
+```sh
+node --test tests/decision-quality-engine.test.cjs tests/decision-quality-records.test.cjs tests/decision-quality-analytics.test.cjs tests/decision-quality-ui-contract.test.cjs
+```
+
+Полный набор тестов проекта:
+
+```sh
+node --test --test-concurrency=1 tests/*.test.cjs
+```
+
 Полная проверка всех 2 598 960 пятикарточных комбинаций запускается отдельно:
 
 ```sh

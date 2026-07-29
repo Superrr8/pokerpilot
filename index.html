@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="src/styles/profile.css">
   <link rel="stylesheet" href="src/styles/motion.css">
   <link rel="stylesheet" href="src/styles/live-session.css">
+  <link rel="stylesheet" href="src/styles/decision-quality.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
 </head>
 <body>
@@ -248,6 +249,7 @@
         <div id="studyMath" class="math-box hidden"></div>
         <div id="studyActions" class="actions neutral-actions"></div>
         <div id="studyFeedback" class="feedback hidden"></div>
+        <div id="studyDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="studyCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div class="coach-questions">
@@ -269,6 +271,7 @@
         <div id="rangeSpot"></div>
         <div id="rangeActions" class="actions neutral-actions"></div>
         <div id="rangeFeedback" class="feedback hidden"></div>
+        <div id="rangeDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="rangeCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div id="rangeCoachAnswer" class="coach-answer"></div>
@@ -306,6 +309,17 @@
             <div class="profile-metric"><small>Decision Quality</small><strong id="profileDecisionQuality">Не рассчитана</strong></div>
             <div class="profile-metric"><small>Rating</small><strong id="profileRating">Без рейтинга</strong></div>
             <div class="profile-metric"><small>Rank</small><strong id="profileRank">Без ранга</strong></div>
+          </div>
+          <div class="decision-quality-profile-detail" aria-live="polite">
+            <span id="profileDecisionQualityDetail" class="muted">Сыграйте больше решений для оценки.</span>
+            <span id="profileDecisionQualityTrend" class="muted">Тренд пока недоступен</span>
+            <div class="decision-quality-summary-grid">
+              <span><small>Lifetime</small><strong id="profileDecisionQualityLifetime">—</strong></span>
+              <span><small>Последние 20</small><strong id="profileDecisionQualityRecent">—</strong></span>
+              <span><small>Решений</small><strong id="profileDecisionQualityRated">0</strong></span>
+              <span><small>Лучшая сессия</small><strong id="profileDecisionQualityBestSession">—</strong></span>
+            </div>
+            <div id="profileDecisionQualityStreets" class="decision-quality-streets"><span class="muted">Нет данных по улицам</span></div>
           </div>
         </section>
 
@@ -382,6 +396,7 @@
           <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
           <div id="liveActions" class="actions neutral-actions"></div>
           <div id="liveFeedback" class="feedback hidden"></div>
+          <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
           <button id="nextHand" class="primary wide hidden">Следующая раздача</button>
           <button id="endSession" class="ghost wide">Закончить сессию</button>
         </div>
@@ -436,6 +451,9 @@
 <script src="src/data/preflop-ranges.js"></script>
 <script src="src/data/learning-course.js"></script>
 <script src="src/learning/course-progress.js"></script>
+<script src="src/decision-quality/decision-quality-engine.js"></script>
+<script src="src/decision-quality/decision-records.js"></script>
+<script src="src/decision-quality/decision-quality-stats.js"></script>
 <script src="src/storage/progress-storage.js"></script>
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
@@ -450,6 +468,7 @@
 <script src="src/ui/poker-card.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
+<script src="src/ui/decision-quality.js"></script>
 <script src="src/ui/profile.js"></script>
 <script src="src/ui/learning-mode.js"></script>
 <script>
@@ -537,13 +556,34 @@ let profileUi = PokerPilotProfileUI.create({
   feedback: UIFeedback
 });
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
+let decisionSequence = 0;
 
 function addHistory(item) {
-  progress.history.unshift({ date: new Date().toISOString(), ...item });
-  progress.history = progress.history.slice(0, 60);
+  progress.history.unshift({ date: item?.date || new Date().toISOString(), ...item });
+  progress.history = DecisionQualityStats.applyRetention(progress.history);
 }
 
-function recordDecision({ grade, tag = null, mode, title, choice, preferred }) {
+function normalizeDecisionConfidence(value) {
+  const normalized = String(value || '').toLowerCase();
+  if (normalized === 'высокая') return 'high';
+  if (normalized === 'низкая') return 'low';
+  if (normalized === 'средняя') return 'medium';
+  return ['low', 'medium', 'high'].includes(normalized) ? normalized : 'medium';
+}
+
+function recordDecision({
+  grade,
+  tag = null,
+  mode,
+  decisionMode = null,
+  title,
+  choice,
+  preferred,
+  userAmount = null,
+  userAmountUnit = null,
+  trainer = null,
+  context = {}
+}) {
   const g = GRADE[grade] || GRADE.mistake;
   progress.decisions += 1;
   progress.scorePoints += g.points;
@@ -552,8 +592,20 @@ function recordDecision({ grade, tag = null, mode, title, choice, preferred }) {
   else progress.streak = 0;
   progress.bestStreak = Math.max(progress.bestStreak, progress.streak);
   if (tag) progress.mistakes[tag] = (progress.mistakes[tag] || 0) + 1;
-  addHistory({ mode, title, choice, preferred, grade });
+  const date = new Date().toISOString();
+  decisionSequence += 1;
+  const record = DecisionQualityRecords.createDecisionRecord({
+    base: { mode, decisionMode: decisionMode || mode, title, choice, preferred, grade, mistakeTag: tag, sequence: decisionSequence },
+    userAction: choice,
+    userAmount,
+    userAmountUnit,
+    trainer: trainer || { actionClass: preferred },
+    context: { mode: decisionMode || mode, ...context },
+    evaluatedAt: date
+  });
+  addHistory(record);
   saveProgress();
+  return record;
 }
 
 function assistMode() {
@@ -580,6 +632,7 @@ function renderProgress() {
   });
   PokerPilotDashboard.render(document, dashboardModel);
   profileUi.render();
+  DecisionQualityUI.renderProfile(document, DecisionQualityStats.getSummary(progress.history));
   renderSoundControls();
   renderSavedHands();
 }
@@ -696,6 +749,60 @@ function mistakeTag(choice, scenario) {
   return 'range_reading';
 }
 
+function decisionAmount(source, action) {
+  if (action === 'call') return Number(source.bet ?? source.callAmount ?? 0) || null;
+  if (action === 'bet') return Number(source.betSize ?? source.size ?? 0) || null;
+  if (action === 'raise') return Number(source.raiseSize ?? source.size ?? 0) || null;
+  if (action === 'allin') return Number(source.stack ?? source.effectiveStack ?? 0) || null;
+  return null;
+}
+
+function decisionAmountUnit(action) {
+  if (action === 'call') return 'additional';
+  if (['bet', 'raise', 'allin'].includes(action)) return 'to_total';
+  return null;
+}
+
+function legacyTrainerSnapshot({
+  preferred,
+  grades = {},
+  source = {},
+  confidence = 'medium',
+  callEV = null,
+  callEVMethod = null,
+  explanation = ''
+}) {
+  const alternatives = Object.entries(grades)
+    .filter(([action, grade]) => action !== preferred && ['good', 'acceptable'].includes(grade))
+    .map(([action, grade]) => ({
+      actionClass: action,
+      amount: decisionAmount(source, action),
+      amountUnit: decisionAmountUnit(action),
+      reason: grade === 'good' ? 'Хорошая альтернативная линия.' : 'Допустимая пограничная линия.'
+    }));
+  return {
+    actionClass: preferred,
+    amount: decisionAmount(source, preferred),
+    amountUnit: decisionAmountUnit(preferred),
+    confidence: normalizeDecisionConfidence(confidence),
+    isMarginal: alternatives.length > 0 || normalizeDecisionConfidence(confidence) === 'low',
+    callEV,
+    callEVMethod,
+    alternatives,
+    explanation
+  };
+}
+
+function renderDecisionQuality(selector, record) {
+  const container = $(selector);
+  if (container) DecisionQualityUI.renderResult(document, container, record?.decisionQuality);
+}
+
+function studyStreet(scenario) {
+  const count = Array.isArray(scenario?.board) ? scenario.board.length : 0;
+  return count >= 5 ? 'river' : count === 4 ? 'turn' : count >= 3 ? 'flop' : 'preflop';
+}
+
 function computeStudyMath(s, trials = 14000) {
   const hero = parseCards(s.hero);
   const board = parseCards(s.board || []);
@@ -752,6 +859,7 @@ function renderStudy() {
   $('#studySpot').innerHTML = `<div class="row"><span class="tag">${s.position} • ${s.category}</span><span class="chip">${TYPES[s.villain]?.name || 'Соперник'}</span></div><div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length ? `<div class="cards">${cardsHTML(board, true)}</div>` : ''}<div class="spot-meta"><div class="stat"><small>Банк до ставки</small><strong>${money(s.potBefore || 0)}</strong></div><div class="stat"><small>Ставка</small><strong>${s.bet ? money(s.bet) : '—'}</strong></div><div class="stat"><small>Банк сейчас</small><strong>${money(pot.potNow)}</strong></div></div><p class="spot-question">${s.text}</p>`;
   $('#studyActions').innerHTML = s.actions.map(a => `<button data-study-action="${a}">${actionLabel(a, a === 'call' ? s.bet : a === 'bet' ? s.betSize : a === 'raise' ? s.raiseSize : 0)}</button>`).join('');
   $('#studyFeedback').className = 'feedback hidden';
+  $('#studyDecisionQuality').classList.add('hidden');
   $('#studyCoach').classList.add('hidden');
   $('#studyCoachAnswer').innerHTML = '';
   $('#studyHintBox').classList.add('hidden');
@@ -762,11 +870,11 @@ function renderStudy() {
   if (assistMode() === 'review') showStudyMath();
 }
 
-function showStudyMath() {
+function showStudyMath(precomputed = null) {
   const box = $('#studyMath');
   box.innerHTML = 'Считаю диапазон и ауты…';
   box.classList.remove('hidden');
-  setTimeout(() => { box.innerHTML = mathHTML(computeStudyMath(currentStudy), currentStudy); }, 20);
+  setTimeout(() => { box.innerHTML = mathHTML(precomputed || computeStudyMath(currentStudy), currentStudy); }, 20);
 }
 
 $('#studyHint').addEventListener('click', () => {
@@ -794,7 +902,36 @@ function answerStudy(choice) {
   const s = currentStudy;
   const grade = s.grades[choice] || 'mistake';
   const preferred = topGradeAction(s.grades);
-  recordDecision({ grade, tag: grade === 'mistake' ? mistakeTag(choice, s) : null, mode: 'study', title: s.title, choice, preferred });
+  const math = computeStudyMath(s);
+  const record = recordDecision({
+    grade,
+    tag: grade === 'mistake' ? mistakeTag(choice, s) : null,
+    mode: 'study',
+    decisionMode: assistMode().toUpperCase(),
+    title: s.title,
+    choice,
+    preferred,
+    userAmount: decisionAmount(s, choice),
+    userAmountUnit: decisionAmountUnit(choice),
+    trainer: legacyTrainerSnapshot({
+      preferred,
+      grades: s.grades,
+      source: s,
+      confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
+      callEV: math.equity?.exact ? (math.ev?.ev ?? null) : null,
+      callEVMethod: math.equity?.exact && math.ev ? 'exact' : null,
+      explanation: s.summary
+    }),
+    context: {
+      scenarioId: s.id,
+      street: studyStreet(s),
+      pot: s.potBefore || 0,
+      toCall: s.bet || 0,
+      position: s.position,
+      opponentType: s.villain
+    }
+  });
+  renderDecisionQuality('#studyDecisionQuality', record);
   const g = GRADE[grade];
   const f = $('#studyFeedback');
   f.className = `feedback ${g.cls}`;
@@ -809,7 +946,7 @@ function answerStudy(choice) {
   $('#studyCoach').classList.remove('hidden');
   $('#studyCoachAnswer').innerHTML = `<strong>Что произошло:</strong> ${s.missed}`;
   $('#studyNext').classList.remove('hidden');
-  showStudyMath();
+  showStudyMath(math);
 }
 
 $$('[data-coach-q]').forEach(b => b.addEventListener('click', () => {
@@ -897,6 +1034,7 @@ function nextRangeSpot() {
   $('#rangeSpot').innerHTML = `<div class="row"><div><span class="tag">${s.pos}</span><h3>${C.handClass(s.cards)}</h3></div><span class="chip">Эффективный стек $300</span></div><div class="cards hero-cards">${cardsHTML(s.cards)}</div><p class="spot-question">${s.context} Что делать?</p>`;
   $('#rangeActions').innerHTML = s.actions.map(a => `<button data-range-action="${a}">${actionLabel(a, a === 'call' ? (s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3) : a === 'raise' ? s.size : 0)}</button>`).join('');
   $('#rangeFeedback').className = 'feedback hidden';
+  $('#rangeDecisionQuality').classList.add('hidden');
   $('#rangeCoach').classList.add('hidden');
   $('#rangeNext').classList.add('hidden');
   $$('[data-range-action]').forEach(b => b.addEventListener('click', () => answerRange(b.dataset.rangeAction)));
@@ -914,7 +1052,36 @@ function answerRange(choice) {
   if (!rangeState.categories[s.category]) rangeState.categories[s.category] = [0, 0];
   rangeState.categories[s.category][0] += GRADE[grade].points;
   rangeState.categories[s.category][1] += 3;
-  recordDecision({ grade, tag: grade === 'mistake' ? (choice === 'fold' ? 'too_tight' : choice === 'call' ? 'passive' : 'too_loose') : null, mode: 'ranges', title: `${s.pos} ${C.handClass(s.cards)}`, choice, preferred });
+  const rangeCallAmount = choice === 'call' ? (s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3) : null;
+  const rangeSource = {
+    ...s,
+    bet: s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3
+  };
+  const record = recordDecision({
+    grade,
+    tag: grade === 'mistake' ? (choice === 'fold' ? 'too_tight' : choice === 'call' ? 'passive' : 'too_loose') : null,
+    mode: 'ranges',
+    decisionMode: assistMode().toUpperCase(),
+    title: `${s.pos} ${C.handClass(s.cards)}`,
+    choice,
+    preferred,
+    userAmount: choice === 'call' ? rangeCallAmount : decisionAmount(rangeSource, choice),
+    userAmountUnit: decisionAmountUnit(choice),
+    trainer: legacyTrainerSnapshot({
+      preferred,
+      grades: s.grades,
+      source: rangeSource,
+      confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
+      explanation: s.reason
+    }),
+    context: {
+      scenarioId: `${s.category}-${s.pos}-${C.handClass(s.cards)}`,
+      street: 'preflop',
+      position: s.pos,
+      effectiveStack: 300
+    }
+  });
+  renderDecisionQuality('#rangeDecisionQuality', record);
   const f = $('#rangeFeedback');
   f.className = `feedback ${GRADE[grade].cls}`;
   f.innerHTML = `<strong>${GRADE[grade].label}.</strong><br>${s.reason}<br><span class="muted">Базовая линия: ${actionLabel(preferred, preferred === 'raise' ? s.size : 0)}.</span>`;
@@ -955,8 +1122,32 @@ function renderCoachReport() {
     range_reading: 'Строй диапазон от префлопа и сужай его после каждого действия. Тип игрока меняет частоту блефов и тонкого вэлью.'
   };
   const plan = top && top[1] ? plans[top[0]] : 'Сыграй не менее 10 решений, чтобы тренер построил персональный план.';
-  $('#coachSummary').innerHTML = `<div class="coach-summary-card"><h4>Общая точность: ${progress.maxPoints ? accuracy+'%' : '—'}</h4><p class="muted">${progress.decisions} решений, лучшая серия ${progress.bestStreak || 0}.</p></div><div class="coach-summary-card"><h4>${top && top[1] ? `Главное слабое место: ${labels[top[0]]}` : 'Данных пока мало'}</h4><p class="muted">${top && top[1] ? `Зафиксировано ${top[1]} ошибок. ${plan}` : plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
-  $('#historyList').innerHTML = progress.history.length ? progress.history.slice(0,15).map(h => `<div class="history-item"><strong>${h.title || h.mode}</strong><small>${new Date(h.date).toLocaleString('ru-RU')} • ${GRADE[h.grade]?.label || ''} • ${String(h.choice || '').toUpperCase()}</small></div>`).join('') : '<p class="muted">История пока пуста.</p>';
+  const coachSummary=$('#coachSummary');
+  coachSummary.innerHTML = `<div class="coach-summary-card"><h4>Общая точность: ${progress.maxPoints ? accuracy+'%' : '—'}</h4><p class="muted">${progress.decisions} решений, лучшая серия ${progress.bestStreak || 0}.</p></div><div class="coach-summary-card"><h4>${top && top[1] ? `Главное слабое место: ${labels[top[0]]}` : 'Данных пока мало'}</h4><p class="muted">${top && top[1] ? `Зафиксировано ${top[1]} ошибок. ${plan}` : plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
+  const dqSummary=DecisionQualityStats.getSummary(progress.history);
+  const dqCard=document.createElement('div');
+  dqCard.className='coach-summary-card';
+  const dqTitle=document.createElement('h4');
+  dqTitle.textContent=dqSummary.average===null?'Decision Quality: недостаточно данных':`Decision Quality: ${Math.round(dqSummary.average)}`;
+  const dqText=document.createElement('p');
+  dqText.className='muted';
+  const weakestStreet=Object.entries(dqSummary.byStreet||{}).sort((a,b)=>a[1].average-b[1].average)[0];
+  const qualityByMistake={};
+  progress.history.forEach(record=>{
+    if(!record?.mistakeTag||record?.decisionQuality?.isRated!==true)return;
+    if(!qualityByMistake[record.mistakeTag])qualityByMistake[record.mistakeTag]=[];
+    qualityByMistake[record.mistakeTag].push(record.decisionQuality.score);
+  });
+  const weakestQualityTag=Object.entries(qualityByMistake)
+    .map(([key,scores])=>[key,scores.reduce((sum,value)=>sum+value,0)/scores.length,scores.length])
+    .sort((a,b)=>a[1]-b[1])[0];
+  const trendText=dqSummary.trend.direction==='UP'?`Тренд последних решений +${dqSummary.trend.delta}.`:dqSummary.trend.direction==='DOWN'?`Тренд последних решений ${dqSummary.trend.delta}.`:dqSummary.trend.direction==='STABLE'?'Тренд последних решений стабилен.':'Для тренда пока мало данных.';
+  dqText.textContent=dqSummary.ratedCount
+    ? `${dqSummary.ratedCount} оценённых решений${dqSummary.sampleStatus!=='ESTABLISHED'?' — выборка пока формируется':''}. ${trendText}${weakestStreet?` Самая слабая улица: ${weakestStreet[0].toUpperCase()} — ${Math.round(weakestStreet[1].average)}.`:''}${weakestQualityTag?` Низшая средняя по категории «${labels[weakestQualityTag[0]]||weakestQualityTag[0]}» — ${Math.round(weakestQualityTag[1])}.`:''} Это дополнительный сигнал; план слабых тем по-прежнему строится по фактическим ошибкам.`
+    :'Сыграйте решения с доступной рекомендацией тренера, чтобы сформировать дополнительный сигнал.';
+  dqCard.append(dqTitle,dqText);
+  coachSummary.appendChild(dqCard);
+  DecisionQualityUI.renderHistory(document,$('#historyList'),progress.history,15);
 }
 $('#startFocusTraining').addEventListener('click', () => {
   const top = Object.entries(progress.mistakes || {}).sort((a,b)=>b[1]-a[1])[0]?.[0];
@@ -1176,6 +1367,7 @@ function dealLiveHand(){
   session.collectingBets=false;
   session.boardRevealActive=false;
   session.winnerSummary='';
+  $('#liveDecisionQuality').classList.add('hidden');
   session.players.forEach(p=>{
     p.cards=[session.deck.pop(),session.deck.pop()];
     p.folded=false;
@@ -1707,7 +1899,7 @@ function renderLive(){
   syncLivePauseButton();
 }
 function showLiveMath(precomputed=null){const box=$('#mathBox');box.innerHTML='Считаю…';box.classList.remove('hidden');setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);}
-function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
+function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#liveDecisionQuality').classList.add('hidden');$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
 function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
 $('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
 $('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
@@ -1746,7 +1938,45 @@ function handleHeroAction(action,amount=0){
   if((action==='bet'||action==='raise')&&!amount){toggleSizer(action);return;}
   const evaluation=evaluateLiveAction(action,amount);
   session.decisionGrades.push(GRADE[evaluation.grade].points);
-  recordDecision({grade:evaluation.grade,tag:evaluation.grade==='mistake'?(action==='fold'?'too_tight':action==='call'||action==='check'?'passive':'overplay'):null,mode:'live',title:`${streetText()} • ${C.handClass(session.players[0].cards)}`,choice:action,preferred:evaluation.best});
+  const liveCallEV=evaluation.math?.equity?.exact&&session.toCall>0
+    ? C.callEV({equity:evaluation.math.equity.equity,potBefore:session.pot,bet:0,call:session.toCall}).ev
+    : null;
+  const liveAlternatives=evaluation.grade==='good'||evaluation.grade==='acceptable'
+    ? [{actionClass:action,amount:null,amountUnit:null,reason:'Допустимая линия в текущей учебной модели.'}]
+    : [];
+  const record=recordDecision({
+    grade:evaluation.grade,
+    tag:evaluation.grade==='mistake'?(action==='fold'?'too_tight':action==='call'||action==='check'?'passive':'overplay'):null,
+    mode:'live',
+    decisionMode:'LIVE',
+    title:`${streetText()} • ${C.handClass(session.players[0].cards)}`,
+    choice:action,
+    preferred:evaluation.best,
+    userAmount:action==='call'?session.toCall:amount,
+    userAmountUnit:decisionAmountUnit(action),
+    trainer:{
+      actionClass:evaluation.best,
+      amount:null,
+      amountUnit:null,
+      confidence:normalizeDecisionConfidence(evaluation.confidence),
+      isMarginal:normalizeDecisionConfidence(evaluation.confidence)==='low'||evaluation.grade==='acceptable',
+      callEV:liveCallEV,
+      callEVMethod:liveCallEV!==null?'exact':null,
+      alternatives:liveAlternatives,
+      explanation:evaluation.why
+    },
+    context:{
+      scenarioId:`${session.id}-${session.hands}-${session.street}-${session.actionHistory.length}`,
+      sessionId:session.id,
+      street:session.street,
+      pot:session.pot,
+      toCall:session.toCall,
+      effectiveStack:session.players[0].stack,
+      position:positionsFor(session.n,session.button)[0],
+      opponents:activeOpponents().length
+    }
+  });
+  renderDecisionQuality('#liveDecisionQuality',record);
   const feedback=$('#liveFeedback');
   feedback.className=`feedback ${GRADE[evaluation.grade].cls}`;
   feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;
@@ -2022,7 +2252,7 @@ function saveCurrentLiveHand(){
 }
 $('#saveLiveHand').addEventListener('click',saveCurrentLiveHand);
 $('#nextHand').addEventListener('click',()=>{if(session)dealLiveHand();});
-function finishSession(reason='Сессия завершена.'){if(!session)return;const result=session.players[0].stack-session.initial;flowController.exit();presentationQueue.exit();addHistory({mode:'session',title:`Sycuan Live • ${session.hands} рук`,choice:signedMoney(result),preferred:'',grade:result>=0?'good':'acceptable'});saveProgress();alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.`);session=null;$('#liveGame').classList.add('hidden');$('#liveSetup').classList.remove('hidden');route('home');}
+function finishSession(reason='Сессия завершена.'){if(!session)return;const result=session.players[0].stack-session.initial;const dq=DecisionQualityStats.getSessionSummary(progress.history,session.id);flowController.exit();presentationQueue.exit();addHistory({mode:'session',title:`Sycuan Live • ${session.hands} рук`,choice:signedMoney(result),preferred:'',grade:result>=0?'good':'acceptable'});saveProgress();const dqLine=dq.average===null?'Качество решений: недостаточно данных.':`Качество решений: ${Math.round(dq.average)} (${dq.ratedCount} реш.). Лучшее: ${Math.round(dq.bestDecision.decisionQuality.score)}, худшее: ${Math.round(dq.worstDecision.decisionQuality.score)}.${dq.preflop.average!==null?` Префлоп: ${Math.round(dq.preflop.average)}.`:''}${dq.postflop.average!==null?` Постфлоп: ${Math.round(dq.postflop.average)}.`:''}${dq.trend.delta!==null?` К прошлой сессии: ${dq.trend.delta>0?'+':''}${dq.trend.delta}.`:''}`;alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.\n${dqLine}`);session=null;$('#liveGame').classList.add('hidden');$('#liveSetup').classList.remove('hidden');route('home');}
 $('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?'))finishSession();});
 
 

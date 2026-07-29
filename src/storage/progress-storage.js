@@ -31,15 +31,25 @@ function defaultProgress() {
   };
 }
 
+function normalizeDecisionHistory(value) {
+  return typeof DecisionQualityRecords !== 'undefined'
+    ? DecisionQualityRecords.normalizeHistory(value)
+    : (Array.isArray(value) ? value : []);
+}
+
 function loadProgress() {
   try {
     const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || localStorage.getItem(PREVIOUS_STORAGE_KEY) || 'null');
-    if (current) return CourseProgress.migrateProgress({
+    if (current) {
+      const migrated = CourseProgress.migrateProgress({
       ...defaultProgress(),
       ...current,
       mistakes: { ...defaultProgress().mistakes, ...(current.mistakes || {}) },
-      savedHands: Array.isArray(current.savedHands) ? current.savedHands : []
-    });
+      savedHands: Array.isArray(current.savedHands) ? current.savedHands : [],
+      history: normalizeDecisionHistory(current.history)
+      });
+      return migrated;
+    }
     const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
     if (old) {
       return CourseProgress.migrateProgress({
@@ -49,7 +59,7 @@ function loadProgress() {
         maxPoints: (old.decisions || 0) * 3,
         sessions: old.sessions || 0,
         mistakes: { ...defaultProgress().mistakes, ...(old.mistakes || {}) },
-        history: old.history || []
+        history: normalizeDecisionHistory(old.history)
       });
     }
   } catch (_) {}
@@ -57,6 +67,9 @@ function loadProgress() {
 }
 
 function saveProgress() {
+  if (typeof DecisionQualityRecords !== 'undefined') {
+    progress.history = DecisionQualityRecords.normalizeHistory(progress.history);
+  }
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch (_) {}
   renderProgress();
 }
