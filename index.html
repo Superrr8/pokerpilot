@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="src/styles/motion.css">
   <link rel="stylesheet" href="src/styles/live-session.css">
   <link rel="stylesheet" href="src/styles/decision-quality.css">
+  <link rel="stylesheet" href="src/styles/poker-iq.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
 </head>
 <body>
@@ -66,6 +67,7 @@
               <span class="home-profile-copy">
                 <strong id="homeProfileName">Player</strong>
                 <small id="homeProfileLevel">Level 1 · 0 XP</small>
+                <small id="homeProfileIq">Poker IQ формируется</small>
                 <span id="homeProfileProgress" class="profile-mini-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс Level 1: 0 / 500 XP"><i></i></span>
               </span>
               <b aria-hidden="true">›</b>
@@ -310,6 +312,29 @@
             <div class="profile-metric"><small>Rating</small><strong id="profileRating">Без рейтинга</strong></div>
             <div class="profile-metric"><small>Rank</small><strong id="profileRank">Без ранга</strong></div>
           </div>
+          <div id="profilePokerIqSummary" class="poker-iq-profile-detail" data-sample-status="NONE" aria-live="polite" aria-label="Poker IQ не рассчитан. Нужно минимум 30 оцениваемых решений.">
+            <div class="poker-iq-heading">
+              <div>
+                <small>Текущий ранг</small>
+                <strong id="profilePokerIqRank">Без ранга</strong>
+              </div>
+              <span id="profilePokerIqTrend" class="poker-iq-trend">Недостаточно данных</span>
+            </div>
+            <p id="profilePokerIqStatus" class="muted">Нужно минимум 30 оцениваемых решений. Начните с первого решения.</p>
+            <div id="profilePokerIqProgress" class="poker-iq-rank-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс Poker IQ: недостаточно данных"><i></i></div>
+            <small id="profilePokerIqNext" class="muted">Недостаточно данных</small>
+            <div class="poker-iq-summary-grid">
+              <span><small>Оценено решений</small><strong id="profilePokerIqRated">0</strong></span>
+              <span><small>Стабильность</small><strong id="profilePokerIqConsistency">Недостаточно данных</strong></span>
+            </div>
+            <div class="poker-iq-street-grid" aria-label="Poker IQ по улицам">
+              <span><small>Preflop</small><strong id="profilePokerIqStreet-preflop">Недостаточно данных</strong></span>
+              <span><small>Flop</small><strong id="profilePokerIqStreet-flop">Недостаточно данных</strong></span>
+              <span><small>Turn</small><strong id="profilePokerIqStreet-turn">Недостаточно данных</strong></span>
+              <span><small>River</small><strong id="profilePokerIqStreet-river">Недостаточно данных</strong></span>
+              <span><small>Postflop</small><strong id="profilePokerIqStreet-postflop">Недостаточно данных</strong></span>
+            </div>
+          </div>
           <div class="decision-quality-profile-detail" aria-live="polite">
             <span id="profileDecisionQualityDetail" class="muted">Сыграйте больше решений для оценки.</span>
             <span id="profileDecisionQualityTrend" class="muted">Тренд пока недоступен</span>
@@ -454,6 +479,9 @@
 <script src="src/decision-quality/decision-quality-engine.js"></script>
 <script src="src/decision-quality/decision-records.js"></script>
 <script src="src/decision-quality/decision-quality-stats.js"></script>
+<script src="src/poker-iq/poker-iq-config.js"></script>
+<script src="src/poker-iq/poker-iq-engine.js"></script>
+<script src="src/poker-iq/poker-iq-stats.js"></script>
 <script src="src/storage/progress-storage.js"></script>
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
@@ -553,6 +581,7 @@ let learningSound = appSound;
 let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,
   getStatistics: () => ProfileStatistics.fromProgress(progress),
+  getPokerIQ: () => PokerIQStats.getSummary(progress.history),
   feedback: UIFeedback
 });
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
@@ -1147,6 +1176,32 @@ function renderCoachReport() {
     :'Сыграйте решения с доступной рекомендацией тренера, чтобы сформировать дополнительный сигнал.';
   dqCard.append(dqTitle,dqText);
   coachSummary.appendChild(dqCard);
+  const pokerIqSummary=PokerIQStats.getSummary(progress.history);
+  const iqCard=document.createElement('div');
+  iqCard.className='coach-summary-card';
+  const iqTitle=document.createElement('h4');
+  iqTitle.textContent=pokerIqSummary.isRated
+    ? `Poker IQ: ${pokerIqSummary.score} · ${pokerIqSummary.rank.label}`
+    :'Poker IQ: не рассчитан';
+  const iqText=document.createElement('p');
+  iqText.className='muted';
+  if(pokerIqSummary.sampleStatus==='NONE'){
+    iqText.textContent='Сыграйте хотя бы одно оцениваемое решение. Для сформированной оценки нужно минимум 30 решений.';
+  }else if(pokerIqSummary.sampleStatus!=='ESTABLISHED'){
+    iqText.textContent=`Poker IQ формируется: оценено ${pokerIqSummary.ratedDecisions} из необходимых 30 решений. Не делайте сильных выводов по малой выборке.`;
+  }else{
+    const availableStreets=Object.entries(pokerIqSummary.breakdown||{}).filter(([,value])=>Number.isFinite(value)&&value!==null);
+    const strongest=availableStreets.slice().sort((a,b)=>b[1]-a[1])[0];
+    const weakest=availableStreets.slice().sort((a,b)=>a[1]-b[1])[0];
+    const trend=pokerIqSummary.trend.direction==='UP'
+      ? `Тренд растёт на ${Math.abs(pokerIqSummary.trend.delta)} IQ.`
+      :pokerIqSummary.trend.direction==='DOWN'
+        ?`Тренд снижается на ${Math.abs(pokerIqSummary.trend.delta)} IQ.`
+        :pokerIqSummary.trend.direction==='STABLE'?'Тренд стабилен.':'Для тренда пока мало данных.';
+    iqText.textContent=`Оценка основана на ${pokerIqSummary.ratedDecisions} решениях. ${trend}${strongest?` Сильнейший срез: ${strongest[0].toUpperCase()} — ${strongest[1]}.`:''}${weakest?` Зона внимания: ${weakest[0].toUpperCase()} — ${weakest[1]}.`:''} Денежный результат раздач в Poker IQ не входит.`;
+  }
+  iqCard.append(iqTitle,iqText);
+  coachSummary.appendChild(iqCard);
   DecisionQualityUI.renderHistory(document,$('#historyList'),progress.history,15);
 }
 $('#startFocusTraining').addEventListener('click', () => {
@@ -1178,7 +1233,7 @@ function positionsFor(n, button) {
 function orderedFrom(start,n){return Array.from({length:n},(_,k)=>(start+k)%n);}
 function typePool(style){if(style==='passive')return ['passive','station','new','passive','reg','nit'];if(style==='wild')return ['wild','aggro','station','new','wild','reg'];return ['reg','passive','aggro','new','station','nit','wild'];}
 function createPlayers(n,buyIn,style){const pool=typePool(style);return Array.from({length:n},(_,i)=>i===0?{id:i,name:'YOU',type:'hero',stack:buyIn,cards:[],folded:false,contrib:0,streetContrib:0}:{id:i,name:TYPES[pool[(i-1)%pool.length]].short,type:pool[(i-1)%pool.length],stack:Math.max(80,buyIn+sample([-60,-30,0,50,100])),cards:[],folded:false,contrib:0,streetContrib:0});}
-function startSession(){const buyIn=+$('#buyIn').value,n=+$('#tableSize').value,style=$('#tableStyle').value;flowController.exit();presentationQueue.exit();flowController=createLiveFlowController();presentationQueue=createLivePresentationQueue();session={id:`session-${Date.now()}`,initial:buyIn,n,style,players:createPlayers(n,buyIn,style),button:Math.floor(Math.random()*n),hands:0,pot:0,presentedPot:0,board:[],deck:[],street:'preflop',currentBet:0,toCall:0,awaiting:null,villain:null,observing:false,lastCompletedHand:null,completedHand:null,log:[],actionHistory:[],decisionGrades:[]};$('#liveSetup').classList.add('hidden');$('#liveGame').classList.remove('hidden');progress.sessions++;saveProgress();syncLivePauseButton();dealLiveHand();}
+function startSession(){const buyIn=+$('#buyIn').value,n=+$('#tableSize').value,style=$('#tableStyle').value;flowController.exit();presentationQueue.exit();flowController=createLiveFlowController();presentationQueue=createLivePresentationQueue();session={id:`session-${Date.now()}`,initial:buyIn,n,style,players:createPlayers(n,buyIn,style),button:Math.floor(Math.random()*n),hands:0,pot:0,presentedPot:0,board:[],deck:[],street:'preflop',currentBet:0,toCall:0,awaiting:null,villain:null,observing:false,lastCompletedHand:null,completedHand:null,log:[],actionHistory:[],decisionGrades:[],pokerIqBeforeSession:PokerIQStats.getSummary(progress.history)};$('#liveSetup').classList.add('hidden');$('#liveGame').classList.remove('hidden');progress.sessions++;saveProgress();syncLivePauseButton();dealLiveHand();}
 $('#startSession').addEventListener('click',startSession);
 function applyLiveFoldVisual(playerId){
   const player=session?.players[playerId];
@@ -2252,7 +2307,47 @@ function saveCurrentLiveHand(){
 }
 $('#saveLiveHand').addEventListener('click',saveCurrentLiveHand);
 $('#nextHand').addEventListener('click',()=>{if(session)dealLiveHand();});
-function finishSession(reason='Сессия завершена.'){if(!session)return;const result=session.players[0].stack-session.initial;const dq=DecisionQualityStats.getSessionSummary(progress.history,session.id);flowController.exit();presentationQueue.exit();addHistory({mode:'session',title:`Sycuan Live • ${session.hands} рук`,choice:signedMoney(result),preferred:'',grade:result>=0?'good':'acceptable'});saveProgress();const dqLine=dq.average===null?'Качество решений: недостаточно данных.':`Качество решений: ${Math.round(dq.average)} (${dq.ratedCount} реш.). Лучшее: ${Math.round(dq.bestDecision.decisionQuality.score)}, худшее: ${Math.round(dq.worstDecision.decisionQuality.score)}.${dq.preflop.average!==null?` Префлоп: ${Math.round(dq.preflop.average)}.`:''}${dq.postflop.average!==null?` Постфлоп: ${Math.round(dq.postflop.average)}.`:''}${dq.trend.delta!==null?` К прошлой сессии: ${dq.trend.delta>0?'+':''}${dq.trend.delta}.`:''}`;alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.\n${dqLine}`);session=null;$('#liveGame').classList.add('hidden');$('#liveSetup').classList.remove('hidden');route('home');}
+function finishSession(reason='Сессия завершена.'){
+  if(!session)return;
+  const result=session.players[0].stack-session.initial;
+  const dq=DecisionQualityStats.getSessionSummary(progress.history,session.id);
+  const before=session.pokerIqBeforeSession||PokerIQStats.getSummary([]);
+  const after=PokerIQStats.getSummary(progress.history);
+  const compactIq=value=>({
+    score:Number.isFinite(value?.score)?value.score:null,
+    rank:value?.rank?.label||'Без ранга',
+    sampleStatus:value?.sampleStatus||'NONE',
+    ratedDecisions:value?.ratedDecisions||0,
+    modelVersion:value?.modelVersion||PokerIQ.MODEL_VERSION
+  });
+  const pokerIQSnapshot={
+    before:compactIq(before),
+    after:compactIq(after),
+    delta:Number.isFinite(before?.score)&&Number.isFinite(after?.score)?after.score-before.score:null
+  };
+  flowController.exit();
+  presentationQueue.exit();
+  addHistory({
+    mode:'session',
+    title:`Sycuan Live • ${session.hands} рук`,
+    choice:signedMoney(result),
+    preferred:'',
+    grade:result>=0?'good':'acceptable',
+    pokerIQSnapshot
+  });
+  saveProgress();
+  const dqLine=dq.average===null
+    ?'Качество решений: недостаточно данных.'
+    :`Качество решений: ${Math.round(dq.average)} (${dq.ratedCount} реш.). Лучшее: ${Math.round(dq.bestDecision.decisionQuality.score)}, худшее: ${Math.round(dq.worstDecision.decisionQuality.score)}.${dq.preflop.average!==null?` Префлоп: ${Math.round(dq.preflop.average)}.`:''}${dq.postflop.average!==null?` Постфлоп: ${Math.round(dq.postflop.average)}.`:''}${dq.trend.delta!==null?` К прошлой сессии: ${dq.trend.delta>0?'+':''}${dq.trend.delta}.`:''}`;
+  const iqLine=after.isRated
+    ?`Poker IQ: ${after.score} · ${after.rank.label}${pokerIQSnapshot.delta===null?'':` (${pokerIQSnapshot.delta>=0?'+':''}${pokerIQSnapshot.delta} за сессию)`}.`
+    :'Poker IQ: недостаточно оцениваемых решений.';
+  alert(`${reason}\nРезультат: ${signedMoney(result)} за ${session.hands} раздач.\n${dqLine}\n${iqLine}`);
+  session=null;
+  $('#liveGame').classList.add('hidden');
+  $('#liveSetup').classList.remove('hidden');
+  route('home');
+}
 $('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?'))finishSession();});
 
 

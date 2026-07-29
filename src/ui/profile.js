@@ -14,9 +14,72 @@
     return Number.isFinite(numeric) && numeric >= 0 ? numeric : 0;
   }
 
-  function createViewModel({ profile = {}, statistics = {} } = {}) {
+  function optionalNumber(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : null;
+  }
+
+  function createPokerIqViewModel(value = {}) {
+    const summary = value && typeof value === 'object' ? value : {};
+    const score = optionalNumber(summary.score);
+    const ratedDecisions = Math.max(0, Math.floor(number(summary.ratedDecisions)));
+    const sampleStatus = ['NONE', 'PROVISIONAL', 'FORMING', 'ESTABLISHED'].includes(summary.sampleStatus)
+      ? summary.sampleStatus
+      : ratedDecisions ? 'PROVISIONAL' : 'NONE';
+    const isRated = summary.isRated === true && score !== null;
+    const rank = summary.rank && typeof summary.rank === 'object' ? summary.rank : {};
+    const trend = summary.trend && typeof summary.trend === 'object' ? summary.trend : {};
+    const details = {
+      NONE: 'Нужно минимум 30 оцениваемых решений. Начните с первого решения.',
+      PROVISIONAL: `Предварительный Poker IQ · ${ratedDecisions} из 30 решений`,
+      FORMING: `Poker IQ формируется · ${ratedDecisions} из 30 решений`,
+      ESTABLISHED: `Оценка сформирована по ${ratedDecisions} решениям`
+    };
+    const trendLabels = {
+      UP: `↗ Растёт${Number.isFinite(Number(trend.delta)) ? ` · +${Math.abs(Math.round(Number(trend.delta)))}` : ''}`,
+      DOWN: `↘ Снижается${Number.isFinite(Number(trend.delta)) ? ` · −${Math.abs(Math.round(Number(trend.delta)))}` : ''}`,
+      STABLE: '→ Стабилен',
+      INSUFFICIENT_DATA: '— Недостаточно данных'
+    };
+    const breakdown = summary.breakdown && typeof summary.breakdown === 'object' ? summary.breakdown : {};
+    const streetValue = street => optionalNumber(breakdown[street]) !== null
+      ? Math.round(optionalNumber(breakdown[street]))
+      : null;
+    return {
+      isRated,
+      score: isRated ? Math.round(score) : null,
+      displayScore: isRated ? String(Math.round(score)) : 'Не рассчитан',
+      sampleStatus,
+      statusLabel: details[sampleStatus],
+      ratedDecisions,
+      rank: {
+        label: isRated ? String(rank.label || 'Без ранга') : 'Без ранга',
+        nextLabel: rank.nextRank?.label ? String(rank.nextRank.label) : null,
+        iqToNext: optionalNumber(rank.iqToNext) !== null ? Math.max(0, Math.round(optionalNumber(rank.iqToNext))) : null,
+        progressPercent: Math.max(0, Math.min(100, Math.round(number(rank.progressPercent))))
+      },
+      trend: {
+        direction: String(trend.direction || 'INSUFFICIENT_DATA'),
+        label: trendLabels[trend.direction] || trendLabels.INSUFFICIENT_DATA
+      },
+      consistency: optionalNumber(summary.components?.consistency) !== null
+        ? Math.round(optionalNumber(summary.components.consistency))
+        : null,
+      streets: {
+        preflop: streetValue('preflop'),
+        flop: streetValue('flop'),
+        turn: streetValue('turn'),
+        river: streetValue('river'),
+        postflop: streetValue('postflop')
+      }
+    };
+  }
+
+  function createViewModel({ profile = {}, statistics = {}, pokerIQ = null } = {}) {
     const progression = profile.progression || {};
     const ratings = profile.ratings || {};
+    const pokerIqModel = createPokerIqViewModel(pokerIQ || {});
     const xpIntoLevel = number(progression.xpIntoLevel);
     const xpToNextLevel = Math.max(1, number(progression.xpToNextLevel) || 500);
     const rank = ratings.rank && ratings.rank !== 'Unranked' ? String(ratings.rank) : 'Без ранга';
@@ -38,17 +101,22 @@
       xpToNextLevel,
       progressPercent: Math.max(0, Math.min(100, Math.round(xpIntoLevel / xpToNextLevel * 100))),
       progressLabel: `${xpIntoLevel} / ${xpToNextLevel} XP`,
+      pokerIQ: pokerIqModel,
       ratings: {
-        pokerIQ: ratings.pokerIQ === null || ratings.pokerIQ === undefined
-          ? translate('profile.notCalculated', 'Не рассчитан')
-          : String(ratings.pokerIQ),
+        pokerIQ: pokerIqModel.isRated
+          ? pokerIqModel.displayScore
+          : ratings.pokerIQ === null || ratings.pokerIQ === undefined
+            ? translate('profile.notCalculated', 'Не рассчитан')
+            : String(ratings.pokerIQ),
         decisionQuality: ratings.decisionQuality === null || ratings.decisionQuality === undefined
           ? translate('profile.notCalculatedFeminine', 'Не рассчитана')
           : String(ratings.decisionQuality),
         rating: ratings.elo === null || ratings.elo === undefined
           ? translate('profile.unrated', 'Без рейтинга')
           : String(ratings.elo),
-        rank: rank === 'Без ранга' ? translate('profile.unranked', rank) : rank
+        rank: pokerIqModel.isRated
+          ? pokerIqModel.rank.label
+          : rank === 'Без ранга' ? translate('profile.unranked', rank) : rank
       },
       statistics: {
         isEmpty: Boolean(statistics.isEmpty),
@@ -84,6 +152,13 @@
     setAvatar(document, '#homeProfileAvatar', model);
     setText(document, '#homeProfileName', model.displayName);
     setText(document, '#homeProfileLevel', `Level ${model.level} · ${model.totalXp} XP`);
+    setText(
+      document,
+      '#homeProfileIq',
+      model.pokerIQ.isRated
+        ? `Poker IQ ${model.pokerIQ.displayScore} · ${model.pokerIQ.rank.label}`
+        : 'Poker IQ формируется'
+    );
     const bar = document?.querySelector('#homeProfileProgress');
     if (bar) {
       bar.style.setProperty('--profile-progress', `${model.progressPercent}%`);
@@ -109,6 +184,50 @@
     setText(document, '#profileDecisionQuality', model.ratings.decisionQuality);
     setText(document, '#profileRating', model.ratings.rating);
     setText(document, '#profileRank', model.ratings.rank);
+    setText(document, '#profilePokerIqRank', model.pokerIQ.rank.label);
+    setText(document, '#profilePokerIqStatus', model.pokerIQ.statusLabel);
+    setText(document, '#profilePokerIqTrend', model.pokerIQ.trend.label);
+    setText(document, '#profilePokerIqRated', model.pokerIQ.ratedDecisions);
+    setText(
+      document,
+      '#profilePokerIqConsistency',
+      model.pokerIQ.consistency === null ? 'Недостаточно данных' : `${model.pokerIQ.consistency} / 100`
+    );
+    setText(
+      document,
+      '#profilePokerIqNext',
+      model.pokerIQ.rank.nextLabel && model.pokerIQ.rank.iqToNext !== null
+        ? `${model.pokerIQ.rank.iqToNext} IQ до ранга «${model.pokerIQ.rank.nextLabel}»`
+        : model.pokerIQ.isRated ? 'Максимальный ранг' : 'Недостаточно данных'
+    );
+    const pokerIqProgress = document?.querySelector('#profilePokerIqProgress');
+    if (pokerIqProgress) {
+      pokerIqProgress.style.setProperty('--poker-iq-progress', `${model.pokerIQ.rank.progressPercent}%`);
+      pokerIqProgress.setAttribute('aria-valuenow', String(model.pokerIQ.rank.progressPercent));
+      pokerIqProgress.setAttribute(
+        'aria-label',
+        model.pokerIQ.isRated
+          ? `Прогресс ранга ${model.pokerIQ.rank.label}: ${model.pokerIQ.rank.progressPercent}%`
+          : 'Прогресс Poker IQ: недостаточно данных'
+      );
+    }
+    const pokerIqSummary = document?.querySelector('#profilePokerIqSummary');
+    if (pokerIqSummary) {
+      pokerIqSummary.setAttribute(
+        'aria-label',
+        model.pokerIQ.isRated
+          ? `Poker IQ ${model.pokerIQ.displayScore}, ранг ${model.pokerIQ.rank.label}. ${model.pokerIQ.statusLabel}.`
+          : `Poker IQ не рассчитан. ${model.pokerIQ.statusLabel}.`
+      );
+      pokerIqSummary.dataset.sampleStatus = model.pokerIQ.sampleStatus;
+    }
+    Object.entries(model.pokerIQ.streets).forEach(([street, value]) => {
+      setText(
+        document,
+        `#profilePokerIqStreet-${street}`,
+        value === null ? 'Недостаточно данных' : value
+      );
+    });
     setText(document, '#profileHandsPlayed', model.statistics.handsPlayed || 'Нет данных');
     setText(document, '#profileSessionsPlayed', model.statistics.sessionsPlayed);
     setText(document, '#profileDecisionsMade', model.statistics.decisionsMade);
@@ -143,6 +262,7 @@
   function create({
     store,
     getStatistics = () => ({}),
+    getPokerIQ = () => null,
     feedback = root.UIFeedback,
     document = root.document
   } = {}) {
@@ -157,7 +277,8 @@
     function currentModel() {
       return createViewModel({
         profile: store.getProfile(),
-        statistics: getStatistics()
+        statistics: getStatistics(),
+        pokerIQ: getPokerIQ()
       });
     }
 
@@ -290,6 +411,7 @@
 
   const api = Object.freeze({
     AVATAR_SYMBOLS,
+    createPokerIqViewModel,
     createViewModel,
     renderHomeEntry,
     renderProfile,

@@ -59,11 +59,21 @@
 
   function createHistoryItemViewModel(record = {}) {
     const result = createResultViewModel(record.decisionQuality);
+    const iqBefore = Number(record.pokerIQSnapshot?.before?.score);
+    const iqAfter = Number(record.pokerIQSnapshot?.after?.score);
+    const hasPokerIqSnapshot = Number.isFinite(iqBefore) && Number.isFinite(iqAfter);
     return {
       ...result,
       action: String(record.choice || record.userAction || '—').toUpperCase(),
       recommendedAction: String(record.trainerSnapshot?.actionClass || record.preferred || '').toUpperCase(),
-      title: String(record.title || record.mode || 'Решение')
+      title: String(record.title || record.mode || 'Решение'),
+      pokerIQ: hasPokerIqSnapshot
+        ? {
+          before: Math.round(iqBefore),
+          after: Math.round(iqAfter),
+          delta: Math.round(iqAfter - iqBefore)
+        }
+        : null
     };
   }
 
@@ -155,6 +165,14 @@
           : model.action),
         element(document, 'span', 'muted', model.reason)
       );
+      if (model.pokerIQ) {
+        item.appendChild(element(
+          document,
+          'span',
+          'poker-iq-history-delta',
+          `Poker IQ ${model.pokerIQ.before} → ${model.pokerIQ.after} (${model.pokerIQ.delta >= 0 ? '+' : ''}${model.pokerIQ.delta})`
+        ));
+      }
       container.appendChild(item);
     });
   }

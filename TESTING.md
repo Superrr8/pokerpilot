@@ -54,6 +54,13 @@ Decision Quality Engine: формула, 24 контрольных решени�
 node --test tests/decision-quality-engine.test.cjs tests/decision-quality-records.test.cjs tests/decision-quality-analytics.test.cjs tests/decision-quality-ui-contract.test.cjs
 ```
 
+Poker IQ: детерминированный engine, 20 контрольных профилей, устойчивость,
+кэш и UI-контракты:
+
+```sh
+node --test tests/poker-iq-engine.test.cjs tests/poker-iq-stability.test.cjs tests/poker-iq-cache.test.cjs tests/poker-iq-ui-contract.test.cjs
+```
+
 Полный набор тестов проекта:
 
 ```sh
