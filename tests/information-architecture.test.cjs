@@ -124,9 +124,12 @@ test('обычное переключение разделов сохраняе�
   assert.doesNotMatch(html, /if \(name === 'study'\) renderStudy\(\)/);
 });
 
-test('профиль показывает только реальные локальные данные и честный empty state', () => {
+test('профиль показывает только реальные локальные данные и честные placeholders рейтингов', () => {
   assert.match(html, /Недостаточно решений для оценки/);
-  assert.doesNotMatch(html, />\s*(?:Poker IQ|XP|Рейтинг пользователя)\s*</i);
+  assert.match(html, /Poker IQ[\s\S]*Не рассчитан/);
+  assert.match(html, /Decision Quality[\s\S]*Не рассчитана/);
+  assert.match(html, /Rating[\s\S]*Без рейтинга/);
+  assert.doesNotMatch(html, /Poker IQ[\s\S]{0,120}>\s*\d+\s*</);
   assert.match(html, /progress\.decisions/);
   assert.match(html, /progress\.history/);
 });

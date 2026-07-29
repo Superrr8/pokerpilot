@@ -14,7 +14,13 @@
     'live.saveHand': '💾 Save Hand',
     'live.savedSuccess': 'Hand saved successfully',
     'analysis.savedHands': 'Сохранённые раздачи',
-    'profile.insufficientData': 'Недостаточно решений для оценки'
+    'profile.insufficientData': 'Недостаточно решений для оценки',
+    'profile.notCalculated': 'Не рассчитан',
+    'profile.notCalculatedFeminine': 'Не рассчитана',
+    'profile.unrated': 'Без рейтинга',
+    'profile.unranked': 'Без ранга',
+    'profile.saved': 'Профиль сохранён',
+    'profile.saveError': 'Не удалось сохранить профиль на устройстве'
   });
 
   function t(key, fallback = key) {

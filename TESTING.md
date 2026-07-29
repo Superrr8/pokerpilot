@@ -41,6 +41,12 @@ Live Session: модель сохранённой руки, UI-контракт,
 node --test tests/live-hand-model.test.cjs tests/live-session-ui-contract.test.cjs tests/live-flow-controller.test.cjs tests/live-presentation-queue.test.cjs tests/live-ux-controller.test.cjs tests/live-motion-system.test.cjs
 ```
 
+Profile Foundation: версионируемый store, XP, адаптер существующей статистики и UI-контракты:
+
+```sh
+node --test tests/profile-store.test.cjs tests/profile-statistics-adapter.test.cjs tests/profile-ui-contract.test.cjs
+```
+
 Полная проверка всех 2 598 960 пятикарточных комбинаций запускается отдельно:
 
 ```sh

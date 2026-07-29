@@ -34,6 +34,7 @@
 
   </style>
   <link rel="stylesheet" href="src/styles/app-shell.css">
+  <link rel="stylesheet" href="src/styles/profile.css">
   <link rel="stylesheet" href="src/styles/motion.css">
   <link rel="stylesheet" href="src/styles/live-session.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
@@ -59,6 +60,15 @@
       <div class="dashboard-shell">
         <section class="dashboard-hero">
           <div class="dashboard-hero-copy">
+            <button id="homeProfileEntry" class="home-profile-entry" type="button" data-route="profile" aria-label="Открыть профиль">
+              <span id="homeProfileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</span>
+              <span class="home-profile-copy">
+                <strong id="homeProfileName">Player</strong>
+                <small id="homeProfileLevel">Level 1 · 0 XP</small>
+                <span id="homeProfileProgress" class="profile-mini-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс Level 1: 0 / 500 XP"><i></i></span>
+              </span>
+              <b aria-hidden="true">›</b>
+            </button>
             <span class="eyebrow">Тренируй решения, а не удачу</span>
             <h1>PokerPilot — твой покерный тренер</h1>
             <p>Курс, контрольные раздачи и точная математика в одном спокойном рабочем пространстве. Рекомендации остаются объяснимой exploit-моделью, а не обещанием GTO.</p>
@@ -270,13 +280,65 @@
 
     <section id="screen-profile" class="screen">
       <button class="back" data-route="home">‹ Назад</button>
-      <div class="panel">
-        <span class="tag">Локальный профиль</span><h3>Профиль</h3>
-        <p id="profileEmptyState" class="muted">Недостаточно решений для оценки</p>
-        <div id="coachSummary"></div>
-        <button id="startFocusTraining" class="primary wide">Начать тренировку слабого места</button>
+      <div class="profile-screen-shell">
+        <section id="profileHeader" class="panel profile-hero-card" aria-labelledby="profileName">
+          <div id="profileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</div>
+          <div class="profile-identity">
+            <span class="tag">Локальный профиль</span>
+            <h1 id="profileName">Player</h1>
+            <p id="profileGame" class="muted">$1/$3 Cash</p>
+            <p id="profileBioText" class="muted">Bio пока не заполнено</p>
+          </div>
+          <button id="profileEdit" class="ghost profile-edit-button" type="button" aria-label="Редактировать профиль">Изменить</button>
+          <div class="profile-progression">
+            <div class="profile-progression-label">
+              <strong id="profileLevel">Level 1</strong>
+              <span id="profileXpLabel">0 / 500 XP</span>
+            </div>
+            <div id="profileXpProgress" class="profile-xp-progress" role="progressbar" aria-label="Прогресс Level 1: 0 / 500 XP" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="profileRatingsTitle">
+          <div class="section-header"><div><span class="tag">Основа будущих оценок</span><h2 id="profileRatingsTitle">Ключевые показатели</h2></div></div>
+          <div id="profileRatings" class="profile-metric-grid">
+            <div class="profile-metric"><small>Poker IQ</small><strong id="profilePokerIq">Не рассчитан</strong></div>
+            <div class="profile-metric"><small>Decision Quality</small><strong id="profileDecisionQuality">Не рассчитана</strong></div>
+            <div class="profile-metric"><small>Rating</small><strong id="profileRating">Без рейтинга</strong></div>
+            <div class="profile-metric"><small>Rank</small><strong id="profileRank">Без ранга</strong></div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="profileActivityTitle">
+          <div class="section-header"><div><span class="tag">Только реальные данные</span><h2 id="profileActivityTitle">Активность</h2></div></div>
+          <p id="profileEmptyState" class="muted">Недостаточно решений для оценки</p>
+          <div id="profileActivity" class="profile-activity-grid">
+            <div class="profile-activity-item"><small>Сыграно раздач</small><strong id="profileHandsPlayed">Нет данных</strong></div>
+            <div class="profile-activity-item"><small>Сыграно сессий</small><strong id="profileSessionsPlayed">0</strong></div>
+            <div class="profile-activity-item"><small>Принято решений</small><strong id="profileDecisionsMade">0</strong></div>
+            <div class="profile-activity-item"><small>Правильных решений</small><strong id="profileCorrectDecisions">0</strong></div>
+            <div class="profile-activity-item"><small>Лучший экзамен</small><strong id="profileBestResult">Нет данных</strong></div>
+            <div class="profile-activity-item"><small>Серия дней</small><strong id="profileDayStreak">Нет данных</strong></div>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="profileAchievementsTitle">
+          <div class="section-header"><div><span class="tag">Достижения</span><h2 id="profileAchievementsTitle">Следующие цели</h2></div></div>
+          <div id="profileAchievements" class="profile-achievement-grid">
+            <article class="profile-achievement" data-profile-achievement="first-hand" data-status="locked"><strong>Первая раздача</strong><small data-achievement-status>Заблокировано</small></article>
+            <article class="profile-achievement" data-profile-achievement="ten-correct" data-status="locked"><strong>10 правильных решений</strong><small data-achievement-status>Заблокировано</small></article>
+            <article class="profile-achievement" data-profile-achievement="three-day-streak" data-status="locked"><strong>Серия 3 дня</strong><small data-achievement-status>Заблокировано</small></article>
+            <article class="profile-achievement" data-profile-achievement="hundred-hands" data-status="locked"><strong>100 сыгранных раздач</strong><small data-achievement-status>Заблокировано</small></article>
+          </div>
+        </section>
+
+        <section class="panel">
+          <span class="tag">Персональный фокус</span><h2>Coach</h2>
+          <div id="coachSummary"></div>
+          <button id="startFocusTraining" class="primary wide">Начать тренировку слабого места</button>
+        </section>
+        <section class="panel"><span class="tag">Последние решения</span><h2>История</h2><div id="historyList" class="history-list"></div></section>
       </div>
-      <div class="panel"><span class="tag">Последние решения</span><h3>История</h3><div id="historyList" class="history-list"></div></div>
     </section>
     <section id="screen-coach" class="screen legacy-route" aria-hidden="true"></section>
 
@@ -336,6 +398,38 @@
     <button class="ui-button-primary wide" type="button" data-dialog-close>Закрыть</button>
   </div>
 </dialog>
+<dialog id="profileEditDialog" class="profile-edit-dialog" aria-labelledby="profileEditTitle">
+  <form id="profileEditForm" class="profile-edit-form" method="dialog" novalidate>
+    <div>
+      <span class="tag">Локальные данные</span>
+      <h2 id="profileEditTitle">Редактировать профиль</h2>
+    </div>
+    <label class="field" for="profileDisplayName">Имя
+      <input id="profileDisplayName" name="displayName" type="text" minlength="1" maxlength="24" autocomplete="nickname" required>
+    </label>
+    <label class="field" for="profileBio">Bio
+      <textarea id="profileBio" name="bio" maxlength="120" rows="4"></textarea>
+    </label>
+    <label class="field" for="profilePreferredGame">Предпочитаемая игра
+      <input id="profilePreferredGame" name="preferredGame" type="text" maxlength="32" value="$1/$3 Cash">
+    </label>
+    <fieldset class="field">
+      <legend>Аватар</legend>
+      <div id="profileAvatarOptions" class="profile-avatar-options">
+        <button class="profile-avatar-option" type="button" data-avatar-type="initials" data-avatar-value="PL" aria-label="Инициалы" aria-pressed="true">PL</button>
+        <button class="profile-avatar-option" type="button" data-avatar-type="preset" data-avatar-value="spade-green" aria-label="Зелёная пика" aria-pressed="false">♠</button>
+        <button class="profile-avatar-option" type="button" data-avatar-type="preset" data-avatar-value="diamond-blue" aria-label="Синий бубен" aria-pressed="false">♦</button>
+        <button class="profile-avatar-option" type="button" data-avatar-type="preset" data-avatar-value="club-gold" aria-label="Золотая трефа" aria-pressed="false">♣</button>
+        <button class="profile-avatar-option" type="button" data-avatar-type="preset" data-avatar-value="heart-red" aria-label="Красное сердце" aria-pressed="false">♥</button>
+      </div>
+    </fieldset>
+    <p id="profileEditError" class="feedback bad hidden" role="alert"></p>
+    <div class="profile-edit-actions">
+      <button id="profileCancel" class="ui-button-ghost" type="button">Отмена</button>
+      <button id="profileSave" class="ui-button-primary" type="submit">Сохранить</button>
+    </div>
+  </form>
+</dialog>
 <div id="appToast" class="ui-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <script src="src/poker-core.js"></script>
 <script src="src/data/postflop-scenarios.js"></script>
@@ -343,6 +437,8 @@
 <script src="src/data/learning-course.js"></script>
 <script src="src/learning/course-progress.js"></script>
 <script src="src/storage/progress-storage.js"></script>
+<script src="src/profile/profile-store.js"></script>
+<script src="src/profile/profile-statistics.js"></script>
 <script src="src/live/saved-hands.js"></script>
 <script src="src/live/live-flow-controller.js"></script>
 <script src="src/live/live-motion.js"></script>
@@ -354,6 +450,7 @@
 <script src="src/ui/poker-card.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
+<script src="src/ui/profile.js"></script>
 <script src="src/ui/learning-mode.js"></script>
 <script>
 'use strict';
@@ -434,6 +531,11 @@ let appSound = SoundManager.create({
   }
 });
 let learningSound = appSound;
+let profileUi = PokerPilotProfileUI.create({
+  store: ProfileStore,
+  getStatistics: () => ProfileStatistics.fromProgress(progress),
+  feedback: UIFeedback
+});
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
 
 function addHistory(item) {
@@ -477,6 +579,7 @@ function renderProgress() {
     courseProgress: CourseProgress
   });
   PokerPilotDashboard.render(document, dashboardModel);
+  profileUi.render();
   renderSoundControls();
   renderSavedHands();
 }
@@ -852,7 +955,6 @@ function renderCoachReport() {
     range_reading: 'Строй диапазон от префлопа и сужай его после каждого действия. Тип игрока меняет частоту блефов и тонкого вэлью.'
   };
   const plan = top && top[1] ? plans[top[0]] : 'Сыграй не менее 10 решений, чтобы тренер построил персональный план.';
-  $('#profileEmptyState').classList.toggle('hidden', progress.decisions > 0);
   $('#coachSummary').innerHTML = `<div class="coach-summary-card"><h4>Общая точность: ${progress.maxPoints ? accuracy+'%' : '—'}</h4><p class="muted">${progress.decisions} решений, лучшая серия ${progress.bestStreak || 0}.</p></div><div class="coach-summary-card"><h4>${top && top[1] ? `Главное слабое место: ${labels[top[0]]}` : 'Данных пока мало'}</h4><p class="muted">${top && top[1] ? `Зафиксировано ${top[1]} ошибок. ${plan}` : plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
   $('#historyList').innerHTML = progress.history.length ? progress.history.slice(0,15).map(h => `<div class="history-item"><strong>${h.title || h.mode}</strong><small>${new Date(h.date).toLocaleString('ru-RU')} • ${GRADE[h.grade]?.label || ''} • ${String(h.choice || '').toUpperCase()}</small></div>`).join('') : '<p class="muted">История пока пуста.</p>';
 }
