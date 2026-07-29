@@ -35,10 +35,10 @@ node --test tests/dashboard-contract.test.cjs tests/ui-system-contract.test.cjs 
 node --test tests/information-architecture.test.cjs
 ```
 
-Live Session: модель сохранённой руки, UI-контракт, непрерывный flow и presentation queue:
+Live Session: модель сохранённой руки, UI-контракт, непрерывный flow, presentation queue, mobile UX и premium motion:
 
 ```sh
-node --test tests/live-hand-model.test.cjs tests/live-session-ui-contract.test.cjs tests/live-flow-controller.test.cjs tests/live-presentation-queue.test.cjs
+node --test tests/live-hand-model.test.cjs tests/live-session-ui-contract.test.cjs tests/live-flow-controller.test.cjs tests/live-presentation-queue.test.cjs tests/live-ux-controller.test.cjs tests/live-motion-system.test.cjs
 ```
 
 Полная проверка всех 2 598 960 пятикарточных комбинаций запускается отдельно:

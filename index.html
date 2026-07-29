@@ -303,7 +303,17 @@
           <div class="panel-head"><div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle">Новая раздача</h3></div><span id="toCallChip" class="chip bet-display">К действию</span></div>
           <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
           <div id="heroCards" class="cards hero-cards"></div>
-          <div id="actionLog" class="action-log" aria-label="История раздачи"></div>
+          <section id="liveHistoryPanel" class="live-history-panel" aria-label="История раздачи">
+            <button id="liveHistoryToggle" class="live-history-toggle" type="button" aria-expanded="false" aria-controls="liveHistoryBody">
+              <span class="live-history-title">📝 Ход раздачи <small id="liveHistoryCount">· 0</small></span>
+              <span class="live-history-chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div id="liveHistoryBody" class="live-history-body" aria-hidden="true">
+              <div class="live-history-inner">
+                <div id="actionLog" class="action-log" aria-label="История раздачи"></div>
+              </div>
+            </div>
+          </section>
           <div class="coach-tools"><button id="liveHint" class="ghost">💡 Тренер</button><button id="liveMathToggle" class="ghost">🧮 Ауты и шансы</button></div>
           <div id="liveHintBox" class="coach-box hidden"></div>
           <div id="mathBox" class="math-box hidden"></div>
@@ -335,12 +345,14 @@
 <script src="src/storage/progress-storage.js"></script>
 <script src="src/live/saved-hands.js"></script>
 <script src="src/live/live-flow-controller.js"></script>
+<script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
 <script src="src/audio/sound-manager.js"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/dashboard.js"></script>
 <script src="src/ui/poker-card.js"></script>
+<script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
 <script src="src/ui/learning-mode.js"></script>
 <script>
@@ -408,6 +420,11 @@ function createLivePresentationQueue() {
 }
 let flowController = createLiveFlowController();
 let presentationQueue = createLivePresentationQueue();
+const historyPanel = PokerPilotLiveUX.createHistoryPanel({
+  onChange: renderHistoryPanelState
+});
+const actionFeed = PokerPilotLiveUX.createActionFeed();
+const motionLedger = PokerPilotLiveMotion.createMotionLedger();
 let learningMode = null;
 let appSound = SoundManager.create({
   initialSettings: progress.learning.preferences.sound,
@@ -960,6 +977,20 @@ $('#pauseLive').addEventListener('click',()=>{
   if(flowController.getState().phase==='paused')resumeLiveSession();
   else pauseLiveSession('manual');
 });
+function renderHistoryPanelState(state=historyPanel.getState()){
+  const panel=$('#liveHistoryPanel'),toggle=$('#liveHistoryToggle'),body=$('#liveHistoryBody');
+  if(!panel||!toggle||!body)return;
+  panel.classList.toggle('is-expanded',state.expanded);
+  toggle.setAttribute('aria-expanded',String(state.expanded));
+  body.setAttribute('aria-hidden',String(!state.expanded));
+  const chevron=$('.live-history-chevron',toggle);
+  if(chevron)chevron.textContent=state.expanded?'⌃':'⌄';
+}
+function updateHistoryPanelMeta(){
+  const count=$('#liveHistoryCount');
+  if(count)count.textContent=`· ${session?.actionHistory?.length||0}`;
+}
+$('#liveHistoryToggle').addEventListener('click',()=>historyPanel.toggle());
 function log(t){session.log.push(t);if(session.log.length>24)session.log.shift();renderLog();}
 function recordLiveAction(player,type,{amount=0,toAmount=null,text='',legacyAction=null,street=session.street}={}){
   const action={
@@ -977,7 +1008,10 @@ function recordLiveAction(player,type,{amount=0,toAmount=null,text='',legacyActi
   if(player){
     player.lastAction=legacyAction??type.toLowerCase().replace('_','-');
     if(LIVE_TABLE_ACTION_TYPES.has(type)){
-      player.visualAction={...action,label:PokerPilotSavedHands.formatAction(action)};
+      const label=PokerPilotSavedHands.formatAction(action);
+      player.lastActionLabel=label;
+      player.lastActionType=type;
+      player.visualAction={...action,label,eventId:`${session.handToken}:${action.sequence}`};
     }
     if(type==='FOLD')player.pendingFold=true;
   }
@@ -1007,6 +1041,7 @@ function renderLog(){
     box.appendChild(section);
   });
   box.scrollTop=box.scrollHeight;
+  updateHistoryPanelMeta();
 }
 function commitTo(p,target){const add=C.clamp(target-p.streetContrib,0,p.stack);p.stack-=add;p.streetContrib+=add;p.contrib+=add;session.pot+=add;renderLive();return add;}
 function postBlind(idx,amount,label){const p=session.players[idx],paid=Math.min(amount,p.stack);p.stack-=paid;p.contrib+=paid;p.streetContrib+=paid;session.pot+=paid;recordLiveAction(p,'POST_BLIND',{amount:paid,text:`${p.name} ставит ${label} ${money(paid)}`,legacyAction:label.toLowerCase()});}
@@ -1016,6 +1051,9 @@ function dealLiveHand(){
   if(!session||session.players[0].stack<3){finishSession('Стек закончился.');return;}
   session.handToken=flowController.startHand();
   presentationQueue.startHand(session.handToken);
+  historyPanel.startHand();
+  actionFeed.startHand();
+  motionLedger.startHand(session.handToken);
   session.hands++;
   session.button=(session.button+1)%session.n;
   session.deck=C.shuffle(C.fullDeck());
@@ -1043,6 +1081,8 @@ function dealLiveHand(){
     p.contrib=0;
     p.streetContrib=0;
     p.lastAction='';
+    p.lastActionLabel='';
+    p.lastActionType='';
     p.visualAction=null;
     p.handStartingStack=p.stack;
     p.showCards=false;
@@ -1056,13 +1096,19 @@ function dealLiveHand(){
   postBlind(sb,1,'SB');
   postBlind(bb,3,'BB');
   const order=orderedFrom((session.button+3)%session.n,session.n),heroAt=order.indexOf(0);
-  runLiveAiSequence(order.slice(0,heroAt),aiPreflopBeforeHero,()=>{
-    session.toCall=Math.max(0,session.currentBet-session.players[0].streetContrib);
-    session.awaiting='hero-preflop';
-    recordLiveAction(null,'INFO',{text:`Твой ход: ${positionsFor(session.n,session.button)[0]} • ${C.handClass(session.players[0].cards)}`});
-    renderLive();
-    appSound.play('cardDeal');
-    showHeroActions();
+  renderLive();
+  presentationQueue.playDeal({
+    token:session.handToken,
+    cardCount:session.n*2,
+    onStart:()=>{session.presentationPhase='deal-cards';},
+    onComplete:()=>runLiveAiSequence(order.slice(0,heroAt),aiPreflopBeforeHero,()=>{
+      session.toCall=Math.max(0,session.currentBet-session.players[0].streetContrib);
+      session.awaiting='hero-preflop';
+      recordLiveAction(null,'INFO',{text:`Твой ход: ${positionsFor(session.n,session.button)[0]} • ${C.handClass(session.players[0].cards)}`});
+      renderLive();
+      appSound.play('cardDeal');
+      showHeroActions();
+    })
   });
 }
 function aiPreflopBeforeHero(idx){const p=session.players[idx];if(p.stack<=0)return recordLiveAction(p,'FOLD',{text:`${p.name} fold`,legacyAction:'fold'});const pos=positionsFor(session.n,session.button)[idx],type=TYPES[p.type],facing=session.currentBet>3;let openRange=OPEN_RANGES[pos]||OPEN_RANGES.CO;if(type.loose>0&&['CO','BTN','SB'].includes(pos))openRange=OPEN_RANGES.BTN;const inOpen=classInRange(p.cards,openRange);if(!facing){if(inOpen&&Math.random()<0.72+type.aggression*.2){const target=Math.min(p.stack+p.streetContrib,sample([10,12,15]));commitTo(p,target);session.currentBet=Math.max(session.currentBet,p.streetContrib);return recordLiveAction(p,'RAISE',{amount:target,toAmount:target,text:`${p.name} рейз до ${money(target)}`,legacyAction:`raise ${money(target)}`});}if((p.type==='passive'||p.type==='station'||p.type==='wild')&&preflopPower(p.cards)>24&&Math.random()<0.55){const paid=commitTo(p,3);return recordLiveAction(p,'CALL',{amount:paid,text:`${p.name} лимп $3`,legacyAction:'limp'});}return recordLiveAction(p,'FOLD',{text:`${p.name} fold`,legacyAction:'fold'});}const need=session.currentBet-p.streetContrib;if(preflopPower(p.cards)>78&&Math.random()<type.aggression*.4){const target=Math.min(p.stack+p.streetContrib,session.currentBet*3);commitTo(p,target);session.currentBet=p.streetContrib;return recordLiveAction(p,'RAISE',{amount:target,toAmount:target,text:`${p.name} 3-бет до ${money(target)}`,legacyAction:`3-bet ${money(target)}`});}if(preflopPower(p.cards)>43-type.loose*40&&need<=p.stack&&Math.random()<0.5){const paid=commitTo(p,session.currentBet);return recordLiveAction(p,'CALL',{amount:paid,text:`${p.name} call ${money(need)}`,legacyAction:`call ${money(need)}`});}return recordLiveAction(p,'FOLD',{text:`${p.name} fold`,legacyAction:'fold'});}
@@ -1100,6 +1146,20 @@ function animateBetsToPot(){
     bet.style.setProperty('--live-chip-move-ms',`${LIVE_PACING.chipMoveMs}ms`);
     bet.classList.add('is-collecting');
   });
+}
+function animatePotToWinner(winnerId){
+  const pot=$('#potLabel');
+  if(!pot||!motionLedger.consume('pot-award',winnerId==null?'split':String(winnerId)))return false;
+  const winner=winnerId==null?null:$(`[data-player-id="${winnerId}"]`,$('#seats'));
+  if(winner){
+    const potRect=pot.getBoundingClientRect(),winnerRect=winner.getBoundingClientRect();
+    pot.style.setProperty('--pot-win-x',`${winnerRect.left+winnerRect.width/2-potRect.left-potRect.width/2}px`);
+    pot.style.setProperty('--pot-win-y',`${winnerRect.top+winnerRect.height/2-potRect.top-potRect.height/2}px`);
+  }else{
+    pot.style.setProperty('--pot-win-x','0px');
+    pot.style.setProperty('--pot-win-y','12px');
+  }
+  return UIFeedback.animateChipTransfer(pot,'to-winner');
 }
 function finishBetCollection(){
   session.presentedPot=session.pot;
@@ -1271,7 +1331,7 @@ function observerShowdown(){
       recordLiveAction(winnerId==null?null:winners[0],'RESULT',{amount:potSize,text:summary,street:'showdown'});
       createCompletedHand(winnerId,summary,potSize);
       appSound.play('potCollect');
-      UIFeedback.animateChipTransfer($('#potLabel'),'to-winner');
+      animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
       session.winnerSummary=summary;
@@ -1334,74 +1394,218 @@ function evaluateLiveAction(action,amount=0){
   const noBetConfidence=(m.equity.equity>=.67||m.equity.equity<=.38||cat>=3)?'средняя':'низкая';
   return {grade,best,confidence:noBetConfidence,math:m,why:`Готовая комбинация: ${C.handName(C.best7([...hero.cards,...session.board]))}. Эквити против модели диапазона: ${pct(m.equity.equity)}. ${draw.strongOuts?`Сильных аутов: ${draw.strongOuts}.`:''}`};
 }
+function createLiveSeatElement(playerId){
+  const el=document.createElement('div');
+  el.setAttribute('data-player-id',String(playerId));
+  const label=document.createElement('small');
+  label.dataset.seatPart='label';
+  const stack=document.createElement('strong');
+  stack.dataset.seatPart='stack';
+  const lastAction=document.createElement('span');
+  lastAction.dataset.seatPart='last-action';
+  lastAction.className='seat-last-action hidden';
+  const hole=document.createElement('span');
+  hole.dataset.seatPart='hole-cards';
+  hole.className='seat-hole-cards';
+  const handLabel=document.createElement('span');
+  handLabel.dataset.seatPart='hand-label';
+  handLabel.className='showdown-hand-label hidden';
+  const fold=document.createElement('span');
+  fold.dataset.seatPart='fold';
+  fold.className='fold-badge hidden';
+  fold.textContent='FOLD';
+  const betZone=document.createElement('span');
+  betZone.dataset.seatPart='bet-zone';
+  betZone.className='seat-bet-zone';
+  el.append(label,stack,lastAction,hole,handLabel,fold,betZone);
+  return el;
+}
+function reconcileLiveSeats(container,players,update){
+  const existing=new Map(
+    $$('[data-player-id]',container).map(node=>[Number(node.dataset.playerId),node])
+  );
+  players.forEach((player,index)=>{
+    let node=existing.get(player.id);
+    if(!node)node=createLiveSeatElement(player.id);
+    existing.delete(player.id);
+    update(node,player,index);
+    const current=container.children[index]||null;
+    if(current!==node)container.insertBefore(node,current);
+  });
+  existing.forEach(node=>node.remove());
+}
+function syncLiveHoleCards(hole,player,{x,y}){
+  if(player.id===0){
+    hole.classList.add('hidden');
+    return;
+  }
+  hole.classList.remove('hidden');
+  const handKey=`${session.handToken}:${player.cards.map(card=>`${card.r}${card.s}`).join('|')}`;
+  if(hole.dataset.handKey!==handKey){
+    hole.replaceChildren();
+    player.cards.forEach((card,cardIndex)=>{
+      const mini=document.createElement('i');
+      const dealIndex=cardIndex*session.n+player.id;
+      mini.className='mini-hole-card face-down';
+      mini.style.setProperty('--live-deal-index',dealIndex);
+      mini.style.setProperty('--deal-from-x',`${Math.round((50-x)*2.4)}px`);
+      mini.style.setProperty('--deal-from-y',`${Math.round((50-y)*2.4)}px`);
+      if(motionLedger.consume('deal',`seat-${player.id}-card-${cardIndex}`)){
+        mini.classList.add('live-mini-dealt-card');
+      }
+      hole.appendChild(mini);
+    });
+    hole.dataset.handKey=handKey;
+  }
+  const reveal=player.showCards&&!player.folded;
+  [...hole.children].forEach((mini,cardIndex)=>{
+    const card=player.cards[cardIndex];
+    mini.classList.toggle('face-up',reveal);
+    mini.classList.toggle('face-down',!reveal);
+    mini.classList.toggle('red',reveal&&(card.s==='h'||card.s==='d'));
+    if(reveal&&motionLedger.consume('showdown-card',`${player.id}-${cardIndex}`)){
+      mini.classList.add('is-showdown-reveal');
+    }
+    mini.textContent=reveal?C.cardText(card):'';
+    mini.setAttribute('aria-label',reveal?C.cardText(card):'Скрытая карта');
+  });
+}
+function syncLiveActionBubble(el,player){
+  let bubble=$('.player-action-bubble',el);
+  const action=player.folded||player.visualAction?.type==='POST_BLIND'?null:player.visualAction;
+  if(!action){
+    if(bubble)bubble.remove();
+    return;
+  }
+  if(!bubble||bubble.dataset.eventId!==action.eventId){
+    if(bubble)bubble.remove();
+    bubble=document.createElement('em');
+    bubble.className='player-action-bubble';
+    bubble.dataset.eventId=action.eventId;
+    el.appendChild(bubble);
+    if(actionFeed.consume(action.eventId))bubble.classList.add('is-entering');
+  }
+  bubble.dataset.action=action.type;
+  bubble.textContent=action.label;
+  bubble.classList.toggle('is-exiting',Boolean(action.exiting));
+}
+function syncLiveBetZone(zone,player){
+  const eventId=player.visualAction?.eventId||`${session.street}:${player.streetContrib}`;
+  const motionKey=`${player.id}:${eventId}:${player.streetContrib}`;
+  let bet=$('.seat-bet',zone);
+  if(player.streetContrib<=0){
+    if(bet)bet.remove();
+    return;
+  }
+  const arriving=player.chipMoving&&motionLedger.consume('chip',motionKey);
+  if(!bet||arriving){
+    if(bet)bet.remove();
+    bet=document.createElement('span');
+    bet.className='seat-bet';
+    zone.appendChild(bet);
+  }
+  bet.textContent=money(player.streetContrib);
+  bet.dataset.motionKey=motionKey;
+  if(arriving)bet.classList.add('is-arriving');
+}
 function renderSeats(){
   const seats=$('#seats');
-  seats.replaceChildren();
   const positions=positionsFor(session.n,session.button);
   const presentationState=presentationQueue.getState();
   const activeId=presentationState.activePlayerId??(session.awaiting?.startsWith('hero')?0:null);
-  session.players.forEach((p,i)=>{
+  reconcileLiveSeats(seats,session.players,(el,p,i)=>{
     const angle=(-90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);
-    const el=document.createElement('div');
-    el.className=`seat ${i===0?'hero':''} ${p.pendingFold?'pending-fold':''} ${p.folded?'folded':''} ${p.winner?'winner':''} ${activeId===i?'active-player':''}`;
+    const heroTurn=i===0&&/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
+    const winnerReveal=p.winner&&(
+      el.classList.contains('is-winner-reveal')||
+      motionLedger.consume('winner',String(p.id))
+    );
+    el.className=`seat ${i===0?'hero':''} ${heroTurn?'hero-turn':''} ${y<16?'seat-edge-top':''} ${p.pendingFold?'pending-fold':''} ${p.folded?'folded':''} ${p.winner?'winner':''} ${winnerReveal?'is-winner-reveal':''} ${activeId===i?'active-player':''}`;
     el.style.left=`calc(${x}% - 32px)`;
     el.style.top=`calc(${y}% - 30px)`;
     el.style.setProperty('--live-label-left',x<20?'0%':x>80?'100%':'50%');
     el.style.setProperty('--live-label-shift',x<20?'0%':x>80?'-100%':'-50%');
-    el.style.setProperty('--bet-zone-x',`${Math.round(-Math.cos(angle)*52)}px`);
-    el.style.setProperty('--bet-zone-y',`${Math.round(-Math.sin(angle)*52)}px`);
-    const label=document.createElement('small');
-    label.textContent=`${positions[i]} • ${i===session.button?'D ':''}${p.type==='hero'?'YOU':TYPES[p.type].short}`;
-    const stack=document.createElement('strong');
-    stack.textContent=money(p.stack);
-    el.append(label,stack);
-    if(i!==0){
-      const hole=document.createElement('span');
-      hole.className='seat-hole-cards';
-      const reveal=p.showCards&&!p.folded;
-      p.cards.forEach(card=>{
-        const mini=document.createElement('i');
-        mini.className=`mini-hole-card ${reveal?'face-up':'face-down'} ${(card.s==='h'||card.s==='d')&&reveal?'red':''}`;
-        mini.textContent=reveal?C.cardText(card):'';
-        mini.setAttribute('aria-label',reveal?C.cardText(card):'Скрытая карта');
-        hole.appendChild(mini);
-      });
-      el.appendChild(hole);
-      if(p.showdownLabel){
-        const handLabel=document.createElement('span');
-        handLabel.className='showdown-hand-label';
-        handLabel.textContent=p.showdownLabel;
-        el.appendChild(handLabel);
-      }
-    }
-    if(p.folded){
-      const fold=document.createElement('span');
-      fold.className='fold-badge';
-      fold.textContent='FOLD';
-      el.appendChild(fold);
-    }else if(p.visualAction&&p.visualAction.type!=='POST_BLIND'){
-      const bubble=document.createElement('em');
-      bubble.className=`player-action-bubble ${p.visualAction.exiting?'is-exiting':''}`;
-      bubble.dataset.action=p.visualAction.type;
-      bubble.textContent=p.visualAction.label;
-      el.appendChild(bubble);
-    }
-    const betZone=document.createElement('span');
-    betZone.className='seat-bet-zone';
-    if(p.streetContrib>0){
-      const bet=document.createElement('span');
-      bet.className=`seat-bet ${p.chipMoving?'is-arriving':''}`;
-      bet.textContent=money(p.streetContrib);
-      betZone.appendChild(bet);
-    }
-    el.appendChild(betZone);
-    seats.appendChild(el);
+    const betZoneX=Math.round(-Math.cos(angle)*52),betZoneY=Math.round(-Math.sin(angle)*52);
+    el.style.setProperty('--bet-zone-x',`${betZoneX}px`);
+    el.style.setProperty('--bet-zone-y',`${betZoneY}px`);
+    el.style.setProperty('--chip-from-x',`${-betZoneX}px`);
+    el.style.setProperty('--chip-from-y',`${-betZoneY}px`);
+    $('[data-seat-part="label"]',el).textContent=`${positions[i]} • ${i===session.button?'D ':''}${p.type==='hero'?'YOU':TYPES[p.type].short}`;
+    $('[data-seat-part="stack"]',el).textContent=money(p.stack);
+    const lastAction=$('[data-seat-part="last-action"]',el);
+    lastAction.classList.toggle('hidden',!p.lastActionLabel);
+    lastAction.dataset.action=p.lastActionType||'';
+    lastAction.textContent=p.lastActionLabel||'';
+    syncLiveHoleCards($('[data-seat-part="hole-cards"]',el),p,{x,y});
+    const handLabel=$('[data-seat-part="hand-label"]',el);
+    handLabel.classList.toggle('hidden',!p.showdownLabel);
+    handLabel.textContent=p.showdownLabel||'';
+    $('[data-seat-part="fold"]',el).classList.toggle('hidden',!p.folded);
+    syncLiveActionBubble(el,p);
+    syncLiveBetZone($('[data-seat-part="bet-zone"]',el),p);
   });
 }
 function streetText(){return {preflop:'Префлоп',flop:'Флоп',turn:'Тёрн',river:'Ривер',showdown:'Шоудаун'}[session.street];}
-function renderLive(){const hero=session.players[0],profit=hero.stack+hero.contrib-session.initial,phase=flowController.getState().phase;$('#liveStack').textContent=money(hero.stack);$('#liveProfit').textContent=signedMoney(profit);$('#liveProfit').style.color=profit>=0?'var(--accent)':'var(--danger)';$('#liveHands').textContent=session.hands;const misses=session.decisionGrades.filter(x=>x<2).length;$('#liveTilt').textContent=profit<-session.initial*.35||misses>=4?'Средний':'Низкий';$('#heroPosition').textContent=positionsFor(session.n,session.button)[0];$('#heroCards').innerHTML=cardsHTML(hero.cards);$('#heroCards').classList.toggle('is-folded',hero.folded);const board=$('#board');board.innerHTML=cardsHTML(session.board,true);$$('.playing-card',board).forEach((card,index)=>{card.classList.add('board-card');card.classList.toggle('is-revealing',session.boardRevealActive&&index===session.boardRevealIndex);});$('#streetLabel').textContent=streetText();$('#potLabel').textContent=`Банк ${money(session.presentedPot??session.pot)}`;$('#actionTitle').textContent=phase==='paused'?'Сессия на паузе':phase==='completed'?(session.winnerSummary||'Раздача завершена'):session.awaiting?.startsWith('hero')?'Твоё решение':session.observing?'Наблюдение за столом':session.awaiting==='ai'?'Ход соперника':(session.winnerSummary||'Раздача завершена');$('#toCallChip').textContent=session.observing?'Hero — Fold':session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';const observing=$('#liveObservingStatus');observing.classList.toggle('hidden',!session.observing);observing.textContent=session.observing?'You folded — watching the action':'';const paused=phase==='paused';$$('#liveActions button').forEach(button=>button.disabled=paused);$('#betRange').disabled=paused;$('#confirmBet').disabled=paused;renderSeats();renderLog();syncLivePauseButton();}
+function renderLive(){
+  const hero=session.players[0];
+  const profit=hero.stack+hero.contrib-session.initial;
+  const phase=flowController.getState().phase;
+  $('#liveStack').textContent=money(hero.stack);
+  $('#liveProfit').textContent=signedMoney(profit);
+  $('#liveProfit').style.color=profit>=0?'var(--accent)':'var(--danger)';
+  $('#liveHands').textContent=session.hands;
+  const misses=session.decisionGrades.filter(x=>x<2).length;
+  $('#liveTilt').textContent=profit<-session.initial*.35||misses>=4?'Средний':'Низкий';
+  $('#heroPosition').textContent=positionsFor(session.n,session.button)[0];
+  PokerPilotLiveUX.syncCardCollection($('#heroCards'),hero.cards,{
+    collectionKey:session.handToken
+  });
+  [...$('#heroCards').children].forEach((card,index)=>{
+    card.style.setProperty('--live-deal-index',index*session.n);
+    card.style.setProperty('--deal-from-x','0px');
+    card.style.setProperty('--deal-from-y','-128px');
+    if(motionLedger.consume('deal',`hero-card-${index}`)){
+      card.classList.add('live-dealt-card');
+    }
+  });
+  $('#heroCards').classList.toggle('is-folded',hero.folded);
+  const board=$('#board');
+  PokerPilotLiveUX.syncCardCollection(board,session.board,{
+    small:true,
+    className:'board-card',
+    revealIndex:session.boardRevealActive?session.boardRevealIndex:-1,
+    collectionKey:session.handToken
+  });
+  $('#streetLabel').textContent=streetText();
+  $('#potLabel').textContent=`Банк ${money(session.presentedPot??session.pot)}`;
+  $('#actionTitle').textContent=phase==='paused'
+    ?'Сессия на паузе'
+    :phase==='completed'
+      ?(session.winnerSummary||'Раздача завершена')
+      :session.awaiting?.startsWith('hero')
+        ?'Твоё решение'
+        :session.awaiting==='dealing'
+          ?'Раздача карт'
+        :session.observing
+          ?'Наблюдение за столом'
+          :session.awaiting==='ai'
+            ?'Ход соперника'
+            :(session.winnerSummary||'Раздача завершена');
+  $('#toCallChip').textContent=session.observing?'Hero — Fold':session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';
+  const observing=$('#liveObservingStatus');
+  observing.classList.toggle('hidden',!session.observing);
+  observing.textContent=session.observing?'You folded — watching the action':'';
+  const heroTurn=/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
+  $('#screen-live .decision-panel').classList.toggle('is-hero-turn',heroTurn);
+  const paused=phase==='paused';
+  $$('#liveActions button').forEach(button=>button.disabled=paused);
+  $('#betRange').disabled=paused;
+  $('#confirmBet').disabled=paused;
+  renderSeats();
+  syncLivePauseButton();
+}
 function showLiveMath(precomputed=null){const box=$('#mathBox');box.innerHTML='Считаю…';box.classList.remove('hidden');setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);}
-function showHeroActions(){renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
+function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
 function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
 $('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
 $('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
@@ -1569,7 +1773,7 @@ function awardPot(winnerId,message){
       recordLiveAction(winner,'RESULT',{amount:potSize,text:summary,street:session.street});
       createCompletedHand(winnerId,summary,potSize);
       appSound.play('potCollect');
-      UIFeedback.animateChipTransfer($('#potLabel'),'to-winner');
+      animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
       session.winnerSummary=summary;
@@ -1604,7 +1808,7 @@ function showdown(){
       recordLiveAction(winnerId==null?null:session.players[winnerId],'RESULT',{amount:potSize,text:summary,street:'showdown'});
       createCompletedHand(winnerId,summary,potSize);
       appSound.play('potCollect');
-      UIFeedback.animateChipTransfer($('#potLabel'),'to-winner');
+      animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
       session.winnerSummary=summary;

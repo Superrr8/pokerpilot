@@ -1,33 +1,53 @@
 'use strict';
 
 (function attachLivePresentationQueue(root) {
+  const LIVE_MOTION = root.PokerPilotLiveMotion?.LIVE_TIMING || {
+    dealCardMs: 160,
+    dealGapMs: 55,
+    boardRevealMs: 260,
+    boardGapMs: 80,
+    chipTravelMs: 260,
+    winnerGlowMs: 1000
+  };
+  const REDUCED_LIVE_MOTION = root.PokerPilotLiveMotion?.REDUCED_TIMING || {
+    dealCardMs: 60,
+    dealGapMs: 20,
+    boardRevealMs: 60,
+    boardGapMs: 25,
+    chipTravelMs: 60,
+    winnerGlowMs: 80
+  };
   const DEFAULT_PACING = Object.freeze({
+    dealCardMs: LIVE_MOTION.dealCardMs,
+    dealGapMs: LIVE_MOTION.dealGapMs,
     aiThinkMinMs: 560,
     aiThinkMaxMs: 820,
     actionBadgeHoldMs: 260,
     actionBadgeExitMs: 140,
     afterCheckPauseMs: 480,
     afterFoldPauseMs: 500,
-    chipMoveMs: 260,
+    chipMoveMs: LIVE_MOTION.chipTravelMs,
     afterBetPauseMs: 500,
     streetTransitionPauseMs: 760,
-    cardRevealGapMs: 170,
+    cardRevealGapMs: LIVE_MOTION.boardGapMs,
     showdownRevealGapMs: 620,
     winnerDisplayMs: 1900,
     nextHandDelayMs: 2200
   });
 
   const REDUCED_MOTION_PACING = Object.freeze({
+    dealCardMs: REDUCED_LIVE_MOTION.dealCardMs,
+    dealGapMs: REDUCED_LIVE_MOTION.dealGapMs,
     aiThinkMinMs: 80,
     aiThinkMaxMs: 110,
     actionBadgeHoldMs: 160,
     actionBadgeExitMs: 50,
     afterCheckPauseMs: 160,
     afterFoldPauseMs: 160,
-    chipMoveMs: 80,
+    chipMoveMs: REDUCED_LIVE_MOTION.chipTravelMs,
     afterBetPauseMs: 140,
     streetTransitionPauseMs: 180,
-    cardRevealGapMs: 70,
+    cardRevealGapMs: REDUCED_LIVE_MOTION.boardGapMs,
     showdownRevealGapMs: 180,
     winnerDisplayMs: 420,
     nextHandDelayMs: 650
@@ -244,6 +264,30 @@
       ], { token });
     }
 
+    function playDeal({
+      token = state.handToken,
+      cardCount = 0,
+      onStart = () => {},
+      onComplete = () => {}
+    } = {}) {
+      const count = Math.max(0, Math.floor(Number(cardCount) || 0));
+      const duration = count
+        ? config.dealCardMs + Math.max(0, count - 1) * config.dealGapMs
+        : 0;
+      return enqueue([
+        {
+          phase: 'deal-cards',
+          run: onStart,
+          duration
+        },
+        {
+          phase: 'deal-complete',
+          run: onComplete,
+          duration: 0
+        }
+      ], { token });
+    }
+
     function playStreetTransition({
       token = state.handToken,
       street,
@@ -376,6 +420,7 @@
       config,
       startHand,
       enqueue,
+      playDeal,
       playAction,
       playStreetTransition,
       playShowdown,

@@ -45,6 +45,8 @@ function harness(pacing = {}) {
   const queue = api.create({
     pacing: {
       ...api.ZERO_DURATION_PACING,
+      dealCardMs: 160,
+      dealGapMs: 55,
       aiThinkMinMs: 100,
       aiThinkMaxMs: 100,
       actionBadgeHoldMs: 200,
@@ -67,6 +69,17 @@ function harness(pacing = {}) {
   queue.startHand(1);
   return { api, clock, events, queue };
 }
+
+test('deal presentation ждёт последовательную раздачу всех карт', () => {
+  const { queue, clock, events } = harness();
+  queue.playDeal({ token: 1, cardCount: 4 });
+
+  assert.deepEqual(events, ['deal-cards:']);
+  clock.tick(324);
+  assert.equal(events.includes('deal-complete:'), false);
+  clock.tick(1);
+  assert.equal(events.includes('deal-complete:'), true);
+});
 
 test('AI actions воспроизводятся строго последовательно', () => {
   const { queue, clock, events } = harness();

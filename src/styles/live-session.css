@@ -1,4 +1,4 @@
-/* Stage 8.1.1 — Live Session presentation only. */
+/* Stage 8.2 — Premium Live presentation only. */
 
 #screen-live .poker-table {
   isolation: isolate;
@@ -7,7 +7,8 @@
 
 #screen-live .seat {
   z-index: 2;
-  will-change: opacity, filter, box-shadow;
+  transform: translateZ(0);
+  will-change: transform, opacity;
   transition:
     opacity 280ms var(--motion-ease-standard),
     filter 280ms var(--motion-ease-standard),
@@ -21,6 +22,22 @@
     0 0 0 3px rgba(228, 189, 106, 0.2),
     0 0 24px rgba(228, 189, 106, 0.12),
     var(--shadow-sm);
+}
+
+#screen-live .seat.hero.hero-turn::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  z-index: -1;
+  border: 2px solid rgba(88, 196, 139, 0.52);
+  border-radius: inherit;
+  opacity: 0.4;
+  pointer-events: none;
+  animation: live-hero-pulse 2.1s var(--motion-ease-standard) infinite;
+}
+
+#screen-live .decision-panel.is-hero-turn #liveActions button {
+  box-shadow: 0 0 0 1px rgba(88, 196, 139, 0.1);
 }
 
 #screen-live .seat.pending-fold {
@@ -73,6 +90,20 @@
   font-size: 8px;
   font-style: normal;
   font-weight: 900;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.live-mini-dealt-card {
+  will-change: transform, opacity;
+  animation:
+    live-card-flight var(--motion-live-fast)
+    var(--motion-live-ease-flight) both;
+  animation-delay: calc(var(--live-deal-index, 0) * var(--motion-live-deal-gap));
+}
+
+.mini-hole-card.is-showdown-reveal {
+  animation: live-showdown-reveal var(--motion-live-normal) var(--motion-live-ease-settle) both;
 }
 
 .mini-hole-card.face-down {
@@ -98,6 +129,17 @@
   box-shadow:
     0 0 0 3px rgba(88, 196, 139, 0.16),
     var(--shadow-md);
+}
+
+#screen-live .seat.winner.is-winner-reveal::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border: 1px solid rgba(228, 189, 106, 0.58);
+  border-radius: inherit;
+  pointer-events: none;
+  animation: live-winner-glow var(--motion-live-slow) var(--motion-live-ease-settle) both;
 }
 
 #heroCards.is-folded {
@@ -126,11 +168,20 @@
 .fold-badge {
   position: absolute;
   left: var(--live-label-left, 50%);
-  transform: translateX(var(--live-label-shift, -50%));
+  --live-badge-transform: translateX(var(--live-label-shift, -50%));
+  transform: var(--live-badge-transform);
   width: max-content;
   max-width: 104px;
   white-space: nowrap;
   pointer-events: none;
+}
+
+#screen-live .seat.seat-edge-top .player-action-bubble,
+#screen-live .seat.seat-edge-top .fold-badge {
+  top: 50%;
+  bottom: auto;
+  left: calc(100% + 5px);
+  --live-badge-transform: translateY(-50%);
 }
 
 .player-action-bubble {
@@ -140,15 +191,34 @@
   overflow: hidden;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-pill);
-  background: rgba(5, 12, 10, 0.94);
-  box-shadow: var(--shadow-sm);
+  background: rgba(7, 18, 15, 0.82);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: var(--text-primary);
   font-size: 9px;
   font-style: normal;
   font-weight: 850;
   letter-spacing: 0.02em;
   text-overflow: ellipsis;
-  animation: live-action-in 180ms var(--motion-ease-emphasized) both;
+}
+
+.player-action-bubble::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  aspect-ratio: 1;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.035);
+  vertical-align: 1px;
+}
+
+.player-action-bubble.is-entering {
+  animation: live-action-in var(--motion-live-fast) var(--motion-live-ease-settle) both;
 }
 
 .player-action-bubble.is-exiting {
@@ -160,11 +230,26 @@
   color: var(--accent);
 }
 
+.player-action-bubble[data-action="CALL"]::before,
+.player-action-bubble[data-action="CHECK"]::before {
+  background: var(--status-success);
+}
+
 .player-action-bubble[data-action="BET"],
 .player-action-bubble[data-action="RAISE"],
 .player-action-bubble[data-action="ALL_IN"] {
   border-color: rgba(228, 189, 106, 0.48);
   color: var(--status-warning);
+}
+
+.player-action-bubble[data-action="BET"]::before,
+.player-action-bubble[data-action="RAISE"]::before {
+  background: var(--status-warning);
+}
+
+.player-action-bubble[data-action="ALL_IN"]::before,
+.player-action-bubble[data-action="FOLD"]::before {
+  background: var(--status-danger);
 }
 
 .player-action-bubble[data-action="CHECK"] {
@@ -188,6 +273,32 @@
   font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.06em;
+}
+
+.seat-last-action {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 7px;
+  font-weight: 750;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seat-last-action[data-action="CALL"] {
+  color: rgba(112, 196, 172, 0.92);
+}
+
+.seat-last-action[data-action="BET"],
+.seat-last-action[data-action="RAISE"],
+.seat-last-action[data-action="ALL_IN"] {
+  color: rgba(228, 189, 106, 0.92);
+}
+
+.seat-last-action[data-action="FOLD"] {
+  color: rgba(236, 120, 126, 0.66);
 }
 
 .seat-bet-zone {
@@ -223,7 +334,8 @@
 }
 
 .seat-bet.is-arriving {
-  animation: live-chip-arrive var(--live-chip-move-ms, 260ms) var(--motion-ease-emphasized) both;
+  will-change: transform, opacity;
+  animation: live-chip-arrive var(--motion-live-normal) var(--motion-live-ease-flight) both;
 }
 
 .seat-bet.is-collecting {
@@ -256,11 +368,22 @@
 }
 
 .board-card {
+  transform: translateZ(0);
   will-change: opacity, transform;
 }
 
 .board-card.is-revealing {
-  animation: live-card-reveal 260ms var(--motion-ease-emphasized) both;
+  animation: live-board-reveal var(--motion-live-normal) var(--motion-live-ease-settle) both;
+}
+
+#screen-live .live-dealt-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  animation:
+    live-card-flight var(--motion-live-fast)
+    var(--motion-live-ease-flight) both;
+  animation-delay: calc(var(--live-deal-index, 0) * var(--motion-live-deal-gap));
 }
 
 .showdown-hand-label {
@@ -282,9 +405,86 @@
   animation: live-action-in 180ms var(--motion-ease-standard) both;
 }
 
+.live-history-panel {
+  margin: var(--space-2) 0 var(--space-3);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: rgba(5, 14, 11, 0.48);
+}
+
+.live-history-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.live-history-toggle:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.live-history-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.live-history-title {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-history-title small {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.live-history-chevron {
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.live-history-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 230ms var(--motion-ease-standard),
+    opacity 180ms var(--motion-ease-standard);
+}
+
+.live-history-panel.is-expanded .live-history-body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.live-history-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .action-log {
   display: grid;
   gap: var(--space-3);
+  max-height: 190px;
+  margin: 0 8px 9px;
+  padding: 9px;
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.13);
 }
 
 .action-history-street {
@@ -389,18 +589,41 @@
 }
 
 @keyframes live-action-in {
-  from { opacity: 0; transform: translateX(var(--live-label-shift, -50%)) translateY(4px); }
-  to { opacity: 1; transform: translateX(var(--live-label-shift, -50%)); }
+  from { opacity: 0; transform: var(--live-badge-transform) translateY(4px); }
+  to { opacity: 1; transform: var(--live-badge-transform); }
 }
 
 @keyframes live-action-out {
-  from { opacity: 1; transform: translateX(var(--live-label-shift, -50%)); }
-  to { opacity: 0; transform: translateX(var(--live-label-shift, -50%)) translateY(-2px); }
+  from { opacity: 1; transform: var(--live-badge-transform); }
+  to { opacity: 0; transform: var(--live-badge-transform) translateY(-2px); }
+}
+
+@keyframes live-hero-pulse {
+  0%, 100% {
+    opacity: 0.28;
+    box-shadow: 0 0 0 0 rgba(88, 196, 139, 0.18);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 5px rgba(88, 196, 139, 0.04);
+  }
 }
 
 @keyframes live-chip-arrive {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(var(--chip-from-x, 0), var(--chip-from-y, 0), 0)
+      scale(0.82);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(0, 1px, 0) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 @keyframes live-bet-to-pot {
@@ -410,9 +633,58 @@
   }
 }
 
-@keyframes live-card-reveal {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes live-card-flight {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(var(--deal-from-x, 0), var(--deal-from-y, -80px), 0)
+      rotate(-3deg)
+      scale(0.92);
+  }
+  74% {
+    opacity: 1;
+    transform: translate3d(0, 1px, 0) rotate(0.4deg) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0) scale(1);
+  }
+}
+
+@keyframes live-board-reveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(-7px, -5px, 0) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes live-showdown-reveal {
+  from { opacity: 0.55; transform: translate3d(0, -3px, 0) scale(0.96); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes live-winner-glow {
+  0% {
+    opacity: 0;
+    box-shadow: 0 0 0 0 rgba(228, 189, 106, 0);
+  }
+  38% {
+    opacity: 1;
+    box-shadow: 0 0 0 4px rgba(228, 189, 106, 0.1), 0 0 24px rgba(228, 189, 106, 0.2);
+  }
+  100% {
+    opacity: 0.38;
+    box-shadow: 0 0 0 2px rgba(228, 189, 106, 0.04), 0 0 12px rgba(228, 189, 106, 0.08);
+  }
+}
+
+@keyframes live-fade-only {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
 }
 
 @keyframes live-pot-ready {
@@ -465,6 +737,23 @@
     font-size: 10px;
   }
 
+  #screen-live .decision-panel {
+    padding: 12px;
+  }
+
+  #screen-live .hero-cards {
+    margin-block: 9px;
+  }
+
+  #screen-live .coach-tools,
+  #screen-live .actions {
+    margin-top: 8px;
+  }
+
+  .live-history-panel {
+    margin-block: 6px 8px;
+  }
+
   .action-log {
     max-height: 170px;
   }
@@ -484,5 +773,23 @@
   #screen-live .seat.winner {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
+  }
+
+  .live-history-body {
+    transition-duration: 1ms !important;
+  }
+
+  #screen-live .seat.hero.hero-turn::after {
+    animation: none !important;
+  }
+
+  #screen-live .live-dealt-card,
+  .live-mini-dealt-card,
+  .mini-hole-card.is-showdown-reveal,
+  .board-card.is-revealing,
+  .seat-bet.is-arriving,
+  #screen-live .seat.winner.is-winner-reveal::before {
+    animation: live-fade-only 60ms linear both !important;
+    transform: none !important;
   }
 }

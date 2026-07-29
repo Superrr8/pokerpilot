@@ -97,6 +97,13 @@
   --motion-duration-slow: 460ms;
   --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
   --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-live-fast: 160ms;
+  --motion-live-normal: 260ms;
+  --motion-live-slow: 1000ms;
+  --motion-live-deal-gap: 55ms;
+  --motion-live-board-gap: 80ms;
+  --motion-live-ease-flight: cubic-bezier(0.18, 0.84, 0.24, 1);
+  --motion-live-ease-settle: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Backward-compatible aliases for existing screens. */
   --color-bg: var(--app-bg);
@@ -134,4 +141,3 @@
   --shadow: var(--shadow-md);
   --motion-med: var(--motion-duration-medium);
 }
-

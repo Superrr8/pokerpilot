@@ -58,7 +58,12 @@
 
 @keyframes potToWinner {
   from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-  to { opacity: 0; transform: translate3d(24px, 20px, 0) scale(0.78); }
+  to {
+    opacity: 0;
+    transform:
+      translate3d(var(--pot-win-x, 24px), var(--pot-win-y, 20px), 0)
+      scale(0.78);
+  }
 }
 
 @keyframes loadingSpin {
@@ -106,9 +111,9 @@
   animation: positionSelect var(--motion-duration-medium) var(--motion-ease-emphasized);
 }
 
-.playing-card {
+.playing-card:not(.live-dealt-card):not(.board-card) {
   animation: cardDeal var(--motion-duration-medium) var(--motion-ease-emphasized) both;
-  animation-delay: calc(var(--deal-index, 0) * 55ms);
+  animation-delay: calc(var(--deal-index, 0) * var(--motion-live-deal-gap));
 }
 
 .is-chip-to-pot {
@@ -116,7 +121,7 @@
 }
 
 .is-pot-to-winner {
-  animation: potToWinner var(--motion-duration-slow) var(--motion-ease-standard);
+  animation: potToWinner var(--motion-live-normal) var(--motion-live-ease-flight);
 }
 
 .is-loading::after {
@@ -140,4 +145,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-

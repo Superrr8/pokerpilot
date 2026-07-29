@@ -135,3 +135,47 @@ test('showdown и результат не дублируются в action bubbl
   );
   assert.match(html, /session\.winnerSummary\|\|'Раздача завершена'/);
 });
+
+test('Live UX подключает отдельный controller до inline-приложения', () => {
+  assert.match(html, /<script src="src\/live\/live-ux-controller\.js"><\/script>/);
+  assert.ok(
+    html.indexOf('src/live/live-ux-controller.js') < html.indexOf('<script>'),
+    'Live UX controller должен загружаться до inline-приложения'
+  );
+});
+
+test('HistoryPanel имеет компактную доступную кнопку и анимируемое содержимое', () => {
+  assert.match(html, /id="liveHistoryToggle"[^>]*aria-expanded="false"[^>]*aria-controls="liveHistoryBody"/);
+  assert.match(html, /id="liveHistoryBody"/);
+  assert.match(html, /id="liveHistoryCount"/);
+  assert.match(css, /\.live-history-toggle/);
+  assert.match(css, /\.live-history-panel\.is-expanded/);
+  assert.match(css, /grid-template-rows/);
+});
+
+test('HistoryPanel обновляется отдельно от decision card', () => {
+  assert.match(html, /historyPanel\.onHeroTurn\(\)/);
+  assert.match(html, /historyPanel\.startHand\(\)/);
+  assert.match(html, /function renderHistoryPanelState/);
+  assert.match(html, /liveHistoryToggle[\s\S]*?historyPanel\.toggle/);
+});
+
+test('Hero и board cards синхронизируются без пересоздания при обычном rerender', () => {
+  assert.match(html, /syncCardCollection\(\$\('#heroCards'\)/);
+  assert.match(html, /syncCardCollection\(board/);
+  assert.doesNotMatch(html, /\$\('#heroCards'\)\.innerHTML=cardsHTML/);
+  assert.doesNotMatch(html, /board\.innerHTML=cardsHTML/);
+});
+
+test('action feed дедуплицирует enter-анимацию и сохраняет компактное последнее действие', () => {
+  assert.match(html, /actionFeed\.consume\(action\.eventId\)/);
+  assert.match(html, /seat-last-action/);
+  assert.match(css, /\.player-action-bubble\.is-entering/);
+  assert.match(css, /\.seat-last-action/);
+});
+
+test('Hero active state использует декоративный pulse без изменения геометрии', () => {
+  assert.match(css, /\.seat\.hero\.hero-turn::after/);
+  assert.match(css, /@keyframes live-hero-pulse/);
+  assert.match(css, /prefers-reduced-motion:\s*reduce[\s\S]*\.seat\.hero\.hero-turn::after[\s\S]*animation:\s*none/);
+});
