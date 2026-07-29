@@ -26,6 +26,7 @@ function defaultProgress() {
       range_reading: 0
     },
     history: [],
+    savedHands: [],
     learning: CourseProgress.defaultState()
   };
 }
@@ -33,7 +34,12 @@ function defaultProgress() {
 function loadProgress() {
   try {
     const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || localStorage.getItem(PREVIOUS_STORAGE_KEY) || 'null');
-    if (current) return CourseProgress.migrateProgress({ ...defaultProgress(), ...current, mistakes: { ...defaultProgress().mistakes, ...(current.mistakes || {}) } });
+    if (current) return CourseProgress.migrateProgress({
+      ...defaultProgress(),
+      ...current,
+      mistakes: { ...defaultProgress().mistakes, ...(current.mistakes || {}) },
+      savedHands: Array.isArray(current.savedHands) ? current.savedHands : []
+    });
     const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY) || 'null');
     if (old) {
       return CourseProgress.migrateProgress({

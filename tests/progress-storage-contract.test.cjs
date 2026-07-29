@@ -38,6 +38,7 @@ test('пустой localStorage загружает неизменённый пр
       range_reading: 0
     },
     history: [],
+    savedHands: [],
     learning: {
       schemaVersion: 1,
       modules: {},
@@ -217,4 +218,31 @@ test('обновление страницы повторно загружает 
     initial: page.snapshot()
   });
   assert.deepEqual(plain(refreshedPage.getProgress()), progress);
+});
+
+test('storage создаёт и безопасно нормализует коллекцию savedHands', () => {
+  const empty = createProgressStorageHarness();
+  assert.deepEqual(plain(empty.getProgress().savedHands), []);
+
+  for (const damaged of [null, 'broken', {}, 42]) {
+    const harness = createProgressStorageHarness({
+      initial: {
+        [KEYS.STORAGE_KEY]: json({
+          decisions: 3,
+          savedHands: damaged
+        })
+      }
+    });
+    assert.deepEqual(plain(harness.getProgress().savedHands), []);
+    assert.equal(harness.getProgress().decisions, 3);
+  }
+
+  const savedHands = [{ id: 'live-one', source: 'Live Session' }];
+  const valid = createProgressStorageHarness({
+    initial: {
+      [KEYS.STORAGE_KEY]: json({ savedHands, futureField: true })
+    }
+  });
+  assert.deepEqual(plain(valid.getProgress().savedHands), savedHands);
+  assert.equal(valid.getProgress().futureField, true);
 });

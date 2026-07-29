@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachDashboard(root) {
+  const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
+
   function safeProgress(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
   }
@@ -31,11 +33,19 @@
       courseProgress.canOpenModule(learning, module.id)
       && !courseProgress.moduleComplete(learning, module.id)
     );
+    const availableModules = modules.filter(module =>
+      courseProgress.canOpenModule(learning, module.id)
+    ).length;
     const resumeModule = (
       currentModule && courseProgress.canOpenModule(learning, currentModule.id)
         ? currentModule
         : firstAvailableIncomplete
     ) || modules.at(-1) || null;
+    const hasLearningResume = Boolean(
+      currentModule
+      && courseProgress.canOpenModule(learning, currentModule.id)
+      && learning.current?.view
+    );
     const decisions = Number.isFinite(Number(raw.decisions)) ? Number(raw.decisions) : 0;
     const maxPoints = Number.isFinite(Number(raw.maxPoints)) ? Number(raw.maxPoints) : 0;
     const scorePoints = Number.isFinite(Number(raw.scorePoints)) ? Number(raw.scorePoints) : 0;
@@ -54,10 +64,16 @@
       totalLessons: implementedLessons.length,
       completedModules: completedModules.length,
       totalModules: modules.length,
+      availableModules,
       lastCompletedTitle: lastCompleted?.title || 'Пока нет завершённых модулей',
       bestExamScore,
       decisionAccuracy: maxPoints > 0 ? Math.round(scorePoints / maxPoints * 100) : null,
       decisions,
+      primaryAction: hasLearningResume
+        ? { label: translate('action.continue', 'Продолжить'), route: 'learning', resume: true }
+        : decisions > 0
+          ? { label: translate('action.startTraining', 'Начать тренировку'), route: 'training', resume: false }
+          : { label: translate('action.startLearning', 'Начать обучение'), route: 'learning', resume: false },
       resume: {
         moduleId: resumeModule?.id || null,
         label: resumeModule
@@ -79,6 +95,13 @@
     if (!scope || !model) return model;
     setText(scope, '#dashboardProgress', `${model.coursePercent}%`);
     setText(scope, '#dashboardProgressLabel', `${model.completedLessons}/${model.totalLessons} уроков`);
+    setText(
+      scope,
+      '#dashboardAvailableModules',
+      model.availableModules === 1
+        ? '1 доступный модуль'
+        : `${model.availableModules} доступных модуля`
+    );
     setText(scope, '#dashboardLastModule', model.lastCompletedTitle);
     setText(scope, '#dashboardBestExam', model.bestExamScore === null ? '—' : `${model.bestExamScore}%`);
     setText(scope, '#dashboardResumeTitle', model.resume.label);
@@ -93,9 +116,11 @@
     if (empty) empty.classList.toggle('hidden', !model.isEmpty);
     if (populated) populated.classList.toggle('hidden', model.isEmpty);
     const continueButton = scope.querySelector('#dashboardContinue');
-    if (continueButton && model.resume.moduleId) {
-      continueButton.dataset.moduleId = model.resume.moduleId;
-      continueButton.dataset.resume = 'true';
+    if (continueButton) {
+      continueButton.textContent = model.primaryAction.label;
+      continueButton.dataset.route = model.primaryAction.route;
+      continueButton.dataset.resume = String(model.primaryAction.resume);
+      if (model.resume.moduleId) continueButton.dataset.moduleId = model.resume.moduleId;
     }
     return model;
   }
@@ -104,4 +129,3 @@
   root.PokerPilotDashboard = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
-

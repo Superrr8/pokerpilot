@@ -29,6 +29,18 @@ node --test tests/learning-positions-module.test.cjs tests/learning-stage72-prog
 node --test tests/dashboard-contract.test.cjs tests/ui-system-contract.test.cjs tests/poker-card-component.test.cjs tests/sound-v2-contract.test.cjs tests/stage80-browser-contract.test.cjs
 ```
 
+Контракт информационной архитектуры и пяти основных разделов (Этап 8.1):
+
+```sh
+node --test tests/information-architecture.test.cjs
+```
+
+Live Session: модель сохранённой руки, UI-контракт, непрерывный flow и presentation queue:
+
+```sh
+node --test tests/live-hand-model.test.cjs tests/live-session-ui-contract.test.cjs tests/live-flow-controller.test.cjs tests/live-presentation-queue.test.cjs
+```
+
 Полная проверка всех 2 598 960 пятикарточных комбинаций запускается отдельно:
 
 ```sh

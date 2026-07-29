@@ -61,6 +61,12 @@ test('пустой прогресс даёт безопасную модель �
   assert.equal(model.lastCompletedTitle, 'Пока нет завершённых модулей');
   assert.equal(model.bestExamScore, null);
   assert.equal(model.resume.moduleId, 'holdem-foundations');
+  assert.deepEqual({ ...model.primaryAction }, {
+    label: 'Начать обучение',
+    route: 'learning',
+    resume: false
+  });
+  assert.equal(model.availableModules, 1);
 });
 
 test('заполненный прогресс показывает последний модуль, лучший экзамен и продолжение', () => {
@@ -90,6 +96,11 @@ test('заполненный прогресс показывает послед�
   assert.equal(model.resume.moduleId, 'hand-rankings');
   assert.match(model.resume.label, /Комбинации/);
   assert.ok(model.coursePercent > 0 && model.coursePercent < 100);
+  assert.deepEqual({ ...model.primaryAction }, {
+    label: 'Продолжить',
+    route: 'learning',
+    resume: true
+  });
 });
 
 test('dashboard не мутирует объект прогресса при построении модели', () => {
@@ -100,3 +111,21 @@ test('dashboard не мутирует объект прогресса при п�
   assert.equal(JSON.stringify(progress), before);
 });
 
+test('при наличии только решений dashboard честно предлагает тренировку', () => {
+  const { course, api } = loadCourseProgress();
+  const model = loadDashboard().createModel({
+    progress: {
+      decisions: 3,
+      maxPoints: 9,
+      scorePoints: 6,
+      learning: api.defaultState()
+    },
+    course,
+    courseProgress: api
+  });
+  assert.deepEqual({ ...model.primaryAction }, {
+    label: 'Начать тренировку',
+    route: 'training',
+    resume: false
+  });
+});
