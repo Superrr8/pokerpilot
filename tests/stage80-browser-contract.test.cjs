@@ -18,10 +18,10 @@ test('v2.0 stylesheets подключены после legacy styles и до Lea
   assert.ok(html.indexOf(motion) < html.indexOf(learning));
 });
 
-test('app shell содержит доступную top navigation и компактную mode navigation', () => {
+test('app shell содержит доступную top navigation без дублирующей mode navigation', () => {
   assert.match(html, /class="[^"]*app-shell/);
   assert.match(html, /class="[^"]*top-navigation/);
-  assert.match(html, /aria-label="Главные режимы"/);
+  assert.match(html, /aria-label="Основная навигация"/);
   for (const route of ['home', 'learning', 'analyzer', 'study', 'ranges', 'live', 'coach']) {
     assert.match(html, new RegExp(`id="screen-${route}"`), `Нет screen-${route}`);
   }
@@ -45,4 +45,3 @@ test('встроенный browser smoke hook контролирует console e
   assert.match(html, /document\.documentElement\.scrollWidth/);
   assert.match(html, /window\.innerWidth/);
 });
-

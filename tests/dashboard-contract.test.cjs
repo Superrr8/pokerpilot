@@ -62,8 +62,8 @@ test('пустой прогресс даёт безопасную модель �
   assert.equal(model.bestExamScore, null);
   assert.equal(model.resume.moduleId, 'holdem-foundations');
   assert.deepEqual({ ...model.primaryAction }, {
-    label: 'Начать обучение',
-    route: 'learning',
+    label: 'Начать тренировку',
+    route: 'study',
     resume: false
   });
   assert.equal(model.availableModules, 1);
@@ -125,7 +125,7 @@ test('при наличии только решений dashboard честно �
   });
   assert.deepEqual({ ...model.primaryAction }, {
     label: 'Начать тренировку',
-    route: 'training',
+    route: 'study',
     resume: false
   });
 });

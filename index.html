@@ -39,101 +39,116 @@
   <link rel="stylesheet" href="src/styles/live-session.css">
   <link rel="stylesheet" href="src/styles/decision-quality.css">
   <link rel="stylesheet" href="src/styles/poker-iq.css">
+  <link rel="stylesheet" href="src/styles/home.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
 </head>
 <body>
-<div class="app app-shell">
+<div class="app app-shell" data-active-route="home">
   <header class="topbar top-navigation">
     <button class="brand" data-route="home" aria-label="Главная">
       <span class="logo">PP</span>
       <span><strong>PokerPilot</strong><small>Тренировка и разбор решений</small></span>
     </button>
-    <div class="top-navigation-actions">
-      <span class="chip top-stakes">$1/$3</span>
-      <div class="sound-control" aria-label="Настройки звука">
-        <button id="soundToggle" class="sound-toggle" type="button" aria-label="Выключить звук" aria-pressed="true">🔊</button>
-        <input id="soundVolume" class="sound-volume" type="range" min="0" max="1" step="0.05" value="0.35" aria-label="Громкость звука">
+    <div class="top-header-actions">
+      <button id="homeProfileEntry" class="home-profile-entry home-header-profile" type="button" data-route="profile" aria-label="Открыть профиль">
+        <span id="homeProfileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</span>
+        <span class="home-profile-copy">
+          <strong id="homeProfileName">Player</strong>
+          <small id="homeProfileLevel">Level 1 · 0 XP</small>
+          <small id="homeProfileIq">Poker IQ формируется</small>
+          <span id="homeProfileProgress" class="profile-mini-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс Level 1: 0 / 500 XP"><i></i></span>
+        </span>
+      </button>
+      <div class="top-navigation-actions">
+        <span class="chip top-stakes">$1/$3</span>
+        <div class="sound-control" aria-label="Настройки звука">
+          <button id="soundToggle" class="sound-toggle" type="button" aria-label="Выключить звук" aria-pressed="true">🔊</button>
+          <input id="soundVolume" class="sound-volume" type="range" min="0" max="1" step="0.05" value="0.35" aria-label="Громкость звука">
+        </div>
       </div>
     </div>
   </header>
 
   <main>
     <section id="screen-home" class="screen active dashboard-screen" data-smoke="dashboard-ready">
-      <div class="dashboard-shell">
-        <section class="dashboard-hero">
-          <div class="dashboard-hero-copy">
-            <button id="homeProfileEntry" class="home-profile-entry" type="button" data-route="profile" aria-label="Открыть профиль">
-              <span id="homeProfileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</span>
-              <span class="home-profile-copy">
-                <strong id="homeProfileName">Player</strong>
-                <small id="homeProfileLevel">Level 1 · 0 XP</small>
-                <small id="homeProfileIq">Poker IQ формируется</small>
-                <span id="homeProfileProgress" class="profile-mini-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс Level 1: 0 / 500 XP"><i></i></span>
-              </span>
-              <b aria-hidden="true">›</b>
-            </button>
-            <span class="eyebrow">Тренируй решения, а не удачу</span>
-            <h1>PokerPilot — твой покерный тренер</h1>
-            <p>Курс, контрольные раздачи и точная математика в одном спокойном рабочем пространстве. Рекомендации остаются объяснимой exploit-моделью, а не обещанием GTO.</p>
-            <div class="dashboard-primary-actions">
-              <button id="dashboardContinue" class="ui-button-primary" data-route="learning" data-resume="true">Начать обучение <span aria-hidden="true">→</span></button>
-              <button id="dashboardTrainer" class="ui-button-secondary" data-route="training">Быстрая тренировка</button>
-              <button id="dashboardHandLab" class="ui-button-secondary" data-route="analyzer">Разобрать раздачу</button>
-              <button id="dashboardLive" class="ui-button-ghost" data-route="live">Live Simulator</button>
-            </div>
+      <div class="home-dashboard">
+        <header class="home-welcome">
+          <h1 id="homeGreeting">С возвращением, Player</h1>
+          <p id="homeStatus">Poker IQ формируется</p>
+        </header>
+
+        <section class="dashboard-hero home-primary-card home-primary-action" aria-labelledby="dashboardNextTitle">
+          <span id="dashboardNextEyebrow" class="eyebrow">ТВОЙ СЛЕДУЮЩИЙ ШАГ</span>
+          <h2 id="dashboardNextTitle">Быстрая тренировка</h2>
+          <p id="dashboardNextDescription">Короткая серия решений для поддержания формы.</p>
+          <span id="dashboardNextMeta" class="home-action-meta">5 раздач · около 4 минут</span>
+          <button id="dashboardContinue" class="ui-button-primary" type="button" data-route="study" data-resume="false">Начать тренировку</button>
+        </section>
+
+        <section class="home-progress-strip" aria-label="Ключевые показатели">
+          <div class="home-progress-metric">
+            <small id="homePokerIqLabel">Poker IQ</small>
+            <strong id="homePokerIqValue">—</strong>
+            <span id="homePokerIqRank">Не рассчитан</span>
+          </div>
+          <div class="home-progress-metric">
+            <small id="homeLevelLabel">Уровень</small>
+            <strong id="homeLevelValue">1</strong>
+            <span id="homeXpDetail">0 / 500 XP</span>
+            <span id="homeLevelProgress" class="home-level-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс уровня 1: 0 / 500 XP"><i></i></span>
+          </div>
+          <div class="home-progress-metric">
+            <small id="homeStreakLabel">Серия</small>
+            <strong id="homeStreakValue">0</strong>
+            <span id="homeStreakDetail">пока нет серии</span>
           </div>
         </section>
 
-        <div class="dashboard-grid">
-          <section class="progress-card dashboard-progress-card">
-            <div class="section-header">
-              <div><span class="ui-badge">Учебный маршрут</span><h2>Текущий прогресс</h2></div>
-              <strong id="dashboardProgress">0%</strong>
-            </div>
-            <div id="dashboardCourseBar" class="ui-progress" role="progressbar" aria-label="Прогресс курса" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
-            <div class="dashboard-progress-value">
-              <span id="dashboardProgressLabel">0/0 уроков</span>
-              <span id="dashboardAvailableModules">1 доступный модуль</span>
-            </div>
-            <div class="dashboard-stat-grid">
-              <div class="stat-card"><small>Последний модуль</small><strong id="dashboardLastModule">Пока нет завершённых модулей</strong></div>
-              <div class="stat-card"><small>Лучший экзамен</small><strong id="dashboardBestExam">—</strong></div>
-              <div class="stat-card"><small>Решений в тренере</small><strong id="statDecisions">0</strong></div>
-            </div>
-          </section>
+        <nav id="dashboardQuickActions" class="home-quick-actions" aria-label="Быстрые действия">
+          <button id="dashboardTrainer" class="home-quick-action" type="button" data-home-quick-index="0" data-route="study">
+            <span data-home-quick-icon aria-hidden="true">◎</span>
+            <strong data-home-quick-label>Быстрая тренировка</strong>
+          </button>
+          <button id="dashboardHandLab" class="home-quick-action" type="button" data-home-quick-index="1" data-route="analyzer">
+            <span data-home-quick-icon aria-hidden="true">＋</span>
+            <strong data-home-quick-label>Ввести раздачу</strong>
+          </button>
+          <button id="dashboardEquity" class="home-quick-action" type="button" data-home-quick-index="2" data-route="analyzer" data-focus="equity">
+            <span data-home-quick-icon aria-hidden="true">%</span>
+            <strong data-home-quick-label>Equity</strong>
+          </button>
+        </nav>
 
-          <section id="dashboardResume" class="progress-card dashboard-resume-card">
-            <div class="section-header"><div><span class="ui-badge">Следующий шаг</span><h2>Продолжить с места остановки</h2></div></div>
-            <div id="dashboardEmpty" class="ui-empty-state">
-              <strong>Начни с основ</strong>
-              Прогресс появится после завершения первого урока или тренировочного решения.
-            </div>
-            <div id="dashboardPopulated" class="hidden">
-              <h3 id="dashboardResumeTitle">Открыть обучение</h3>
-              <p id="dashboardResumeDetail" class="muted">Продолжить с ближайшего доступного модуля</p>
-            </div>
-            <button class="ui-button-secondary wide" data-route="learning" data-resume="true">Вернуться к курсу</button>
-          </section>
+        <section class="home-secondary-card home-focus-card" aria-labelledby="homeFocusTitle">
+          <span id="homeFocusEyebrow" class="eyebrow">ФОКУС НЕДЕЛИ</span>
+          <h2 id="homeFocusTitle">Фокус формируется</h2>
+          <p id="homeFocusDescription">Персональный фокус появится после нескольких тренировок.</p>
+          <button id="homeFocusAction" class="ui-button-ghost small hidden" type="button">Тренировать тему</button>
+        </section>
 
-          <section class="dashboard-full">
-            <div class="section-header"><div><h2>Быстрый доступ</h2><p>Все рабочие режимы без лишних переходов.</p></div></div>
-            <nav id="dashboardModeNav" class="dashboard-grid dashboard-mode-grid" aria-label="Главные режимы">
-              <button class="mode-card dashboard-mode-card" style="--reveal-order:1" data-route="learning"><span class="mode-icon">О</span><span><strong>Обучение</strong><small>Курс, позиции и стартовые руки.</small></span><b aria-hidden="true">›</b></button>
-              <button class="mode-card dashboard-mode-card" style="--reveal-order:2" data-route="training"><span class="mode-icon">Т</span><span><strong>Тренировка</strong><small>Контрольные ситуации и режимы практики.</small></span><b aria-hidden="true">›</b></button>
-              <button class="mode-card dashboard-mode-card" style="--reveal-order:3" data-route="analyzer"><span class="mode-icon">Р</span><span><strong>Разбор</strong><small>Hand Lab, Coach и покерная математика.</small></span><b aria-hidden="true">›</b></button>
-              <button class="mode-card dashboard-mode-card" style="--reveal-order:4" data-route="profile"><span class="mode-icon">П</span><span><strong>Профиль</strong><small>Локальная статистика, история и настройки.</small></span><b aria-hidden="true">›</b></button>
-            </nav>
-          </section>
+        <section id="dashboardResume" class="home-secondary-card home-recent-card hidden" aria-labelledby="homeSecondaryTitle">
+          <span id="homeSecondaryEyebrow" class="eyebrow">НЕДАВНЯЯ АКТИВНОСТЬ</span>
+          <h2 id="homeSecondaryTitle">Недавняя активность</h2>
+          <p id="homeSecondaryDescription">Данные появятся после первого действия.</p>
+          <button id="homeSecondaryAction" class="ui-button-ghost small" type="button" data-route="analyzer">Открыть</button>
+        </section>
 
-          <section class="progress-card dashboard-full">
-            <div class="section-header"><div><h2>Рабочая статистика</h2><p id="focusText">Сыграй несколько ситуаций — здесь появится персональный фокус.</p></div></div>
-            <div class="dashboard-stat-grid">
-              <div class="stat-card"><small>Точность</small><strong id="statAccuracy">—</strong></div>
-              <div class="stat-card"><small>Live-сессии</small><strong id="statSessions">0</strong></div>
-              <div class="stat-card"><small>Текущая серия</small><strong id="statStreak">0</strong></div>
-            </div>
-          </section>
-
+        <div class="home-compatibility-hooks hidden" aria-hidden="true">
+          <span id="dashboardProgress">0%</span>
+          <span id="dashboardProgressLabel">0/0 уроков</span>
+          <span id="dashboardAvailableModules">1</span>
+          <span id="dashboardLastModule">Пока нет завершённых модулей</span>
+          <span id="dashboardBestExam">—</span>
+          <span id="statDecisions">0</span>
+          <span id="statAccuracy">—</span>
+          <span id="statSessions">0</span>
+          <span id="statStreak">0</span>
+          <span id="focusText">Персональный фокус появится после нескольких тренировок.</span>
+          <div id="dashboardCourseBar" class="ui-progress" role="progressbar" aria-label="Прогресс курса" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+          <div id="dashboardEmpty"></div>
+          <div id="dashboardPopulated"></div>
+          <nav id="dashboardModeNav" aria-label="Совместимость прежней навигации"></nav>
+          <button id="dashboardLive" type="button" data-route="live" tabindex="-1">Live Simulator</button>
         </div>
       </div>
     </section>
@@ -642,22 +657,17 @@ function assistMode() {
 }
 
 function renderProgress() {
-  $('#statDecisions').textContent = progress.decisions;
-  $('#statAccuracy').textContent = progress.maxPoints ? `${Math.round(progress.scorePoints / progress.maxPoints * 100)}%` : '—';
-  $('#statSessions').textContent = progress.sessions;
-  $('#statStreak').textContent = progress.streak || 0;
-  const labels = {
-    too_tight: 'слишком тайтовые фолды', too_loose: 'слишком широкие входы', passive: 'излишне пассивная игра',
-    overplay: 'переигрывание руки', pot_odds: 'ошибки в пот-оддсах', outs: 'ошибки при подсчёте аутов', sizing: 'размеры ставок',
-    position: 'игра без учёта позиции', range_reading: 'чтение диапазона'
-  };
-  const top = Object.entries(progress.mistakes || {}).sort((a, b) => b[1] - a[1])[0];
-  $('#focusText').textContent = top && top[1] > 0 ? `Главный фокус: ${labels[top[0]]}. Тренер будет чаще возвращать такие ситуации.` : 'Сыграй несколько ситуаций — здесь появится персональный фокус.';
   $$('input[name="assistMode"]').forEach(r => { r.checked = r.value === assistMode(); });
-  const dashboardModel = PokerPilotDashboard.createModel({
+  const statistics = ProfileStatistics.fromProgress(progress);
+  const pokerIQ = PokerIQStats.getSummary(progress.history);
+  const dashboardModel = PokerPilotDashboard.buildHomeViewModel({
     progress,
     course: window.POKERPILOT_COURSE,
-    courseProgress: CourseProgress
+    courseProgress: CourseProgress,
+    profile: ProfileStore.getProfile(),
+    pokerIQ,
+    statistics,
+    now: new Date()
   });
   PokerPilotDashboard.render(document, dashboardModel);
   profileUi.render();
@@ -692,6 +702,7 @@ function route(name, options = {}) {
   const screen = $(`#screen-${name}`);
   if (!screen) return false;
   screen.classList.add('active');
+  $('.app-shell').dataset.activeRoute = name;
   PokerPilotNavigation.setActive($('#primaryNavigation'), name);
   if (name === 'home') renderProgress();
   if (name === 'learning') {

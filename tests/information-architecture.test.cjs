@@ -52,8 +52,8 @@ test('централизованный русский словарь содер�
   assert.ok(i18n);
   for (const [key, expected] of Object.entries({
     'nav.home': 'Главная',
-    'nav.learning': 'Обучение',
-    'nav.training': 'Тренировка',
+    'nav.learning': 'Учиться',
+    'nav.training': 'Тренер',
     'nav.analysis': 'Разбор',
     'nav.profile': 'Профиль',
     'action.continue': 'Продолжить',
@@ -71,7 +71,7 @@ test('нижняя навигация содержит ровно пять по�
   );
   assert.deepEqual(
     Array.from(navigation.sections, section => section.label),
-    ['Главная', 'Обучение', 'Тренировка', 'Разбор', 'Профиль']
+    ['Главная', 'Учиться', 'Тренер', 'Разбор', 'Профиль']
   );
 });
 

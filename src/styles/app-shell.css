@@ -664,51 +664,55 @@ button {
 
 .bottom-nav {
   z-index: var(--z-navigation);
-  width: min(100%, 760px);
+  bottom: max(8px, env(safe-area-inset-bottom));
+  width: min(calc(100% - 16px), 744px);
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-2);
-  padding:
-    var(--space-3)
-    max(var(--space-3), env(safe-area-inset-left))
-    calc(var(--space-3) + env(safe-area-inset-bottom))
-    max(var(--space-3), env(safe-area-inset-right));
-  background: linear-gradient(180deg, transparent, rgba(4, 7, 10, 0.96) 32%);
+  gap: 3px;
+  padding: 6px;
+  border: 1px solid rgba(207, 230, 220, 0.08);
+  border-radius: 22px;
+  background: rgba(11, 18, 22, 0.88);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.38),
+    inset 0 1px rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(22px) saturate(125%);
 }
 
 .bottom-nav button {
   min-width: 0;
-  min-height: 48px;
+  min-height: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  padding: var(--space-2) var(--space-1);
-  border-color: var(--border-default);
-  background: var(--surface-glass-strong);
-  color: var(--text-secondary);
-  backdrop-filter: blur(var(--blur-glass));
+  gap: 4px;
+  padding: 7px var(--space-1) 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: #74837e;
 }
 
 .primary-nav-icon {
-  font-size: var(--font-size-md);
+  font-size: 0.95rem;
   line-height: 1;
+  transform: translateY(0);
 }
 
 .primary-nav-label {
   max-width: 100%;
-  overflow: hidden;
-  font-size: 10px;
-  font-weight: 800;
+  overflow: visible;
+  font-size: clamp(9px, 2.7vw, 11px);
+  font-weight: 680;
   line-height: 1.1;
-  text-overflow: ellipsis;
+  text-overflow: clip;
   white-space: nowrap;
 }
 
 .bottom-nav button.active {
-  border-color: rgba(105, 217, 167, 0.26);
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: linear-gradient(180deg, rgba(105, 217, 167, 0.12), rgba(105, 217, 167, 0.075));
+  color: #7cdbb0;
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
 }
 
 .mode-card,
@@ -884,13 +888,13 @@ button {
   }
 
   .bottom-nav {
-    gap: 4px;
-    padding-inline: max(6px, env(safe-area-inset-left));
+    gap: 1px;
+    padding-inline: max(var(--space-2), env(safe-area-inset-left));
   }
 
   .bottom-nav button {
-    min-height: 52px;
-    border-radius: var(--radius-sm);
+    min-height: 48px;
+    border-radius: var(--radius-md);
   }
 
   .primary-nav-label {

@@ -3,8 +3,8 @@
 (function attachTranslations(root) {
   const strings = Object.freeze({
     'nav.home': 'Главная',
-    'nav.learning': 'Обучение',
-    'nav.training': 'Тренировка',
+    'nav.learning': 'Учиться',
+    'nav.training': 'Тренер',
     'nav.analysis': 'Разбор',
     'nav.profile': 'Профиль',
     'action.continue': 'Продолжить',
