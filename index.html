@@ -41,6 +41,10 @@
   <link rel="stylesheet" href="src/styles/poker-iq.css">
   <link rel="stylesheet" href="src/styles/home.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
+  <link rel="stylesheet" href="src/styles/progress-overview.css">
+  <link rel="stylesheet" href="src/styles/achievement-center.css">
+  <link rel="stylesheet" href="src/styles/progress-analytics-view.css">
+  <link rel="stylesheet" href="src/styles/progress-feedback.css">
 </head>
 <body>
 <div class="app app-shell" data-active-route="home">
@@ -310,7 +314,7 @@
             <p id="profileBioText" class="muted">Bio пока не заполнено</p>
           </div>
           <button id="profileEdit" class="ghost profile-edit-button" type="button" aria-label="Редактировать профиль">Изменить</button>
-          <div class="profile-progression">
+          <div class="profile-progression" hidden aria-hidden="true">
             <div class="profile-progression-label">
               <strong id="profileLevel">Level 1</strong>
               <span id="profileXpLabel">0 / 500 XP</span>
@@ -319,7 +323,190 @@
           </div>
         </section>
 
-        <section class="panel" aria-labelledby="profileRatingsTitle">
+        <section id="progressOverview" class="panel progress-overview-card progress-overview" aria-label="Прогресс игрока">
+          <header class="progress-overview-hero">
+            <div>
+              <span class="progress-overview-kicker">Прогресс игрока</span>
+              <p id="progressPlayerName" class="progress-overview-player">Player</p>
+              <div class="progress-iq-line">
+                <strong id="progressPokerIq" class="progress-iq-value">Не рассчитан</strong>
+                <span id="progressRank" class="progress-rank">Без ранга</span>
+              </div>
+              <div class="progress-iq-meta">
+                <span id="progressIqSample">Недостаточно решений</span>
+                <span id="progressIqChange" class="progress-iq-change" hidden></span>
+              </div>
+              <button id="progressAnalyticsOpen" class="ghost progress-overview-analytics-action" type="button">Аналитика</button>
+            </div>
+            <div class="progress-level-block">
+              <div class="progress-level-heading">
+                <strong id="progressLevel">Level 1</strong>
+                <span id="progressXpLabel">0 / 500 XP</span>
+              </div>
+              <progress id="progressXpBar" class="progress-meter" max="500" value="0" aria-label="Level 1: 0 / 500 XP"></progress>
+            </div>
+          </header>
+
+          <section class="progress-overview-section" aria-labelledby="progressDecisionQualityTitle">
+            <div class="progress-section-heading">
+              <div>
+                <span class="progress-section-label">Качество решений</span>
+                <h2 id="progressDecisionQualityTitle">Decision Quality</h2>
+              </div>
+              <small id="progressDqSample">Недостаточно решений</small>
+            </div>
+            <div id="progressDqPresent" class="progress-dq-present" hidden>
+              <strong id="progressDqScore" class="progress-dq-score">Не рассчитана</strong>
+              <span id="progressDqBand" class="progress-dq-band"></span>
+            </div>
+            <p id="progressDqEmpty" class="progress-empty">Недостаточно решений для оценки Decision Quality.</p>
+          </section>
+
+          <section class="progress-overview-section" aria-labelledby="progressSkillsTitle">
+            <div class="progress-section-heading">
+              <div>
+                <span class="progress-section-label">Краткий срез</span>
+                <h3 id="progressSkillsTitle">Навыки</h3>
+              </div>
+            </div>
+            <div id="progressSkillsList" class="progress-skills-list"></div>
+          </section>
+
+          <section class="progress-overview-section progress-focus" aria-labelledby="progressFocusTitle">
+            <div>
+              <span class="progress-section-label">Фокус недели</span>
+              <h3 id="progressFocusTitle">Фокус недели пока не определён</h3>
+              <p id="progressFocusDescription" class="progress-empty">Недостаточно надёжных данных по навыкам. Продолжайте тренироваться.</p>
+            </div>
+            <button id="progressFocusCta" class="primary progress-focus-cta" type="button" data-route="study" hidden disabled>Открыть Trainer</button>
+          </section>
+
+          <section class="progress-overview-section" aria-labelledby="progressAchievementsTitle">
+            <div class="progress-section-heading">
+              <div>
+                <span class="progress-section-label">Коллекция</span>
+                <h3 id="progressAchievementsTitle">Достижения</h3>
+              </div>
+              <div class="progress-achievement-link">
+                <small id="progressAchievementsCount">0 / 10</small>
+                <button id="progressAchievementsOpen" class="ghost" type="button">Все достижения</button>
+              </div>
+            </div>
+            <div id="progressAchievementsList" class="progress-achievements-list" hidden></div>
+            <p id="progressAchievementsEmpty" class="progress-empty">Пока нет данных о достижениях.</p>
+          </section>
+
+          <div class="progress-overview-footer">
+            <section class="progress-streak" aria-labelledby="progressStreakTitle">
+              <span class="progress-section-label">Активность</span>
+              <h3 id="progressStreakTitle">Серия</h3>
+              <div class="progress-streak-values">
+                <span><strong id="progressCurrentStreak">0</strong><small>текущая</small></span>
+                <span><strong id="progressBestStreak">0</strong><small>лучшая</small></span>
+              </div>
+              <small id="progressTodayStatus" class="progress-today-status">Сегодня активность ещё не засчитана</small>
+            </section>
+            <section class="progress-recent" aria-labelledby="progressRecentTitle">
+              <span class="progress-section-label">Последнее</span>
+              <h3 id="progressRecentTitle">Недавний прогресс</h3>
+              <ol id="progressRecentList" class="progress-event-list" hidden></ol>
+              <p id="progressRecentEmpty" class="progress-empty">Пока нет значимых событий прогресса.</p>
+            </section>
+          </div>
+        </section>
+
+        <section id="progressAnalytics" class="panel progress-analytics" aria-labelledby="progressAnalyticsTitle" aria-hidden="true" hidden>
+          <button id="progressAnalyticsBack" class="back progress-analytics-back" type="button">‹ К прогрессу</button>
+          <header class="progress-analytics-header">
+            <div>
+              <span class="progress-section-label">Только реальные события</span>
+              <h1 id="progressAnalyticsTitle">Аналитика прогресса</h1>
+              <p class="progress-analytics-description">Активность и XP строятся только по принятым событиям ProgressSystem.</p>
+            </div>
+            <div class="progress-analytics-current" aria-label="Текущее состояние прогресса">
+              <span><strong id="progressAnalyticsPokerIq">Не рассчитан</strong><small>Poker IQ</small></span>
+              <span><strong id="progressAnalyticsRank">Без ранга</strong><small>Rank</small></span>
+              <span><strong id="progressAnalyticsLevel">Level 1</strong><small id="progressAnalyticsLifetimeXp">0 lifetime XP</small></span>
+              <span><strong id="progressAnalyticsStreak">0 / 0</strong><small>Серия / лучшая</small></span>
+            </div>
+          </header>
+
+          <div class="progress-analytics-periods" role="group" aria-label="Период аналитики">
+            <button class="progress-analytics-period is-active" type="button" data-analytics-period="7d" aria-pressed="true">7 дней</button>
+            <button class="progress-analytics-period" type="button" data-analytics-period="30d" aria-pressed="false">30 дней</button>
+            <button class="progress-analytics-period" type="button" data-analytics-period="all" aria-pressed="false">Всё время</button>
+          </div>
+
+          <p id="progressAnalyticsCoverage" class="progress-analytics-notice" hidden></p>
+          <p id="progressAnalyticsEmpty" class="progress-analytics-empty" hidden>История пока пуста.</p>
+          <div id="progressAnalyticsSummary" class="progress-analytics-summary" aria-label="Сводка выбранного периода"></div>
+
+          <section class="progress-analytics-section" aria-labelledby="progressAnalyticsActivityTitle">
+            <div class="progress-analytics-section-header">
+              <div><span class="progress-section-label">Accepted events</span><h2 id="progressAnalyticsActivityTitle">Активность</h2></div>
+            </div>
+            <div id="progressAnalyticsActivityChart" class="progress-analytics-chart" role="group" aria-label="Количество принятых событий по календарным дням"></div>
+            <p id="progressAnalyticsActivityEmpty" class="progress-analytics-empty">Нет событий за выбранный период.</p>
+          </section>
+
+          <section class="progress-analytics-section" aria-labelledby="progressAnalyticsXpTitle">
+            <div class="progress-analytics-section-header">
+              <div><span class="progress-section-label">Daily XP gained</span><h2 id="progressAnalyticsXpTitle">История XP</h2></div>
+            </div>
+            <div id="progressAnalyticsXpChart" class="progress-analytics-chart" role="group" aria-label="Реально начисленный XP по календарным дням"></div>
+            <p id="progressAnalyticsXpEmpty" class="progress-analytics-empty">XP за выбранный период не начислялся.</p>
+          </section>
+
+          <section class="progress-analytics-section" aria-labelledby="progressAnalyticsIqTitle">
+            <div class="progress-analytics-section-header">
+              <div><span class="progress-section-label">Recorded values only</span><h2 id="progressAnalyticsIqTitle">История Poker IQ</h2></div>
+            </div>
+            <p id="progressAnalyticsIqNotice" class="progress-analytics-notice" hidden>История Poker IQ частичная: старые значения не реконструируются.</p>
+            <div id="progressAnalyticsIqChart" class="progress-analytics-chart" role="group" aria-label="Записанные значения Poker IQ"></div>
+            <p id="progressAnalyticsIqEmpty" class="progress-analytics-empty">История Poker IQ появится после новых оценённых решений.</p>
+          </section>
+
+          <section class="progress-analytics-section" aria-labelledby="progressAnalyticsBreakdownTitle">
+            <div class="progress-analytics-section-header">
+              <div><span class="progress-section-label">Структура периода</span><h3 id="progressAnalyticsBreakdownTitle">Типы событий</h3></div>
+            </div>
+            <ul id="progressAnalyticsBreakdown" class="progress-analytics-breakdown"></ul>
+            <p id="progressAnalyticsBreakdownEmpty" class="progress-analytics-empty">Нет событий для распределения.</p>
+          </section>
+
+          <section class="progress-analytics-section" aria-labelledby="progressAnalyticsRecentTitle">
+            <div class="progress-analytics-section-header">
+              <div><span class="progress-section-label">Последнее</span><h3 id="progressAnalyticsRecentTitle">Недавняя активность</h3></div>
+            </div>
+            <ol id="progressAnalyticsRecent" class="progress-analytics-recent"></ol>
+            <p id="progressAnalyticsRecentEmpty" class="progress-analytics-empty">Принятых событий пока нет.</p>
+          </section>
+        </section>
+
+        <section id="achievementCenter" class="panel achievement-center" aria-labelledby="achievementCenterTitle" aria-hidden="true" hidden>
+          <button id="achievementCenterBack" class="back achievement-center-back" type="button">‹ К прогрессу</button>
+          <header class="achievement-center-header">
+            <div>
+              <span class="progress-section-label">Коллекция игрока</span>
+              <h1 id="achievementCenterTitle">Достижения</h1>
+              <p class="achievement-center-description">Отслеживайте открытые цели и реальный прогресс без дополнительных наград или скрытых пересчётов.</p>
+            </div>
+            <div class="achievement-center-summary" aria-label="Общий прогресс достижений">
+              <strong id="achievementCenterCount">0 из 10 открыто</strong>
+              <span id="achievementCenterPercent">0%</span>
+              <progress id="achievementCenterCompletion" class="achievement-center-completion" max="100" value="0" aria-label="Достижения: 0 из 10 открыто, 0%"></progress>
+            </div>
+          </header>
+          <div class="achievement-center-filters" role="group" aria-label="Фильтр достижений">
+            <button id="achievementFilterAll" class="achievement-filter is-active" type="button" data-achievement-filter="all" aria-pressed="true">Все</button>
+            <button id="achievementFilterUnlocked" class="achievement-filter" type="button" data-achievement-filter="unlocked" aria-pressed="false">Открытые</button>
+            <button id="achievementFilterLocked" class="achievement-filter" type="button" data-achievement-filter="locked" aria-pressed="false">Не открытые</button>
+          </div>
+          <div id="achievementCenterGrid" class="achievement-center-grid"></div>
+          <p id="achievementCenterEmpty" class="achievement-center-empty" hidden>Пока нет данных о достижениях.</p>
+        </section>
+
+        <section class="panel" aria-labelledby="profileRatingsTitle" hidden aria-hidden="true">
           <div class="section-header"><div><span class="tag">Основа будущих оценок</span><h2 id="profileRatingsTitle">Ключевые показатели</h2></div></div>
           <div id="profileRatings" class="profile-metric-grid">
             <div class="profile-metric"><small>Poker IQ</small><strong id="profilePokerIq">Не рассчитан</strong></div>
@@ -363,7 +550,7 @@
           </div>
         </section>
 
-        <section class="panel" aria-labelledby="profileActivityTitle">
+        <section class="panel" aria-labelledby="profileActivityTitle" hidden aria-hidden="true">
           <div class="section-header"><div><span class="tag">Только реальные данные</span><h2 id="profileActivityTitle">Активность</h2></div></div>
           <p id="profileEmptyState" class="muted">Недостаточно решений для оценки</p>
           <div id="profileActivity" class="profile-activity-grid">
@@ -376,7 +563,7 @@
           </div>
         </section>
 
-        <section class="panel" aria-labelledby="profileAchievementsTitle">
+        <section class="panel" aria-labelledby="profileAchievementsTitle" hidden aria-hidden="true">
           <div class="section-header"><div><span class="tag">Достижения</span><h2 id="profileAchievementsTitle">Следующие цели</h2></div></div>
           <div id="profileAchievements" class="profile-achievement-grid">
             <article class="profile-achievement" data-profile-achievement="first-hand" data-status="locked"><strong>Первая раздача</strong><small data-achievement-status>Заблокировано</small></article>
@@ -486,6 +673,7 @@
   </form>
 </dialog>
 <div id="appToast" class="ui-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="progressFeedback" class="progress-feedback" role="status" aria-live="polite" aria-atomic="true" aria-label="Уведомления прогресса"></div>
 <script src="src/poker-core.js"></script>
 <script src="src/data/postflop-scenarios.js"></script>
 <script src="src/data/preflop-ranges.js"></script>
@@ -497,9 +685,20 @@
 <script src="src/poker-iq/poker-iq-config.js"></script>
 <script src="src/poker-iq/poker-iq-engine.js"></script>
 <script src="src/poker-iq/poker-iq-stats.js"></script>
+<script src="src/progress/progress-config.js"></script>
+<script src="src/progress/achievement-config.js"></script>
+<script src="src/progress/achievement-system.js"></script>
+<script src="src/progress/progress-date-utils.js"></script>
+<script src="src/progress/progress-analytics.js"></script>
 <script src="src/storage/progress-storage.js"></script>
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
+<script src="src/progress/progress-system.js"></script>
+<script src="src/progress/progress-feedback.js"></script>
+<script src="src/progress/progress-integration.js"></script>
+<script src="src/ui/progress-overview.js"></script>
+<script src="src/ui/achievement-center.js"></script>
+<script src="src/ui/progress-analytics-view.js"></script>
 <script src="src/live/saved-hands.js"></script>
 <script src="src/live/live-flow-controller.js"></script>
 <script src="src/live/live-motion.js"></script>
@@ -542,6 +741,10 @@ const GRADE = {
 };
 
 let progress = loadProgress();
+ProgressSystem.load({
+  legacyProfile: ProfileStore.getProfile(),
+  legacyProgress: progress
+});
 let studyIndex = 0;
 let currentStudy = null;
 let studyAnswered = false;
@@ -599,6 +802,27 @@ let profileUi = PokerPilotProfileUI.create({
   getPokerIQ: () => PokerIQStats.getSummary(progress.history),
   feedback: UIFeedback
 });
+const progressFeedback = PokerPilotProgressFeedback.create({
+  documentRef: document,
+  container: $('#progressFeedback')
+});
+const progressIntegration = PokerPilotProgressIntegration.create({
+  system: ProgressSystem,
+  onSnapshot: () => renderProgress(),
+  onResult: result => progressFeedback.consume(result)
+});
+const achievementCenterUi = PokerPilotAchievementCenter.create({
+  documentRef: document,
+  getSnapshot: () => ProgressSystem.getSnapshot(),
+  getCatalog: () => PokerPilotAchievementConfig.getAchievementCatalog()
+});
+const progressAnalyticsUi = PokerPilotProgressAnalyticsView.create({
+  documentRef: document,
+  getAnalyticsSnapshot: options => ProgressSystem.getAnalyticsSnapshot({
+    ...options,
+    timezoneOffsetMinutes: new Date().getTimezoneOffset()
+  })
+});
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
 let decisionSequence = 0;
 
@@ -648,6 +872,12 @@ function recordDecision({
     evaluatedAt: date
   });
   addHistory(record);
+  progressIntegration.recordTrainingDecision({
+    decisionRecord: record,
+    source: decisionMode || mode || 'unknown',
+    topic: tag || context.topic || '',
+    localDate: date.slice(0, 10)
+  });
   saveProgress();
   return record;
 }
@@ -660,8 +890,10 @@ function renderProgress() {
   $$('input[name="assistMode"]').forEach(r => { r.checked = r.value === assistMode(); });
   const statistics = ProfileStatistics.fromProgress(progress);
   const pokerIQ = PokerIQStats.getSummary(progress.history);
+  const progressSnapshot = ProgressSystem.getSnapshot();
   const dashboardModel = PokerPilotDashboard.buildHomeViewModel({
     progress,
+    progressSnapshot: ProgressSystem.getSnapshot(),
     course: window.POKERPILOT_COURSE,
     courseProgress: CourseProgress,
     profile: ProfileStore.getProfile(),
@@ -671,6 +903,19 @@ function renderProgress() {
   });
   PokerPilotDashboard.render(document, dashboardModel);
   profileUi.render();
+  const today = new Date();
+  const todayKey = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0')
+  ].join('-');
+  PokerPilotProgressOverview.render(document, PokerPilotProgressOverview.createViewModel({
+    snapshot: progressSnapshot,
+    displayName: ProfileStore.getProfile().displayName,
+    today: todayKey
+  }));
+  achievementCenterUi.refresh(progressSnapshot);
+  progressAnalyticsUi.refresh();
   DecisionQualityUI.renderProfile(document, DecisionQualityStats.getSummary(progress.history));
   renderSoundControls();
   renderSavedHands();
@@ -715,7 +960,8 @@ function route(name, options = {}) {
         commitProgress: learning => {
           progress.learning = CourseProgress.normalizeState(learning);
           saveProgress();
-        }
+        },
+        onExamCompleted: event => progressIntegration.completeExam(event)
       });
     }
     if (options.resume && typeof learningMode.resumeFromProgress === 'function') {
@@ -725,7 +971,11 @@ function route(name, options = {}) {
   if (name === 'study' && options.reset) currentStudy = null;
   if (name === 'study' && !currentStudy) renderStudy();
   if (name === 'ranges' && !rangeState.current) nextRangeSpot();
-  if (name === 'profile') renderCoachReport();
+  if (name === 'profile') {
+    achievementCenterUi.close({ restoreFocus: false });
+    progressAnalyticsUi.close({ restoreFocus: false });
+    renderCoachReport();
+  }
   if (name === 'analyzer') renderSavedHands();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   return true;
@@ -971,6 +1221,12 @@ function answerStudy(choice) {
       opponentType: s.villain
     }
   });
+  progressIntegration.completeTrainingScenario({
+    scenarioId: s.id,
+    decisionId: record.decisionId,
+    source: 'study',
+    topic: s.category || studyStreet(s)
+  });
   renderDecisionQuality('#studyDecisionQuality', record);
   const g = GRADE[grade];
   const f = $('#studyFeedback');
@@ -1121,6 +1377,21 @@ function answerRange(choice) {
       effectiveStack: 300
     }
   });
+  progressIntegration.completeTrainingScenario({
+    scenarioId: `${s.category}-${s.pos}-${C.handClass(s.cards)}`,
+    decisionId: record.decisionId,
+    source: 'ranges',
+    topic: 'preflop'
+  });
+  if (assistMode() === 'exam' && rangeState.number % 10 === 0) {
+    progressIntegration.completeExam({
+      moduleId: 'preflop-ranges',
+      attemptId: record.decisionId,
+      score: Math.round(rangeState.correctPoints / rangeState.maxPoints * 100),
+      passed: rangeState.correctPoints / rangeState.maxPoints >= 0.7,
+      source: 'ranges'
+    });
+  }
   renderDecisionQuality('#rangeDecisionQuality', record);
   const f = $('#rangeFeedback');
   f.className = `feedback ${GRADE[grade].cls}`;

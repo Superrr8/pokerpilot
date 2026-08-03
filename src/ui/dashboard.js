@@ -235,9 +235,15 @@
   function getHomeProgressSnapshot(input) {
     const state = object(input);
     const rawProgress = object(state.progress);
+    const progressSnapshot = object(state.progressSnapshot);
     const profile = object(state.profile);
-    const progression = object(profile.progression);
-    const pokerIQ = object(state.pokerIQ);
+    const snapshotLevel = object(progressSnapshot.level);
+    const progression = Object.keys(snapshotLevel).length
+      ? snapshotLevel
+      : object(profile.progression);
+    const pokerIQ = Object.keys(object(progressSnapshot.pokerIq)).length
+      ? object(progressSnapshot.pokerIq)
+      : object(state.pokerIQ);
     const rank = object(pokerIQ.rank);
     const statistics = object(state.statistics);
     const iqScore = optionalNumber(pokerIQ.score);
@@ -248,13 +254,17 @@
       progression.totalXp ?? progression.xp
     ));
     const xpToNextLevel = Math.max(1, Math.floor(number(progression.xpToNextLevel, 500)));
-    const dayStreak = optionalNumber(statistics.currentStreakDays);
+    const snapshotStreak = object(progressSnapshot.streak);
+    const dayStreak = optionalNumber(
+      Object.keys(snapshotStreak).length ? snapshotStreak.current : statistics.currentStreakDays
+    );
     const decisionStreak = Math.floor(number(
       statistics.currentDecisionStreak,
       rawProgress.streak
     ));
-    const streakIsDays = dayStreak !== null && dayStreak > 0;
-    const streakValue = streakIsDays ? Math.floor(dayStreak) : decisionStreak;
+    const hasSnapshotStreak = Object.keys(snapshotStreak).length > 0;
+    const streakIsDays = hasSnapshotStreak || (dayStreak !== null && dayStreak > 0);
+    const streakValue = streakIsDays ? Math.floor(dayStreak || 0) : decisionStreak;
     return {
       pokerIQ: {
         label: 'Poker IQ',

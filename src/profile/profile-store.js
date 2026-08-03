@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachProfileStore(root) {
+  const ProgressConfig = root.PokerPilotProgressConfig
+    || (typeof require === 'function' ? require('../progress/progress-config.js') : null);
   const PROFILE_SCHEMA_VERSION = 1;
   const PROFILE_STORAGE_KEY = 'pokerpilot_profile';
   const MAX_DISPLAY_NAME_LENGTH = 24;
@@ -64,29 +66,11 @@
   }
 
   function xpRequiredForLevel(level) {
-    const safeLevel = Math.max(1, Math.floor(Number(level) || 1));
-    return 250 * (safeLevel + 1);
+    return ProgressConfig.xpRequiredForLevel(level);
   }
 
   function calculateLevelFromXp(value) {
-    const numeric = Number(value);
-    const totalXp = Number.isFinite(numeric) ? Math.max(0, Math.floor(numeric)) : 0;
-    let level = 1;
-    let levelStartXp = 0;
-    let nextLevelXp = xpRequiredForLevel(level);
-    while (totalXp >= levelStartXp + nextLevelXp) {
-      levelStartXp += nextLevelXp;
-      level += 1;
-      nextLevelXp = xpRequiredForLevel(level);
-    }
-    return {
-      totalXp,
-      level,
-      xpIntoLevel: totalXp - levelStartXp,
-      xpToNextLevel: nextLevelXp,
-      levelStartXp,
-      nextLevelXp: levelStartXp + nextLevelXp
-    };
+    return ProgressConfig.deriveLevel(value);
   }
 
   function safeIsoDate(value, fallback) {

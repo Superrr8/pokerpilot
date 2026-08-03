@@ -47,6 +47,9 @@
     const container = options.container;
     const getProgress = options.getProgress;
     const commitProgress = options.commitProgress;
+    const onExamCompleted = typeof options.onExamCompleted === 'function'
+      ? options.onExamCompleted
+      : () => {};
     const sound = options.sound || {
       handleUserGesture: () => Promise.resolve(false),
       play: () => false,
@@ -265,6 +268,15 @@
       if (action === 'finish-exam') {
         lastExamResult = Progress.submitExam(learningState(), moduleId, examAnswers);
         saveLearning(lastExamResult.state);
+        const attempts = Progress.getModuleState(lastExamResult.state, moduleId).examAttempts;
+        const attempt = attempts.at(-1);
+        onExamCompleted({
+          moduleId,
+          attemptId: `${attempt.date}:${attempts.length}`,
+          score: lastExamResult.score,
+          passed: lastExamResult.passed,
+          source: 'learning'
+        });
         sound.play(
           Progress.moduleComplete(lastExamResult.state, moduleId)
             ? 'achievement'
