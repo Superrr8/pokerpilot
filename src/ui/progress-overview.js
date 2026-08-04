@@ -43,7 +43,7 @@
     TRAINING_SESSION_COMPLETED: 'Тренировка завершена',
     HAND_REVIEW_COMPLETED: 'Раздача разобрана',
     DAILY_HAND_COMPLETED: 'Раздача дня завершена',
-    LIVE_SESSION_REVIEWED: 'Live Session разобрана',
+    LIVE_SESSION_REVIEWED: 'Live Poker: разбор завершён',
     SKILL_CHECK_COMPLETED: 'Проверка навыка завершена'
   });
   const ACHIEVEMENT_ICONS = Object.freeze({

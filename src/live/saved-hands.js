@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachSavedHands(root) {
+  const LiveMode = root.PokerPilotLiveMode
+    || (typeof require === 'function' ? require('./live-mode.js') : null);
   const SCHEMA_VERSION = 1;
   const STREETS = ['preflop', 'flop', 'turn', 'river', 'showdown'];
   const STREET_LABELS = Object.freeze({
@@ -144,7 +146,8 @@
     const record = {
       schemaVersion: SCHEMA_VERSION,
       id: `live-${sessionId}-${handNumber}`,
-      source: String(input.source || 'Live Session'),
+      mode: LiveMode.CANONICAL_ID,
+      source: LiveMode.FULL_LABEL,
       timestamp,
       table,
       hero: {
@@ -190,9 +193,23 @@
 
   function saveUnique(existingHands, hand) {
     const hands = Array.isArray(existingHands) ? existingHands.slice() : [];
+    const contentFingerprint = value => stableFingerprint({
+      timestamp: value?.timestamp,
+      table: value?.table,
+      hero: value?.hero,
+      communityCards: value?.communityCards,
+      players: value?.players,
+      effectiveStack: value?.effectiveStack,
+      potSize: value?.potSize,
+      actions: value?.actions,
+      winner: value?.winner,
+      result: value?.result
+    });
+    const handContentFingerprint = contentFingerprint(hand);
     const duplicate = hands.some(existing =>
       existing?.id === hand?.id ||
-      (existing?.fingerprint && hand?.fingerprint && existing.fingerprint === hand.fingerprint)
+      (existing?.fingerprint && hand?.fingerprint && existing.fingerprint === hand.fingerprint) ||
+      contentFingerprint(existing) === handContentFingerprint
     );
     if (duplicate) return { hands, saved: false, hand: null };
     return { hands: [hand, ...hands], saved: true, hand };

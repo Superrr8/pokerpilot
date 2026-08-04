@@ -152,7 +152,7 @@
           <div id="dashboardEmpty"></div>
           <div id="dashboardPopulated"></div>
           <nav id="dashboardModeNav" aria-label="Совместимость прежней навигации"></nav>
-          <button id="dashboardLive" type="button" data-route="live" tabindex="-1">Live Simulator</button>
+          <button id="dashboardLive" type="button" data-route="live" tabindex="-1">Live Cash</button>
         </div>
       </div>
     </section>
@@ -175,7 +175,7 @@
       <div id="trainingTools" class="section-tool-grid">
         <button class="mode-card section-tool-card" data-route="study"><span class="mode-icon">18</span><span><strong>Тренировочные ситуации</strong><small>18 проверенных постфлоп-сценариев.</small></span><b aria-hidden="true">›</b></button>
         <button class="mode-card section-tool-card" data-route="ranges"><span class="mode-icon">10</span><span><strong>Префлоп-тренировка</strong><small>Десять решений по позициям и диапазонам.</small></span><b aria-hidden="true">›</b></button>
-        <button class="mode-card section-tool-card" data-route="live"><span class="mode-icon">LS</span><span><strong>Live Simulator</strong><small>Учебные 6-max и 9-max сессии.</small></span><b aria-hidden="true">›</b></button>
+        <button class="mode-card section-tool-card" data-route="live"><span class="mode-icon">LC</span><span><strong>Live Cash $1/$3</strong><small>Учебные 6-max и 9-max сессии.</small></span><b aria-hidden="true">›</b></button>
       </div>
       <details class="assist-settings">
         <summary>Exam / Training / Review и настройки практики</summary>
@@ -196,7 +196,7 @@
           <div><span class="tag">Analysis</span><h3>Сохранённые раздачи</h3></div>
           <span id="savedHandsCount" class="chip">0</span>
         </div>
-        <p class="muted">Раздачи из Live Session можно открыть в Hand Lab; история действий останется доступна для будущего анализа Coach.</p>
+        <p class="muted">Раздачи из Live Cash $1/$3 можно открыть в Hand Lab; история действий останется доступна для будущего анализа Coach.</p>
         <div id="savedHandsList" class="saved-hands-list">
           <div class="ui-empty-state">Сохранённых раздач пока нет.</div>
         </div>
@@ -586,7 +586,7 @@
     <section id="screen-live" class="screen">
       <button class="back" data-route="training">‹ К тренировке</button>
       <div id="liveSetup" class="panel">
-        <span class="tag">Sycuan Live</span><h3>Настройка сессии</h3>
+        <span class="tag">Live Cash $1/$3</span><h3>Настройка сессии</h3>
         <label class="field">Бай-ин<select id="buyIn"><option value="200">$200</option><option value="300" selected>$300</option><option value="500">$500</option></select></label>
         <label class="field">Стол<select id="tableSize"><option value="6">6-max</option><option value="9" selected>9-max</option></select></label>
         <label class="field">Характер стола<select id="tableStyle"><option value="normal">Смешанный</option><option value="passive">Пассивный</option><option value="wild">Хаотичный</option></select></label>
@@ -596,7 +596,7 @@
       <div id="liveGame" class="hidden">
         <div class="panel session-bar">
           <div class="stats-grid four"><div class="stat"><small>Стек</small><strong id="liveStack">$300</strong></div><div class="stat"><small>Результат</small><strong id="liveProfit">+$0</strong></div><div class="stat"><small>Раздачи</small><strong id="liveHands">0</strong></div><div class="stat"><small>Тильт</small><strong id="liveTilt">Низкий</strong></div></div>
-          <div class="live-hand-controls" aria-label="Управление Live Session">
+          <div class="live-hand-controls" aria-label="Управление Live Cash">
             <button id="pauseLive" class="ghost compact-hand-action" type="button" aria-pressed="false">Ⅱ Пауза</button>
             <button id="saveLiveHand" class="ghost compact-hand-action hidden" type="button">☆ Save Hand</button>
           </div>
@@ -685,6 +685,7 @@
 <script src="src/poker-iq/poker-iq-config.js"></script>
 <script src="src/poker-iq/poker-iq-engine.js"></script>
 <script src="src/poker-iq/poker-iq-stats.js"></script>
+<script src="src/live/live-mode.js"></script>
 <script src="src/progress/progress-config.js"></script>
 <script src="src/progress/achievement-config.js"></script>
 <script src="src/progress/achievement-system.js"></script>
@@ -2388,7 +2389,7 @@ function createCompletedHand(winnerId,summary,potSize){
     sessionId:session.id,
     handNumber:session.hands,
     timestamp:new Date().toISOString(),
-    source:'Live Session',
+    source:'Live Cash $1/$3',
     table:{size:session.n,style:session.style,blinds:{small:1,big:3,label:'$1/$3'}},
     hero:{playerId:hero.id,position:positions[hero.id],holeCards:hero.cards,startingStack:hero.handStartingStack,endingStack:hero.stack},
     players:session.players.map(player=>({playerId:player.id,name:player.name,position:positions[player.id],type:player.type,startingStack:player.handStartingStack,endingStack:player.stack})),
@@ -2611,7 +2612,8 @@ function finishSession(reason='Сессия завершена.'){
   presentationQueue.exit();
   addHistory({
     mode:'session',
-    title:`Sycuan Live • ${session.hands} рук`,
+    liveMode:'live_cash_1_3',
+    title:`Live Cash $1/$3 • ${session.hands} рук`,
     choice:signedMoney(result),
     preferred:'',
     grade:result>=0?'good':'acceptable',

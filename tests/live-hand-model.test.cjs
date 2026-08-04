@@ -12,7 +12,7 @@ function fixture(overrides = {}) {
     sessionId: 'session-2026-07-28',
     handNumber: 7,
     timestamp: '2026-07-28T12:00:00.000Z',
-    source: 'Live Session',
+    source: 'Live Cash $1/$3',
     table: {
       size: 6,
       style: 'normal',
@@ -55,7 +55,8 @@ test('сохранённая Live-раздача имеет версиониро
   const hand = createHandRecord(fixture());
 
   assert.equal(hand.schemaVersion, 1);
-  assert.equal(hand.source, 'Live Session');
+  assert.equal(hand.mode, 'live_cash_1_3');
+  assert.equal(hand.source, 'Live Cash $1/$3');
   assert.equal(hand.id, 'live-session-2026-07-28-7');
   assert.deepEqual(hand.hero.holeCards, ['14s', '13s']);
   assert.deepEqual(hand.communityCards, ['12s', '11s', '2d', '10s', '4c']);

@@ -2,6 +2,8 @@
 
 (function attachDashboard(root) {
   const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
+  const LiveMode = root.PokerPilotLiveMode
+    || (typeof require === 'function' ? require('../live/live-mode.js') : null);
   const WEAK_TOPICS = Object.freeze({
     too_tight: 'Слишком тайтовые фолды',
     too_loose: 'Слишком широкие входы',
@@ -334,7 +336,7 @@
       return {
         type: 'recent-session',
         eyebrow: 'НЕДАВНЯЯ АКТИВНОСТЬ',
-        title: text(recentSession.title, 'Последняя Live-сессия'),
+        title: LiveMode.normalizeDisplayText(text(recentSession.title, 'Последняя Live Cash сессия')),
         description: 'История решений доступна в разделе разбора.',
         actionLabel: 'Посмотреть разбор',
         target: 'analyzer'

@@ -51,10 +51,12 @@ function createProgressStorageHarness({
   const storagePath = path.join(root, 'src', 'storage', 'progress-storage.js');
   const courseDataPath = path.join(root, 'src', 'data', 'learning-course.js');
   const courseProgressPath = path.join(root, 'src', 'learning', 'course-progress.js');
+  const liveModePath = path.join(root, 'src', 'live', 'live-mode.js');
   const source = fs.existsSync(storagePath)
     ? fs.readFileSync(storagePath, 'utf8')
     : inlineStorageSource(html);
   const learningSource = [
+    fs.readFileSync(liveModePath, 'utf8'),
     fs.readFileSync(courseDataPath, 'utf8'),
     fs.readFileSync(courseProgressPath, 'utf8')
   ].join('\n');

@@ -3,6 +3,8 @@
 (function attachProgressAnalytics(root) {
   const DateUtils = root.PokerPilotProgressDateUtils
     || (typeof require === 'function' ? require('./progress-date-utils.js') : null);
+  const LiveMode = root.PokerPilotLiveMode
+    || (typeof require === 'function' ? require('../live/live-mode.js') : null);
 
   const PERIODS = Object.freeze({
     '7d': Object.freeze({ id: '7d', label: '7 дней', days: 7 }),
@@ -28,7 +30,7 @@
     TRAINING_SESSION_COMPLETED: 'Тренировочная сессия завершена',
     HAND_REVIEW_COMPLETED: 'Разбор раздачи завершён',
     DAILY_HAND_COMPLETED: 'Раздача дня завершена',
-    LIVE_SESSION_REVIEWED: 'Live-сессия разобрана',
+    LIVE_SESSION_REVIEWED: 'Live Poker: разбор завершён',
     SKILL_CHECK_COMPLETED: 'Проверка навыка завершена'
   });
 
@@ -86,15 +88,15 @@
         type,
         timestamp: timestampValue,
         day: historyDay(raw),
-        source: text(raw.source, 'unknown'),
+        source: text(LiveMode.normalizeProgressSource(raw.source), 'unknown'),
         xp: integer(raw.xp ?? raw.xpGained),
-        summary: text(raw.summary),
+        summary: text(LiveMode.normalizeDisplayText(raw.summary)),
         lifetimeXpAfter: finite(raw.lifetimeXpAfter),
         levelAfter: finite(raw.levelAfter),
         rankAfter: text(raw.rankAfter) || null,
         pokerIqAfter: finite(raw.pokerIqAfter),
         streakAfter: finite(raw.streakAfter),
-        metadata: object(raw.metadata)
+        metadata: LiveMode.normalizeProgressMetadata(object(raw.metadata))
       };
     }).filter(row => row.eventId && row.type && row.day).sort((left, right) => {
       const timeDelta = Date.parse(right.timestamp || '') - Date.parse(left.timestamp || '');

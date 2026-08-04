@@ -13,6 +13,8 @@
     || (typeof require === 'function' ? require('./progress-date-utils.js') : null);
   const Analytics = root.PokerPilotProgressAnalytics
     || (typeof require === 'function' ? require('./progress-analytics.js') : null);
+  const LiveMode = root.PokerPilotLiveMode
+    || (typeof require === 'function' ? require('../live/live-mode.js') : null);
   const EVENT_TYPES = new Set(Config.EVENT_TYPES);
   const SKILL_IDS = new Set(Config.SKILL_IDS);
 
@@ -216,6 +218,10 @@
         const value = boundedText(rawMetadata[key], 160);
         if (value) metadata[key] = value;
       }
+      for (const key of ['mode', 'liveMode', 'tableMode']) {
+        const value = boundedText(rawMetadata[key], 160);
+        if (value) metadata[key] = LiveMode.normalizeIdentifier(value);
+      }
       const score = finite(rawMetadata.score);
       if (score !== null) metadata.score = Math.max(0, Math.min(100, score));
       if (typeof rawMetadata.passed === 'boolean') metadata.passed = rawMetadata.passed;
@@ -226,9 +232,9 @@
         timestamp,
         localDate: explicitDay || DateUtils.dayKeyFromTimestamp(timestamp, timezoneOffsetMinutes),
         timezoneOffsetMinutes,
-        source: boundedText(raw.source, 64, 'unknown'),
+        source: boundedText(LiveMode.normalizeProgressSource(raw.source), 64, 'unknown'),
         xp: nonNegativeInteger(raw.xp),
-        summary: boundedText(raw.summary, 240),
+        summary: boundedText(LiveMode.normalizeDisplayText(raw.summary), 240),
         lifetimeXpAfter: finite(raw.lifetimeXpAfter),
         levelAfter: finite(raw.levelAfter),
         rankAfter: boundedText(raw.rankAfter, 48) || null,
@@ -467,7 +473,7 @@
       id,
       type,
       timestamp: typeof raw.timestamp === 'string' ? raw.timestamp : '',
-      source: boundedText(raw.source, 64, 'unknown'),
+      source: boundedText(LiveMode.normalizeProgressSource(raw.source), 64, 'unknown'),
       payload
     };
   }
@@ -534,10 +540,9 @@
     const payload = event.payload;
     const identifier = payload.lessonId || payload.moduleId || payload.scenarioId || payload.sessionId
       || payload.handId || payload.challengeId || payload.skillId || payload.decisionRecord?.decisionId;
-    return boundedText(
+    return boundedText(LiveMode.normalizeDisplayText(
       `${event.type}${identifier ? ` · ${String(identifier)}` : ''}${xp ? ` · +${xp} XP` : ''}`,
-      240
-    );
+    ), 240);
   }
 
   function historyMetadata(event) {
@@ -546,6 +551,10 @@
     for (const key of ['lessonId', 'moduleId', 'scenarioId', 'sessionId', 'handId', 'challengeId', 'skillId', 'decisionId']) {
       const value = boundedText(payload[key], 160);
       if (value) metadata[key] = value;
+    }
+    for (const key of ['mode', 'liveMode', 'tableMode']) {
+      const value = boundedText(payload[key], 160);
+      if (value) metadata[key] = LiveMode.normalizeIdentifier(value);
     }
     const decisionId = boundedText(payload.decisionRecord?.decisionId, 160);
     if (decisionId) metadata.decisionId = decisionId;

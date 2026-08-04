@@ -32,9 +32,19 @@ function defaultProgress() {
 }
 
 function normalizeDecisionHistory(value) {
-  return typeof DecisionQualityRecords !== 'undefined'
+  const history = typeof DecisionQualityRecords !== 'undefined'
     ? DecisionQualityRecords.normalizeHistory(value)
     : (Array.isArray(value) ? value : []);
+  if (typeof PokerPilotLiveMode === 'undefined') return history;
+  const normalized = history.map(item => PokerPilotLiveMode.normalizeSessionRecord(item));
+  return normalized.every((item, index) => item === history[index]) ? history : normalized;
+}
+
+function normalizeSavedHands(value) {
+  const hands = Array.isArray(value) ? value : [];
+  if (typeof PokerPilotLiveMode === 'undefined') return hands;
+  const normalized = hands.map(hand => PokerPilotLiveMode.normalizeSavedHand(hand));
+  return normalized.every((hand, index) => hand === hands[index]) ? hands : normalized;
 }
 
 function loadProgress() {
@@ -45,7 +55,7 @@ function loadProgress() {
       ...defaultProgress(),
       ...current,
       mistakes: { ...defaultProgress().mistakes, ...(current.mistakes || {}) },
-      savedHands: Array.isArray(current.savedHands) ? current.savedHands : [],
+      savedHands: normalizeSavedHands(current.savedHands),
       history: normalizeDecisionHistory(current.history)
       });
       return migrated;
@@ -70,6 +80,8 @@ function saveProgress() {
   if (typeof DecisionQualityRecords !== 'undefined') {
     progress.history = DecisionQualityRecords.normalizeHistory(progress.history);
   }
+  progress.history = normalizeDecisionHistory(progress.history);
+  progress.savedHands = normalizeSavedHands(progress.savedHands);
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); } catch (_) {}
   renderProgress();
 }

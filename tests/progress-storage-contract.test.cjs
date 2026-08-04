@@ -237,7 +237,7 @@ test('storage создаёт и безопасно нормализует кол
     assert.equal(harness.getProgress().decisions, 3);
   }
 
-  const savedHands = [{ id: 'live-one', source: 'Live Session' }];
+  const savedHands = [{ id: 'live-one', mode: 'live_cash_1_3', source: 'Live Cash $1/$3' }];
   const valid = createProgressStorageHarness({
     initial: {
       [KEYS.STORAGE_KEY]: json({ savedHands, futureField: true })

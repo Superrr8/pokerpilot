@@ -25,7 +25,7 @@ test('адаптер отображает только реальные суще
     bestStreak: 7,
     savedHands: [{ id: 'one' }, { id: 'two' }],
     history: [
-      { mode: 'session', title: 'Sycuan Live • 18 рук', grade: 'good' },
+      { mode: 'session', title: 'Live Cash $1/$3 • 18 рук', grade: 'good' },
       { mode: 'study', grade: 'best' },
       { mode: 'study', grade: 'mistake' }
     ],
@@ -64,11 +64,10 @@ test('адаптер не мутирует существующий progress sto
   const api = loadApi();
   const progress = {
     decisions: 2,
-    history: [{ mode: 'session', title: 'Sycuan Live • 4 рук' }],
+    history: [{ mode: 'session', title: 'Live Cash $1/$3 • 4 рук' }],
     savedHands: []
   };
   const before = JSON.stringify(progress);
   api.fromProgress(progress);
   assert.equal(JSON.stringify(progress), before);
 });
-

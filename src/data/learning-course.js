@@ -132,7 +132,7 @@
             question('foundations-exam-duplicate', 'уникальность карт', 'Можно ли указать A♠ одновременно у героя и на доске?',
               [choice('yes', 'Да'), choice('no', 'Нет')], 'no', 'В колоде только одна A♠, поэтому повтор физической карты невозможен.'),
             question('foundations-exam-interface', 'интерфейс PokerPilot', 'Где вручную разобрать известную раздачу?',
-              [choice('hand-lab', 'В Hand Lab'), choice('live-only', 'Только в Live'), choice('progress', 'В отчёте прогресса')],
+              [choice('hand-lab', 'В Hand Lab'), choice('live-only', 'Только в Live Poker'), choice('progress', 'В отчёте прогресса')],
               'hand-lab', 'Hand Lab предназначен для ручного ввода и анализа раздачи.')
           ]
         }
