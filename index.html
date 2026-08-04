@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="src/styles/decision-quality.css">
   <link rel="stylesheet" href="src/styles/poker-iq.css">
   <link rel="stylesheet" href="src/styles/home.css">
+  <link rel="stylesheet" href="src/styles/daily-challenge.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
   <link rel="stylesheet" href="src/styles/progress-overview.css">
   <link rel="stylesheet" href="src/styles/achievement-center.css">
@@ -87,6 +88,19 @@
           <p id="dashboardNextDescription">Короткая серия решений для поддержания формы.</p>
           <span id="dashboardNextMeta" class="home-action-meta">5 раздач · около 4 минут</span>
           <button id="dashboardContinue" class="ui-button-primary" type="button" data-route="study" data-resume="false">Начать тренировку</button>
+        </section>
+
+        <section id="dailyChallengeCard" class="daily-challenge-card" aria-labelledby="dailyChallengeCardTitle" data-state="new">
+          <div class="daily-challenge-card-copy">
+            <div class="daily-challenge-card-head">
+              <span class="tag">Раздача дня</span>
+              <span id="dailyChallengeStatus" class="chip">Новая</span>
+            </div>
+            <h2 id="dailyChallengeCardTitle">Daily Challenge</h2>
+            <p id="dailyChallengeSummary">Сегодняшняя покерная ситуация</p>
+            <small id="dailyChallengeResult">Одно решение на сегодня</small>
+          </div>
+          <button id="dailyChallengeCta" class="ui-button-secondary" type="button" data-route="daily">Решить</button>
         </section>
 
         <section class="home-progress-strip" aria-label="Ключевые показатели">
@@ -154,6 +168,57 @@
           <nav id="dashboardModeNav" aria-label="Совместимость прежней навигации"></nav>
           <button id="dashboardLive" type="button" data-route="live" tabindex="-1">Live Cash</button>
         </div>
+      </div>
+    </section>
+
+    <section id="screen-daily" class="screen">
+      <button class="back" type="button" data-route="home">‹ На главную</button>
+      <div class="daily-challenge-layout">
+        <header class="panel daily-challenge-header">
+          <div class="daily-challenge-card-head">
+            <span class="tag">Раздача дня</span>
+            <span id="dailyDifficulty" class="chip">Средняя</span>
+          </div>
+          <h1 id="dailyTitle">Daily Challenge</h1>
+          <div class="daily-meta-grid" aria-label="Параметры раздачи">
+            <div class="daily-meta-item"><small>Улица</small><strong id="dailyStreet">—</strong></div>
+            <div class="daily-meta-item"><small>Позиция Hero</small><strong id="dailyPosition">—</strong></div>
+            <div class="daily-meta-item"><small>Соперник</small><strong id="dailyOpponent">—</strong></div>
+            <div class="daily-meta-item"><small>Банк</small><strong id="dailyPot">—</strong></div>
+            <div class="daily-meta-item"><small>К ответу</small><strong id="dailyCall">—</strong></div>
+            <div class="daily-meta-item"><small>Effective stack</small><strong id="dailyStack">—</strong></div>
+          </div>
+        </header>
+
+        <div class="daily-cards-section">
+          <section class="daily-card-group" aria-labelledby="dailyHeroTitle">
+            <h2 id="dailyHeroTitle">Карты Hero</h2>
+            <div id="dailyHeroCards" class="cards" aria-label="Карты Hero"></div>
+          </section>
+          <section id="dailyBoardWrap" class="daily-card-group" aria-labelledby="dailyBoardTitle">
+            <h2 id="dailyBoardTitle">Доска</h2>
+            <div id="dailyBoard" class="board" aria-label="Общие карты"></div>
+          </section>
+        </div>
+
+        <section class="panel" aria-labelledby="dailyDecisionTitle">
+          <span class="eyebrow">ТВОЁ РЕШЕНИЕ</span>
+          <h2 id="dailyDecisionTitle">Как сыграть?</h2>
+          <p id="dailyContext" class="daily-context"></p>
+          <div id="dailyActions" class="daily-actions" role="group" aria-label="Доступные действия"></div>
+          <button id="dailyConfirm" class="primary wide daily-submit" type="button" disabled>Подтвердить решение</button>
+        </section>
+
+        <section id="dailyFeedback" class="feedback daily-result hidden" role="status" aria-live="polite" aria-atomic="true">
+          <h2 id="dailyResultTitle"></h2>
+          <div class="daily-progress-result" aria-label="Награда за раздачу дня">
+            <strong id="dailyReward"></strong>
+            <span id="dailyStreak"></span>
+            <p id="dailyProgressPending" class="hidden"></p>
+          </div>
+          <strong id="dailyCorrectAction"></strong>
+          <p id="dailyExplanation"></p>
+        </section>
       </div>
     </section>
 
@@ -677,6 +742,12 @@
 <script src="src/poker-core.js"></script>
 <script src="src/data/postflop-scenarios.js"></script>
 <script src="src/data/preflop-ranges.js"></script>
+<script src="src/daily/daily-challenge-reward.js"></script>
+<script src="src/daily/daily-date.js"></script>
+<script src="src/daily/daily-challenge-catalog.js"></script>
+<script src="src/daily/daily-challenge-schedule.js"></script>
+<script src="src/daily/daily-challenge-storage.js"></script>
+<script src="src/daily/daily-challenge-system.js"></script>
 <script src="src/data/learning-course.js"></script>
 <script src="src/learning/course-progress.js"></script>
 <script src="src/decision-quality/decision-quality-engine.js"></script>
@@ -697,6 +768,7 @@
 <script src="src/progress/progress-system.js"></script>
 <script src="src/progress/progress-feedback.js"></script>
 <script src="src/progress/progress-integration.js"></script>
+<script src="src/daily/daily-challenge-progress.js"></script>
 <script src="src/ui/progress-overview.js"></script>
 <script src="src/ui/achievement-center.js"></script>
 <script src="src/ui/progress-analytics-view.js"></script>
@@ -709,6 +781,7 @@
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/dashboard.js"></script>
 <script src="src/ui/poker-card.js"></script>
+<script src="src/ui/daily-challenge.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
 <script src="src/ui/decision-quality.js"></script>
@@ -824,6 +897,23 @@ const progressAnalyticsUi = PokerPilotProgressAnalyticsView.create({
     timezoneOffsetMinutes: new Date().getTimezoneOffset()
   })
 });
+const dailyChallengeStore = PokerPilotDailyChallengeStorage.create();
+const dailyChallengeProgress = PokerPilotDailyChallengeProgress.create({
+  storage: dailyChallengeStore,
+  progressIntegration,
+  getProgressSnapshot: () => ProgressSystem.getSnapshot(),
+  now: () => new Date()
+});
+const dailyChallengeSystem = PokerPilotDailyChallengeSystem.create({
+  storage: dailyChallengeStore,
+  progress: dailyChallengeProgress,
+  now: () => new Date()
+});
+const dailyChallengeUi = PokerPilotDailyChallengeUI.create({
+  documentRef: document,
+  system: dailyChallengeSystem,
+  cardRenderer: PokerCardUI
+});
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
 let decisionSequence = 0;
 
@@ -903,6 +993,7 @@ function renderProgress() {
     now: new Date()
   });
   PokerPilotDashboard.render(document, dashboardModel);
+  dailyChallengeUi.renderDashboard();
   profileUi.render();
   const today = new Date();
   const todayKey = [
@@ -951,6 +1042,7 @@ function route(name, options = {}) {
   $('.app-shell').dataset.activeRoute = name;
   PokerPilotNavigation.setActive($('#primaryNavigation'), name);
   if (name === 'home') renderProgress();
+  if (name === 'daily') dailyChallengeUi.open();
   if (name === 'learning') {
     if (!learningMode) {
       learningSound = appSound;

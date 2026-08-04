@@ -14,6 +14,14 @@
     return Number.isFinite(numeric) ? numeric : null;
   }
 
+  function dailyChallengeEventId({ dateKey, scheduleVersion, challengeId } = {}) {
+    const date = text(dateKey);
+    const challenge = text(challengeId);
+    const version = Math.max(1, Math.floor(Number(scheduleVersion) || 1));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !challenge) return null;
+    return `daily_challenge:v${version}:${date}:${challenge}`;
+  }
+
   function invalid(reason = 'INVALID_INTEGRATION_INPUT') {
     return {
       applied: false,
@@ -116,15 +124,57 @@
       }));
     }
 
+    function completeDailyChallenge(input) {
+      const data = object(input);
+      const dateKey = text(data.dateKey);
+      const challengeId = text(data.challengeId);
+      const selectedAction = text(data.selectedAction).toUpperCase();
+      const correctAction = text(data.correctAction).toUpperCase();
+      const scheduleVersion = Math.max(1, Math.floor(Number(data.scheduleVersion) || 1));
+      const rewardVersion = Math.max(1, Math.floor(Number(data.rewardVersion) || 1));
+      const id = dailyChallengeEventId({ dateKey, scheduleVersion, challengeId });
+      const actions = new Set(['FOLD', 'CHECK', 'CALL', 'BET', 'RAISE', 'ALL_IN']);
+      if (
+        !id || typeof data.isCorrect !== 'boolean' || !selectedAction || !correctAction
+        || !actions.has(selectedAction) || !actions.has(correctAction)
+        || data.isCorrect !== (selectedAction === correctAction)
+      ) return invalid();
+      const context = eventContext();
+      const timestamp = typeof data.completedAt === 'string' && Number.isFinite(Date.parse(data.completedAt))
+        ? new Date(Date.parse(data.completedAt)).toISOString()
+        : context.timestamp;
+      return publish(system.recordEvent({
+        id,
+        type: 'DAILY_CHALLENGE_COMPLETED',
+        timestamp,
+        source: 'daily_challenge',
+        payload: {
+          dateKey,
+          localDate: dateKey,
+          timezoneOffsetMinutes: context.timezoneOffsetMinutes,
+          challengeId,
+          scheduleVersion,
+          rewardVersion,
+          outcome: data.isCorrect ? 'correct' : 'incorrect',
+          isCorrect: data.isCorrect,
+          selectedAction,
+          correctAction,
+          street: text(data.street).toLowerCase(),
+          difficulty: text(data.difficulty)
+        }
+      }));
+    }
+
     return Object.freeze({
       recordTrainingDecision,
       completeTrainingScenario,
       completeExam,
+      completeDailyChallenge,
       destroy: unsubscribe
     });
   }
 
-  const api = Object.freeze({ create });
+  const api = Object.freeze({ create, dailyChallengeEventId });
   root.PokerPilotProgressIntegration = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

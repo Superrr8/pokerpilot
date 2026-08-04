@@ -205,6 +205,10 @@ test('централизованные rewards применяются ко вс�
     ['TRAINING_SESSION_COMPLETED', { sessionId: 'training-1' }],
     ['HAND_REVIEW_COMPLETED', { handId: 'hand-1' }],
     ['DAILY_HAND_COMPLETED', { challengeId: 'daily-1' }],
+    ['DAILY_CHALLENGE_COMPLETED', {
+      challengeId: 'daily-v1', dateKey: '2026-07-31', scheduleVersion: 1, rewardVersion: 1,
+      outcome: 'correct', isCorrect: true, selectedAction: 'CALL', correctAction: 'CALL'
+    }],
     ['LIVE_SESSION_REVIEWED', { sessionId: 'live-1' }],
     ['SKILL_CHECK_COMPLETED', { skillId: 'pokerMath', score: 75 }]
   ];

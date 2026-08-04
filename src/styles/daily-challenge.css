@@ -1,0 +1,247 @@
+.daily-challenge-card {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 1px solid rgba(105, 217, 167, 0.16);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 92% 12%, rgba(105, 217, 167, 0.1), transparent 38%),
+    var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.daily-challenge-card-copy {
+  min-width: 0;
+}
+
+.daily-challenge-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.daily-challenge-card h2 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-xl);
+}
+
+.daily-challenge-card p,
+.daily-challenge-card small {
+  display: block;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.daily-challenge-card small {
+  margin-top: var(--space-1);
+  color: var(--text-tertiary);
+}
+
+.daily-challenge-card .ui-button-secondary {
+  min-height: 44px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.daily-challenge-layout {
+  display: grid;
+  gap: var(--space-4);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+  overflow-x: clip;
+}
+
+.daily-challenge-header {
+  padding: clamp(var(--space-5), 5vw, var(--space-7));
+}
+
+.daily-challenge-header h1 {
+  margin: var(--space-2) 0;
+  font-size: clamp(1.7rem, 6vw, 2.35rem);
+  letter-spacing: -0.04em;
+}
+
+.daily-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.daily-meta-item {
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-interactive);
+}
+
+.daily-meta-item small,
+.daily-meta-item strong {
+  display: block;
+}
+
+.daily-meta-item small {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.daily-meta-item strong {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.daily-cards-section {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.daily-card-group {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated);
+}
+
+.daily-card-group h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.daily-card-group .cards,
+.daily-card-group .board {
+  min-width: 0;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.daily-context {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.daily-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.daily-action {
+  min-width: 0;
+  min-height: 48px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.daily-action:hover,
+.daily-action:focus-visible {
+  border-color: var(--accent);
+}
+
+.daily-action.is-selected {
+  border-color: var(--accent);
+  background: rgba(105, 217, 167, 0.14);
+  box-shadow: 0 0 0 2px rgba(105, 217, 167, 0.12);
+}
+
+.daily-action:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.daily-submit {
+  min-height: 50px;
+  margin-top: var(--space-3);
+}
+
+.daily-result {
+  padding: var(--space-5);
+}
+
+.daily-result h2 {
+  margin: 0 0 var(--space-2);
+}
+
+.daily-progress-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-3);
+  color: var(--text-secondary);
+}
+
+.daily-progress-result > strong {
+  color: var(--accent);
+  font-size: var(--font-size-lg);
+}
+
+.daily-progress-result > p {
+  flex: 1 0 100%;
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.daily-result p {
+  margin: var(--space-2) 0 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 390px) {
+  #screen-daily,
+  .daily-challenge-layout {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .daily-challenge-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .daily-challenge-card .ui-button-secondary {
+    width: 100%;
+  }
+
+  .daily-meta-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-cards-section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .daily-card-group .playing-card {
+    width: clamp(50px, 16vw, 59px);
+    height: clamp(70px, 22vw, 83px);
+  }
+
+  .daily-card-group .small-card {
+    width: clamp(42px, 13vw, 48px);
+    height: clamp(59px, 18vw, 67px);
+  }
+
+  .daily-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-action,
+  .daily-challenge-card {
+    transition: none;
+  }
+}

@@ -3,6 +3,8 @@
 (function attachProgressConfig(root) {
   const pokerIqConfig = root.POKER_IQ_CONFIG
     || (typeof require === 'function' ? require('../poker-iq/poker-iq-config.js') : null);
+  const DailyReward = root.PokerPilotDailyChallengeReward
+    || (typeof require === 'function' ? require('../daily/daily-challenge-reward.js') : null);
 
   const SCHEMA_VERSION = 3;
   const STORAGE_KEY = 'pokerpilot_progress_system';
@@ -25,6 +27,7 @@
     'TRAINING_SESSION_COMPLETED',
     'HAND_REVIEW_COMPLETED',
     'DAILY_HAND_COMPLETED',
+    'DAILY_CHALLENGE_COMPLETED',
     'LIVE_SESSION_REVIEWED',
     'SKILL_CHECK_COMPLETED'
   ]);
@@ -36,6 +39,7 @@
     TRAINING_SESSION_COMPLETED: 40,
     HAND_REVIEW_COMPLETED: 35,
     DAILY_HAND_COMPLETED: 25,
+    DAILY_CHALLENGE_COMPLETED: DailyReward.POLICY.correctXp,
     LIVE_SESSION_REVIEWED: 45,
     SKILL_CHECK_COMPLETED: 50
   });
@@ -90,6 +94,13 @@
     };
   }
 
+  function xpRewardForEvent(type, payload = {}) {
+    if (type === 'DAILY_CHALLENGE_COMPLETED') {
+      return DailyReward.xpForOutcome(payload.isCorrect, payload.rewardVersion);
+    }
+    return XP_REWARDS[type];
+  }
+
   const api = Object.freeze({
     SCHEMA_VERSION,
     STORAGE_KEY,
@@ -99,6 +110,7 @@
     SKILL_IDS,
     EVENT_TYPES,
     XP_REWARDS,
+    xpRewardForEvent,
     TOPIC_TO_SKILL,
     RANKS,
     xpRequiredForLevel,

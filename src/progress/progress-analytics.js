@@ -14,12 +14,14 @@
   const EVENT_CATEGORIES = Object.freeze({
     TRAINING_SCENARIO_COMPLETED: 'trainingScenarios',
     TRAINING_DECISION_RECORDED: 'trainerDecisions',
-    EXAM_COMPLETED: 'exams'
+    EXAM_COMPLETED: 'exams',
+    DAILY_CHALLENGE_COMPLETED: 'dailyChallenges'
   });
   const CATEGORY_LABELS = Object.freeze({
     trainingScenarios: 'Тренировочные сценарии',
     trainerDecisions: 'Решения Trainer',
     exams: 'Экзамены',
+    dailyChallenges: 'Раздача дня',
     other: 'Другая учебная активность'
   });
   const EVENT_LABELS = Object.freeze({
@@ -30,6 +32,7 @@
     TRAINING_SESSION_COMPLETED: 'Тренировочная сессия завершена',
     HAND_REVIEW_COMPLETED: 'Разбор раздачи завершён',
     DAILY_HAND_COMPLETED: 'Раздача дня завершена',
+    DAILY_CHALLENGE_COMPLETED: 'Раздача дня завершена',
     LIVE_SESSION_REVIEWED: 'Live Poker: разбор завершён',
     SKILL_CHECK_COMPLETED: 'Проверка навыка завершена'
   });
@@ -168,7 +171,7 @@
       counts.set(id, (counts.get(id) || 0) + 1);
     });
     const total = rows.length;
-    return ['trainingScenarios', 'trainerDecisions', 'exams', 'other']
+    return ['trainingScenarios', 'trainerDecisions', 'exams', 'dailyChallenges', 'other']
       .filter(id => counts.has(id))
       .map(id => ({
         id,
@@ -189,7 +192,9 @@
   function recentActivity(rows, limit) {
     return rows.slice(0, Math.max(0, Math.min(20, integer(limit) || 8))).map(row => ({
       type: row.type,
-      label: EVENT_LABELS[row.type] || 'Учебная активность',
+      label: row.type === 'DAILY_CHALLENGE_COMPLETED'
+        ? `Раздача дня — ${row.metadata.outcome === 'correct' ? 'правильный ответ' : 'ошибка'}`
+        : EVENT_LABELS[row.type] || 'Учебная активность',
       timestamp: row.timestamp,
       day: row.day,
       xp: row.xp,
@@ -233,6 +238,7 @@
         trainingScenarios: breakdown.find(item => item.id === 'trainingScenarios')?.count || 0,
         trainerDecisions: breakdown.find(item => item.id === 'trainerDecisions')?.count || 0,
         exams: breakdown.find(item => item.id === 'exams')?.count || 0,
+        dailyChallenges: breakdown.find(item => item.id === 'dailyChallenges')?.count || 0,
         averageXpPerActiveDay: activeDays ? Math.round(xpGained / activeDays * 10) / 10 : 0
       },
       series: {

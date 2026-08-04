@@ -214,7 +214,11 @@
       const timezoneOffsetMinutes = finite(raw.timezoneOffsetMinutes, 0);
       const rawMetadata = object(raw.metadata);
       const metadata = {};
-      for (const key of ['lessonId', 'moduleId', 'scenarioId', 'sessionId', 'handId', 'challengeId', 'skillId', 'decisionId']) {
+      for (const key of [
+        'lessonId', 'moduleId', 'scenarioId', 'sessionId', 'handId', 'challengeId',
+        'skillId', 'decisionId', 'dateKey', 'outcome', 'selectedAction', 'correctAction',
+        'street', 'difficulty'
+      ]) {
         const value = boundedText(rawMetadata[key], 160);
         if (value) metadata[key] = value;
       }
@@ -225,6 +229,11 @@
       const score = finite(rawMetadata.score);
       if (score !== null) metadata.score = Math.max(0, Math.min(100, score));
       if (typeof rawMetadata.passed === 'boolean') metadata.passed = rawMetadata.passed;
+      if (typeof rawMetadata.isCorrect === 'boolean') metadata.isCorrect = rawMetadata.isCorrect;
+      for (const key of ['scheduleVersion', 'rewardVersion']) {
+        const value = finite(rawMetadata[key]);
+        if (value !== null && value >= 1) metadata[key] = Math.floor(value);
+      }
       return {
         index,
         eventId: boundedText(raw.eventId, 160),
@@ -455,6 +464,23 @@
     if (type === 'TRAINING_SESSION_COMPLETED') return Boolean(text(raw.sessionId));
     if (type === 'HAND_REVIEW_COMPLETED') return Boolean(text(raw.handId));
     if (type === 'DAILY_HAND_COMPLETED') return Boolean(text(raw.handId || raw.challengeId));
+    if (type === 'DAILY_CHALLENGE_COMPLETED') {
+      const scheduleVersion = finite(raw.scheduleVersion);
+      const rewardVersion = finite(raw.rewardVersion);
+      const actions = new Set(['FOLD', 'CHECK', 'CALL', 'BET', 'RAISE', 'ALL_IN']);
+      const selectedAction = text(raw.selectedAction).toUpperCase();
+      const correctAction = text(raw.correctAction).toUpperCase();
+      return Boolean(text(raw.challengeId))
+        && /^\d{4}-\d{2}-\d{2}$/.test(text(raw.dateKey || raw.localDate))
+        && scheduleVersion !== null && Number.isInteger(scheduleVersion) && scheduleVersion >= 1
+        && rewardVersion !== null && Number.isInteger(rewardVersion) && rewardVersion >= 1
+        && Config.xpRewardForEvent(type, raw) !== null
+        && typeof raw.isCorrect === 'boolean'
+        && ['correct', 'incorrect'].includes(text(raw.outcome).toLowerCase())
+        && actions.has(selectedAction)
+        && actions.has(correctAction)
+        && raw.isCorrect === (selectedAction === correctAction);
+    }
     if (type === 'LIVE_SESSION_REVIEWED') return Boolean(text(raw.sessionId));
     if (type === 'SKILL_CHECK_COMPLETED') {
       const score = finite(raw.score);
@@ -548,7 +574,11 @@
   function historyMetadata(event) {
     const payload = object(event.payload);
     const metadata = {};
-    for (const key of ['lessonId', 'moduleId', 'scenarioId', 'sessionId', 'handId', 'challengeId', 'skillId', 'decisionId']) {
+    for (const key of [
+      'lessonId', 'moduleId', 'scenarioId', 'sessionId', 'handId', 'challengeId',
+      'skillId', 'decisionId', 'dateKey', 'outcome', 'selectedAction', 'correctAction',
+      'street', 'difficulty'
+    ]) {
       const value = boundedText(payload[key], 160);
       if (value) metadata[key] = value;
     }
@@ -561,6 +591,11 @@
     const score = finite(payload.score);
     if (score !== null) metadata.score = Math.max(0, Math.min(100, score));
     if (typeof payload.passed === 'boolean') metadata.passed = payload.passed;
+    if (typeof payload.isCorrect === 'boolean') metadata.isCorrect = payload.isCorrect;
+    for (const key of ['scheduleVersion', 'rewardVersion']) {
+      const value = finite(payload[key]);
+      if (value !== null && value >= 1) metadata[key] = Math.floor(value);
+    }
     return metadata;
   }
 
@@ -622,7 +657,7 @@
     ) return unapplied(state, 'DUPLICATE_DECISION', event);
 
     const next = clone(state);
-    const xp = nonNegativeInteger(Config.XP_REWARDS[event.type]);
+    const xp = nonNegativeInteger(Config.xpRewardForEvent(event.type, event.payload));
     next.lifetimeXp += xp;
     const changes = xp ? [{ type: 'XP', amount: xp }] : [];
 
@@ -681,7 +716,9 @@
       lifetimeXpAfter: next.lifetimeXp,
       levelAfter: deriveLevel(next.lifetimeXp).level,
       rankAfter: postPokerIq.rank?.id || 'UNRANKED',
-      pokerIqAfter: postPokerIq.isRated ? postPokerIq.score : null,
+      pokerIqAfter: event.type === 'DAILY_CHALLENGE_COMPLETED'
+        ? null
+        : postPokerIq.isRated ? postPokerIq.score : null,
       streakAfter: next.streak.current,
       metadata: historyMetadata(event)
     }, ...next.history].slice(0, Config.HISTORY_LIMIT);
