@@ -99,6 +99,11 @@
             <h2 id="dailyChallengeCardTitle">Раздача дня</h2>
             <p id="dailyChallengeSummary">Сегодняшняя покерная ситуация</p>
             <small id="dailyChallengeResult">Одно решение на сегодня</small>
+            <div id="dailyChallengeProgress" class="daily-challenge-progress" aria-label="Прогресс раздачи дня">
+              <span id="dailyChallengeTodayState">Сегодня доступно</span>
+              <span id="dailyChallengeStreak">Серия: 0 дней</span>
+              <span id="dailyChallengeAccuracy">Решено: 0 · Точность: 0%</span>
+            </div>
           </div>
           <div class="daily-challenge-card-actions">
             <button id="dailyChallengeCta" class="ui-button-primary daily-challenge-primary" type="button" data-route="daily">Решить</button>
@@ -234,13 +239,19 @@
           <p>Завершённые решения и начисленные за них награды.</p>
         </header>
 
-        <section id="dailyHistorySummary" class="daily-history-summary" aria-label="Статистика раздач дня" hidden>
-          <div><small>Всего</small><strong id="dailyHistoryTotal">0</strong></div>
-          <div><small>Правильно</small><strong id="dailyHistoryCorrect">0</strong></div>
-          <div><small>Ошибки</small><strong id="dailyHistoryIncorrect">0</strong></div>
-          <div><small>Точность</small><strong id="dailyHistoryAccuracy">0%</strong></div>
-          <div><small>Получено</small><strong id="dailyHistoryXp">0 XP</strong></div>
-          <div><small>Последний результат</small><strong id="dailyHistoryRecent">—</strong></div>
+        <section id="dailyHistorySummary" class="daily-history-summary" aria-label="Статистика раздач дня">
+          <div class="daily-history-summary-core">
+            <div><small>Серия</small><strong id="dailyHistoryCurrentStreak">0 дней</strong></div>
+            <div><small>Лучшая серия</small><strong id="dailyHistoryBestStreak">0 дней</strong></div>
+            <div><small>Точность</small><strong id="dailyHistoryAccuracy">0%</strong></div>
+            <div><small>Решено</small><strong id="dailyHistoryTotal">0</strong></div>
+          </div>
+          <p class="daily-history-summary-detail">
+            <span>Верно: <strong id="dailyHistoryCorrect">0</strong></span>
+            <span>Ошибки: <strong id="dailyHistoryIncorrect">0</strong></span>
+            <span>Получено: <strong id="dailyHistoryXp">0 XP</strong></span>
+            <span>Последний: <strong id="dailyHistoryRecent">—</strong></span>
+          </p>
         </section>
 
         <section class="panel daily-history-week-section" aria-labelledby="dailyHistoryWeekTitle">
@@ -1008,6 +1019,7 @@ const dailyChallengeHistory = PokerPilotDailyChallengeHistory.create({
 const dailyChallengeUi = PokerPilotDailyChallengeUI.create({
   documentRef: document,
   system: dailyChallengeSystem,
+  progress: dailyChallengeHistory,
   cardRenderer: PokerCardUI
 });
 const dailyChallengeHistoryUi = PokerPilotDailyChallengeHistoryUI.create({

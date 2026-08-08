@@ -122,27 +122,77 @@
       };
     }
 
-    function getRecentCalendarDays(count = 7) {
+    function calendarDaysFor(history, current, count = 7) {
       const total = Math.max(1, Math.min(31, Math.floor(Number(count) || 7)));
-      const current = todayKey();
       if (!current) return [];
-      const completionMap = new Map(getCompletionHistory().map(item => [item.dateKey, item]));
+      const completionMap = new Map(history.map(item => [item.dateKey, item]));
       return Array.from({ length: total }, (_, index) => {
         const dateKey = DateUtils.addCalendarDays(current, index - total + 1);
         const completion = completionMap.get(dateKey) || null;
         const isToday = dateKey === current;
         const status = completion?.creditStatus || (isToday ? 'today_available' : 'not_completed');
         return {
+          date: dateKey,
           dateKey,
           dateLabel: dateLabel(dateKey),
           weekdayLabel: weekdayLabel(dateKey),
           dayNumber: Number(dateKey.slice(-2)),
+          completed: Boolean(completion),
+          correct: completion ? completion.isCorrect : null,
           status,
           statusLabel: STATUS_LABELS[status],
           isToday,
           openable: Boolean(completion),
           ariaLabel: `${dateLabel(dateKey)}: ${STATUS_LABELS[status]}`
         };
+      });
+    }
+
+    function getRecentCalendarDays(count = 7) {
+      return calendarDaysFor(getCompletionHistory(), todayKey(), count);
+    }
+
+    function streaksFor(history, currentDateKey) {
+      const dates = [...new Set(history.map(item => item.dateKey))]
+        .filter(DateUtils.validDateKey)
+        .sort((left, right) => left.localeCompare(right));
+      const completedDates = new Set(dates);
+      const yesterday = DateUtils.addCalendarDays(currentDateKey, -1);
+      const currentEnd = completedDates.has(currentDateKey)
+        ? currentDateKey
+        : (completedDates.has(yesterday) ? yesterday : null);
+      let currentStreak = 0;
+      let cursor = currentEnd;
+      while (cursor && completedDates.has(cursor)) {
+        currentStreak += 1;
+        cursor = DateUtils.addCalendarDays(cursor, -1);
+      }
+
+      let bestStreak = 0;
+      let running = 0;
+      let previousIndex = null;
+      dates.forEach(dateKey => {
+        const index = DateUtils.calendarIndex(dateKey);
+        running = previousIndex !== null && index === previousIndex + 1 ? running + 1 : 1;
+        bestStreak = Math.max(bestStreak, running);
+        previousIndex = index;
+      });
+      return { currentStreak, bestStreak };
+    }
+
+    function getProgressSnapshot() {
+      const history = getCompletionHistory();
+      const current = todayKey();
+      const correctCount = history.filter(item => item.isCorrect).length;
+      const streaks = current ? streaksFor(history, current) : { currentStreak: 0, bestStreak: 0 };
+      return clone({
+        currentStreak: streaks.currentStreak,
+        bestStreak: streaks.bestStreak,
+        completedCount: history.length,
+        correctCount,
+        accuracy: history.length ? Math.round((correctCount / history.length) * 100) : 0,
+        completedToday: Boolean(current && history.some(item => item.dateKey === current)),
+        recentDays: calendarDaysFor(history, current, 7)
       });
     }
 
@@ -181,6 +231,7 @@
       getCompletionByDate,
       getDailyChallengeStats,
       getRecentCalendarDays,
+      getProgressSnapshot,
       getHistoricalReview
     });
   }

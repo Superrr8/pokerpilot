@@ -73,6 +73,21 @@
   font-weight: 650;
 }
 
+.daily-challenge-progress {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-3);
+  margin-top: var(--space-2);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.daily-challenge-progress span:first-child {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .daily-challenge-layout {
   display: grid;
   gap: var(--space-4);
@@ -248,17 +263,25 @@
 
 .daily-history-summary {
   min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated);
+}
+
+.daily-history-summary-core {
+  min-width: 0;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
-.daily-history-summary > div {
+.daily-history-summary-core > div {
   min-width: 0;
-  padding: var(--space-4);
+  padding: var(--space-3);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--surface-elevated);
+  background: var(--surface-interactive);
 }
 
 .daily-history-summary small,
@@ -273,6 +296,23 @@
 .daily-history-summary strong {
   margin-top: 4px;
   font-size: var(--font-size-lg);
+}
+
+.daily-history-summary-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: var(--space-3) 0 0;
+  padding-inline: var(--space-1);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.daily-history-summary-detail strong {
+  display: inline;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: inherit;
 }
 
 .daily-history-section-heading {
@@ -455,6 +495,10 @@ button.daily-history-day {
   }
 
   .daily-history-summary {
+    padding: var(--space-2);
+  }
+
+  .daily-history-summary-core {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

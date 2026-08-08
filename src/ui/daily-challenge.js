@@ -48,7 +48,7 @@
     if (element) element.textContent = String(value ?? '');
   }
 
-  function create({ documentRef = root.document, system, cardRenderer = root.PokerCardUI } = {}) {
+  function create({ documentRef = root.document, system, progress = null, cardRenderer = root.PokerCardUI } = {}) {
     if (!documentRef || !system) throw new Error('Daily Challenge UI requires document and system.');
     const card = documentRef.querySelector('#dailyChallengeCard');
     const actionContainer = documentRef.querySelector('#dailyActions');
@@ -69,6 +69,9 @@
 
     function renderDashboard() {
       const status = system.getTodayStatus();
+      const progressSnapshot = typeof progress?.getProgressSnapshot === 'function'
+        ? progress.getProgressSnapshot()
+        : null;
       if (!card) return status;
       const available = status.status === 'new' || status.status === 'completed';
       card.hidden = !available;
@@ -80,6 +83,11 @@
       setText(documentRef, '#dailyChallengeResult', completed
         ? dashboardResultLabel(status.review)
         : 'Одно решение на сегодня');
+      setText(documentRef, '#dailyChallengeTodayState', progressSnapshot?.completedToday
+        ? 'Сегодня выполнено'
+        : 'Сегодня доступно');
+      setText(documentRef, '#dailyChallengeStreak', `Серия: ${progressSnapshot?.currentStreak || 0} ${dayLabel(progressSnapshot?.currentStreak)}`);
+      setText(documentRef, '#dailyChallengeAccuracy', `Решено: ${progressSnapshot?.completedCount || 0} · Точность: ${progressSnapshot?.accuracy || 0}%`);
       const cta = documentRef.querySelector('#dailyChallengeCta');
       if (cta) cta.textContent = completed ? 'Посмотреть разбор' : 'Решить';
       return status;

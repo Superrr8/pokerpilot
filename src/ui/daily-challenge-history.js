@@ -47,13 +47,25 @@
       if (typeof onNavigate === 'function') onNavigate(route);
     }
 
-    function renderSummary(stats) {
+    function dayLabel(value) {
+      const count = Math.max(0, Math.floor(Number(value) || 0));
+      const lastTwo = count % 100;
+      const last = count % 10;
+      if (lastTwo >= 11 && lastTwo <= 14) return 'дней';
+      if (last === 1) return 'день';
+      if (last >= 2 && last <= 4) return 'дня';
+      return 'дней';
+    }
+
+    function renderSummary(snapshot, stats) {
       const summary = documentRef.querySelector('#dailyHistorySummary');
-      if (summary) summary.hidden = stats.total === 0;
-      setText(documentRef, '#dailyHistoryTotal', stats.total);
-      setText(documentRef, '#dailyHistoryCorrect', stats.correct);
+      if (summary) summary.hidden = false;
+      setText(documentRef, '#dailyHistoryCurrentStreak', `${snapshot.currentStreak} ${dayLabel(snapshot.currentStreak)}`);
+      setText(documentRef, '#dailyHistoryBestStreak', `${snapshot.bestStreak} ${dayLabel(snapshot.bestStreak)}`);
+      setText(documentRef, '#dailyHistoryTotal', snapshot.completedCount);
+      setText(documentRef, '#dailyHistoryCorrect', snapshot.correctCount);
       setText(documentRef, '#dailyHistoryIncorrect', stats.incorrect);
-      setText(documentRef, '#dailyHistoryAccuracy', `${stats.accuracy}%`);
+      setText(documentRef, '#dailyHistoryAccuracy', `${snapshot.accuracy}%`);
       setText(documentRef, '#dailyHistoryXp', `${stats.earnedXp} XP`);
       setText(documentRef, '#dailyHistoryRecent', stats.recent
         ? `${stats.recent.outcomeLabel} · ${stats.recent.dateLabel}`
@@ -65,11 +77,11 @@
       navigate('daily-review');
     }
 
-    function renderWeek() {
+    function renderWeek(snapshot) {
       const container = documentRef.querySelector('#dailyHistoryWeek');
       if (!container) return;
       container.replaceChildren();
-      history.getRecentCalendarDays(7).forEach(day => {
+      snapshot.recentDays.forEach(day => {
         const cell = documentRef.createElement(day.openable ? 'button' : 'div');
         if (day.openable) cell.type = 'button';
         cell.className = `daily-history-day is-${day.status}`;
@@ -127,8 +139,9 @@
     function openHistory() {
       const entries = history.getCompletionHistory();
       const stats = history.getDailyChallengeStats();
-      renderSummary(stats);
-      renderWeek();
+      const snapshot = history.getProgressSnapshot();
+      renderSummary(snapshot, stats);
+      renderWeek(snapshot);
       setHidden(documentRef, '#dailyHistoryEmpty', entries.length > 0);
       setHidden(documentRef, '#dailyHistoryContent', entries.length === 0);
       const list = documentRef.querySelector('#dailyHistoryList');
@@ -136,7 +149,7 @@
         list.replaceChildren();
         entries.forEach(entry => list.append(createHistoryRow(entry)));
       }
-      return { entries, stats };
+      return { entries, stats, snapshot };
     }
 
     function openReview(dateKey = selectedDateKey) {
