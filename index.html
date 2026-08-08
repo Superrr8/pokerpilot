@@ -101,7 +101,7 @@
             <small id="dailyChallengeResult">Одно решение на сегодня</small>
             <div id="dailyChallengeProgress" class="daily-challenge-progress" aria-label="Прогресс раздачи дня">
               <span id="dailyChallengeTodayState">Сегодня доступно</span>
-              <span id="dailyChallengeStreak">Серия: 0 дней</span>
+              <span id="dailyChallengeStreak">Серия раздачи дня: 0 дней</span>
               <span id="dailyChallengeAccuracy">Решено: 0 · Точность: 0%</span>
             </div>
           </div>
@@ -226,6 +226,7 @@
           </div>
           <strong id="dailyCorrectAction"></strong>
           <p id="dailyExplanation"></p>
+          <button id="dailyResultReviewCta" class="ui-button-primary daily-result-review" type="button">Посмотреть разбор</button>
         </section>
       </div>
     </section>
@@ -1016,17 +1017,18 @@ const dailyChallengeHistory = PokerPilotDailyChallengeHistory.create({
   catalog: PokerPilotDailyChallengeCatalog,
   now: () => new Date()
 });
-const dailyChallengeUi = PokerPilotDailyChallengeUI.create({
-  documentRef: document,
-  system: dailyChallengeSystem,
-  progress: dailyChallengeHistory,
-  cardRenderer: PokerCardUI
-});
 const dailyChallengeHistoryUi = PokerPilotDailyChallengeHistoryUI.create({
   documentRef: document,
   history: dailyChallengeHistory,
   cardRenderer: PokerCardUI,
   onNavigate: target => route(target)
+});
+const dailyChallengeUi = PokerPilotDailyChallengeUI.create({
+  documentRef: document,
+  system: dailyChallengeSystem,
+  progress: dailyChallengeHistory,
+  cardRenderer: PokerCardUI,
+  onReview: () => dailyChallengeHistoryUi.reviewToday()
 });
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
 let decisionSequence = 0;

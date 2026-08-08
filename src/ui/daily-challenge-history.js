@@ -1,6 +1,14 @@
 'use strict';
 
 (function attachDailyChallengeHistoryUI(root) {
+  function dayStatusPresentation(day = {}) {
+    const key = day.completed
+      ? (day.correct === true ? 'correct' : (day.correct === false ? 'incorrect' : 'completed'))
+      : 'missed';
+    const symbol = key === 'correct' ? '✓' : (key === 'incorrect' ? '×' : (key === 'completed' ? '•' : '—'));
+    return { key, symbol, todayLabel: day.isToday ? 'сег.' : '' };
+  }
+
   function setText(documentRef, selector, value) {
     const node = documentRef.querySelector(selector);
     if (node) node.textContent = value == null ? '' : String(value);
@@ -77,14 +85,23 @@
       navigate('daily-review');
     }
 
+    function reviewToday() {
+      const snapshot = history.getProgressSnapshot();
+      const today = snapshot.recentDays.find(day => day.isToday && day.completed);
+      if (!today) return false;
+      reviewDate(today.dateKey);
+      return true;
+    }
+
     function renderWeek(snapshot) {
       const container = documentRef.querySelector('#dailyHistoryWeek');
       if (!container) return;
       container.replaceChildren();
       snapshot.recentDays.forEach(day => {
+        const presentation = dayStatusPresentation(day);
         const cell = documentRef.createElement(day.openable ? 'button' : 'div');
         if (day.openable) cell.type = 'button';
-        cell.className = `daily-history-day is-${day.status}`;
+        cell.className = `daily-history-day is-${day.status} is-result-${presentation.key}${day.isToday ? ' is-today' : ''}`;
         cell.dataset.dateKey = day.dateKey;
         cell.setAttribute('aria-label', day.ariaLabel);
         if (day.isToday) cell.setAttribute('aria-current', 'date');
@@ -93,8 +110,17 @@
         const number = documentRef.createElement('strong');
         number.textContent = String(day.dayNumber);
         const status = documentRef.createElement('span');
-        status.textContent = day.statusLabel;
+        status.className = 'daily-history-day-status';
+        status.setAttribute('aria-hidden', 'true');
+        status.textContent = presentation.symbol;
         cell.append(weekday, number, status);
+        if (presentation.todayLabel) {
+          const today = documentRef.createElement('span');
+          today.className = 'daily-history-day-today';
+          today.setAttribute('aria-hidden', 'true');
+          today.textContent = presentation.todayLabel;
+          cell.append(today);
+        }
         if (day.openable) cell.addEventListener('click', () => reviewDate(day.dateKey));
         container.append(cell);
       });
@@ -182,10 +208,10 @@
       return review;
     }
 
-    return Object.freeze({ openHistory, openReview, reviewDate });
+    return Object.freeze({ openHistory, openReview, reviewDate, reviewToday });
   }
 
-  const api = Object.freeze({ create });
+  const api = Object.freeze({ create, dayStatusPresentation });
   root.PokerPilotDailyChallengeHistoryUI = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

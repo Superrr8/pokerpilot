@@ -48,11 +48,12 @@
     if (element) element.textContent = String(value ?? '');
   }
 
-  function create({ documentRef = root.document, system, progress = null, cardRenderer = root.PokerCardUI } = {}) {
+  function create({ documentRef = root.document, system, progress = null, cardRenderer = root.PokerCardUI, onReview = null } = {}) {
     if (!documentRef || !system) throw new Error('Daily Challenge UI requires document and system.');
     const card = documentRef.querySelector('#dailyChallengeCard');
     const actionContainer = documentRef.querySelector('#dailyActions');
     const confirmButton = documentRef.querySelector('#dailyConfirm');
+    const reviewButton = documentRef.querySelector('#dailyResultReviewCta');
     let selectedAction = null;
     let actionButtons = [];
 
@@ -86,7 +87,7 @@
       setText(documentRef, '#dailyChallengeTodayState', progressSnapshot?.completedToday
         ? 'Сегодня выполнено'
         : 'Сегодня доступно');
-      setText(documentRef, '#dailyChallengeStreak', `Серия: ${progressSnapshot?.currentStreak || 0} ${dayLabel(progressSnapshot?.currentStreak)}`);
+      setText(documentRef, '#dailyChallengeStreak', `Серия раздачи дня: ${progressSnapshot?.currentStreak || 0} ${dayLabel(progressSnapshot?.currentStreak)}`);
       setText(documentRef, '#dailyChallengeAccuracy', `Решено: ${progressSnapshot?.completedCount || 0} · Точность: ${progressSnapshot?.accuracy || 0}%`);
       const cta = documentRef.querySelector('#dailyChallengeCta');
       if (cta) cta.textContent = completed ? 'Посмотреть разбор' : 'Решить';
@@ -140,12 +141,15 @@
       }
       feedback.classList.toggle('good', status.review.isCorrect);
       feedback.classList.toggle('bad', !status.review.isCorrect);
-      setText(documentRef, '#dailyResultTitle', status.review.isCorrect ? 'Правильно' : 'Неверно');
+      setText(documentRef, '#dailyResultTitle', status.review.isCorrect ? 'Правильно' : 'Ошибка');
       const recorded = status.review.progressStatus === 'recorded' && Number.isFinite(status.review.xpAwarded);
       const pending = status.review.progressStatus === 'pending' || status.review.progressStatus === null;
+      const dailySnapshot = typeof progress?.getProgressSnapshot === 'function'
+        ? progress.getProgressSnapshot()
+        : null;
       setText(documentRef, '#dailyReward', recorded ? `+${status.review.xpAwarded} XP` : '');
-      setText(documentRef, '#dailyStreak', recorded && Number.isFinite(status.review.streak)
-        ? `Серия: ${status.review.streak} ${dayLabel(status.review.streak)}`
+      setText(documentRef, '#dailyStreak', Number.isFinite(dailySnapshot?.currentStreak)
+        ? `Серия раздачи дня: ${dailySnapshot.currentStreak} ${dayLabel(dailySnapshot.currentStreak)}`
         : '');
       setText(documentRef, '#dailyProgressPending', pending
         ? 'Награда будет зачислена при следующем открытии'
@@ -190,6 +194,9 @@
     }
 
     confirmButton?.addEventListener('click', submit);
+    reviewButton?.addEventListener('click', () => {
+      if (system.getTodayStatus().status === 'completed' && typeof onReview === 'function') onReview();
+    });
 
     return Object.freeze({ renderDashboard, renderScreen, open: renderScreen, selectAction, submit });
   }
