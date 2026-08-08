@@ -16,6 +16,8 @@
   const routeSections = Object.freeze({
     home: 'home',
     daily: 'home',
+    'daily-history': 'home',
+    'daily-review': 'home',
     learning: 'learning',
     ranges: 'learning',
     training: 'training',

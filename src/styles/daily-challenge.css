@@ -1,10 +1,11 @@
 .daily-challenge-card {
+  width: 100%;
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(248px, max-content);
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-5);
+  gap: clamp(var(--space-4), 5vw, var(--space-7));
+  padding: clamp(var(--space-4), 4vw, var(--space-5));
   border: 1px solid rgba(105, 217, 167, 0.16);
   border-radius: var(--radius-lg);
   background:
@@ -28,6 +29,8 @@
 .daily-challenge-card h2 {
   margin: 0 0 var(--space-1);
   font-size: var(--font-size-xl);
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .daily-challenge-card p,
@@ -42,10 +45,32 @@
   color: var(--text-tertiary);
 }
 
-.daily-challenge-card .ui-button-secondary {
+.daily-challenge-primary {
   min-height: 44px;
   margin: 0;
+  padding-inline: var(--space-5);
   white-space: nowrap;
+}
+
+.daily-challenge-card-actions {
+  min-width: 0;
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.daily-challenge-card-actions .ui-button-ghost {
+  min-height: 44px;
+  margin: 0;
+  padding-inline: var(--space-3);
+  white-space: nowrap;
+}
+
+.daily-challenge-card[data-state="completed"] #dailyChallengeResult {
+  color: var(--text-secondary);
+  font-weight: 650;
 }
 
 .daily-challenge-layout {
@@ -201,6 +226,207 @@
   line-height: 1.6;
 }
 
+.daily-history-layout {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-4);
+  padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom));
+  overflow-x: clip;
+}
+
+.daily-history-header h1 {
+  margin: var(--space-2) 0;
+  font-size: clamp(1.7rem, 6vw, 2.35rem);
+  letter-spacing: -0.04em;
+}
+
+.daily-history-header p,
+.daily-history-section-heading small {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.daily-history-summary {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.daily-history-summary > div {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+}
+
+.daily-history-summary small,
+.daily-history-summary strong {
+  display: block;
+}
+
+.daily-history-summary small {
+  color: var(--text-tertiary);
+}
+
+.daily-history-summary strong {
+  margin-top: 4px;
+  font-size: var(--font-size-lg);
+}
+
+.daily-history-section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.daily-history-section-heading h2 {
+  margin: 0;
+}
+
+.daily-history-week {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.daily-history-day {
+  min-width: 0;
+  min-height: 76px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  padding: var(--space-2) 2px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-interactive);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+button.daily-history-day {
+  cursor: pointer;
+}
+
+.daily-history-day small,
+.daily-history-day span {
+  max-width: 100%;
+  color: var(--text-tertiary);
+  font-size: clamp(0.55rem, 1.9vw, var(--font-size-xs));
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.daily-history-day.is-correct {
+  border-color: rgba(105, 217, 167, 0.45);
+}
+
+.daily-history-day.is-incorrect {
+  border-color: rgba(239, 135, 135, 0.45);
+}
+
+.daily-history-day.is-pending,
+.daily-history-day.is-legacy {
+  border-color: rgba(226, 184, 104, 0.4);
+}
+
+.daily-history-day[aria-current="date"] {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.daily-history-content,
+.daily-history-list,
+.daily-review-content {
+  min-width: 0;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.daily-history-summary[hidden],
+.daily-history-content[hidden],
+.daily-review-content[hidden] {
+  display: none;
+}
+
+.daily-history-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated);
+}
+
+.daily-history-row-copy {
+  min-width: 0;
+}
+
+.daily-history-row-copy small,
+.daily-history-row-copy p {
+  color: var(--text-secondary);
+}
+
+.daily-history-row-copy h3,
+.daily-history-row-copy p {
+  margin: var(--space-1) 0 0;
+}
+
+.daily-history-row-result {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-1);
+  text-align: right;
+}
+
+.daily-history-row-result > span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.daily-history-outcome.is-correct {
+  color: var(--success);
+}
+
+.daily-history-outcome.is-incorrect {
+  color: var(--danger);
+}
+
+.daily-history-review-button {
+  min-height: 44px;
+  margin: var(--space-1) 0 0;
+}
+
+.daily-history-day:focus-visible,
+.daily-history-review-button:focus-visible,
+.daily-challenge-card-actions button:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--accent));
+  outline-offset: 2px;
+}
+
+.daily-review-fallback {
+  color: var(--warning);
+}
+
+.daily-review-analysis p:last-child {
+  margin-bottom: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@media (min-width: 760px) {
+  .home-dashboard > .daily-challenge-card {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 390px) {
   #screen-daily,
   .daily-challenge-layout {
@@ -210,9 +436,50 @@
 
   .daily-challenge-card {
     grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
   }
 
-  .daily-challenge-card .ui-button-secondary {
+  .daily-challenge-card h2 {
+    white-space: normal;
+  }
+
+  .daily-challenge-card-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    justify-content: stretch;
+  }
+
+  .daily-challenge-primary {
+    width: 100%;
+  }
+
+  .daily-history-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-history-week-section {
+    padding-inline: var(--space-3);
+  }
+
+  .daily-history-week {
+    gap: 4px;
+  }
+
+  .daily-history-day {
+    min-height: 72px;
+  }
+
+  .daily-history-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .daily-history-row-result {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .daily-history-review-button {
     width: 100%;
   }
 
@@ -241,7 +508,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .daily-action,
-  .daily-challenge-card {
+  .daily-challenge-card,
+  .daily-history-day,
+  .daily-history-row {
     transition: none;
   }
 }

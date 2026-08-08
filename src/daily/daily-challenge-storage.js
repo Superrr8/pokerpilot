@@ -63,6 +63,30 @@
     };
   }
 
+  function normalizeHistoryCompletion(value, dateKey) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+    if (!DateUtils.validDateKey(dateKey)) return null;
+    const challengeId = typeof value.challengeId === 'string' ? value.challengeId.trim().slice(0, 120) : '';
+    const selectedAction = String(value.selectedAction || '').toUpperCase();
+    const correctAction = String(value.correctAction || '').toUpperCase();
+    const scheduleVersion = Math.floor(Number(value.scheduleVersion));
+    const timestamp = Date.parse(value.completedAt);
+    const isCorrect = value.isCorrect;
+    if (!challengeId || !ACTIONS.has(selectedAction) || !ACTIONS.has(correctAction)) return null;
+    if (!Number.isFinite(scheduleVersion) || scheduleVersion < 1 || !Number.isFinite(timestamp)) return null;
+    if (typeof isCorrect !== 'boolean' || isCorrect !== (selectedAction === correctAction)) return null;
+    return {
+      dateKey,
+      challengeId,
+      scheduleVersion,
+      selectedAction,
+      correctAction,
+      isCorrect,
+      completedAt: new Date(timestamp).toISOString(),
+      progress: normalizeProgress(value.progress)
+    };
+  }
+
   function normalizeState(value) {
     const raw = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const completions = {};
@@ -77,6 +101,15 @@
   }
 
   function create({ storage = root.localStorage } = {}) {
+    function readRawState() {
+      try {
+        const value = JSON.parse(storage?.getItem(STORAGE_KEY) || 'null');
+        return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+      } catch (_) {
+        return {};
+      }
+    }
+
     function load() {
       try {
         return normalizeState(JSON.parse(storage?.getItem(STORAGE_KEY) || 'null'));
@@ -88,6 +121,18 @@
     function getCompletion(dateKey) {
       const completion = load().completions[dateKey];
       return completion ? { ...completion } : null;
+    }
+
+    function getHistoryCompletions() {
+      const source = readRawState().completions;
+      if (!source || typeof source !== 'object' || Array.isArray(source)) return [];
+      return Object.entries(source)
+        .map(([dateKey, value]) => normalizeHistoryCompletion(value, dateKey))
+        .filter(Boolean)
+        .map(value => ({
+          ...value,
+          progress: value.progress ? { ...value.progress } : null
+        }));
     }
 
     function saveCompletion(dateKey, completion) {
@@ -128,11 +173,12 @@
       }
     }
 
-    return Object.freeze({ load, getCompletion, saveCompletion, saveProgress });
+    return Object.freeze({ load, getCompletion, getHistoryCompletions, saveCompletion, saveProgress });
   }
 
   const api = Object.freeze({
-    STORAGE_KEY, SCHEMA_VERSION, emptyState, normalizeProgress, normalizeState, create
+    STORAGE_KEY, SCHEMA_VERSION, emptyState, normalizeProgress, normalizeState,
+    normalizeHistoryCompletion, create
   });
   root.PokerPilotDailyChallengeStorage = api;
   if (typeof module === 'object' && module.exports) module.exports = api;

@@ -36,6 +36,13 @@
     return action.actionClass === 'RAISE' ? `${base} to ${money(action.amount)}` : `${base} ${money(action.amount)}`;
   }
 
+  function dashboardResultLabel(review) {
+    const outcome = review?.isCorrect ? 'Правильное решение' : 'Ошибка';
+    return Number.isFinite(review?.xpAwarded)
+      ? `${outcome} · +${review.xpAwarded} XP`
+      : outcome;
+  }
+
   function setText(documentRef, selector, value) {
     const element = documentRef.querySelector(selector);
     if (element) element.textContent = String(value ?? '');
@@ -71,9 +78,7 @@
       setText(documentRef, '#dailyChallengeStatus', completed ? 'Завершено' : 'Новая');
       setText(documentRef, '#dailyChallengeSummary', `${STREET_LABELS[status.challenge.street]} · ${status.challenge.difficulty}`);
       setText(documentRef, '#dailyChallengeResult', completed
-        ? `${status.review.isCorrect ? 'Правильное решение' : 'Есть материал для разбора'}${
-          Number.isFinite(status.review.xpAwarded) ? ` · +${status.review.xpAwarded} XP` : ''
-        }`
+        ? dashboardResultLabel(status.review)
         : 'Одно решение на сегодня');
       const cta = documentRef.querySelector('#dailyChallengeCta');
       if (cta) cta.textContent = completed ? 'Посмотреть разбор' : 'Решить';
@@ -181,7 +186,7 @@
     return Object.freeze({ renderDashboard, renderScreen, open: renderScreen, selectAction, submit });
   }
 
-  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS });
+  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS, dashboardResultLabel });
   root.PokerPilotDailyChallengeUI = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

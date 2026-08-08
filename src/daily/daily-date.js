@@ -25,7 +25,14 @@
     return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000);
   }
 
-  const api = Object.freeze({ localDateKey, validDateKey, calendarIndex });
+  function addCalendarDays(value, offset) {
+    if (!validDateKey(value) || !Number.isFinite(Number(offset))) return null;
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day + Math.trunc(Number(offset)), 12, 0, 0, 0);
+    return localDateKey(date);
+  }
+
+  const api = Object.freeze({ localDateKey, validDateKey, calendarIndex, addCalendarDays });
   root.PokerPilotDailyDate = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

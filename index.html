@@ -96,11 +96,14 @@
               <span class="tag">Раздача дня</span>
               <span id="dailyChallengeStatus" class="chip">Новая</span>
             </div>
-            <h2 id="dailyChallengeCardTitle">Daily Challenge</h2>
+            <h2 id="dailyChallengeCardTitle">Раздача дня</h2>
             <p id="dailyChallengeSummary">Сегодняшняя покерная ситуация</p>
             <small id="dailyChallengeResult">Одно решение на сегодня</small>
           </div>
-          <button id="dailyChallengeCta" class="ui-button-secondary" type="button" data-route="daily">Решить</button>
+          <div class="daily-challenge-card-actions">
+            <button id="dailyChallengeCta" class="ui-button-primary daily-challenge-primary" type="button" data-route="daily">Решить</button>
+            <button id="dailyChallengeHistoryCta" class="ui-button-ghost small" type="button" data-route="daily-history">История</button>
+          </div>
         </section>
 
         <section class="home-progress-strip" aria-label="Ключевые показатели">
@@ -219,6 +222,92 @@
           <strong id="dailyCorrectAction"></strong>
           <p id="dailyExplanation"></p>
         </section>
+      </div>
+    </section>
+
+    <section id="screen-daily-history" class="screen">
+      <button class="back" type="button" data-route="home">‹ На главную</button>
+      <div class="daily-history-layout">
+        <header class="panel daily-history-header">
+          <span class="eyebrow">РАЗДАЧА ДНЯ</span>
+          <h1>История раздач дня</h1>
+          <p>Завершённые решения и начисленные за них награды.</p>
+        </header>
+
+        <section id="dailyHistorySummary" class="daily-history-summary" aria-label="Статистика раздач дня" hidden>
+          <div><small>Всего</small><strong id="dailyHistoryTotal">0</strong></div>
+          <div><small>Правильно</small><strong id="dailyHistoryCorrect">0</strong></div>
+          <div><small>Ошибки</small><strong id="dailyHistoryIncorrect">0</strong></div>
+          <div><small>Точность</small><strong id="dailyHistoryAccuracy">0%</strong></div>
+          <div><small>Получено</small><strong id="dailyHistoryXp">0 XP</strong></div>
+          <div><small>Последний результат</small><strong id="dailyHistoryRecent">—</strong></div>
+        </section>
+
+        <section class="panel daily-history-week-section" aria-labelledby="dailyHistoryWeekTitle">
+          <div class="daily-history-section-heading">
+            <h2 id="dailyHistoryWeekTitle">Последние 7 дней</h2>
+            <small>Локальный календарь</small>
+          </div>
+          <div id="dailyHistoryWeek" class="daily-history-week" role="list" aria-label="Активность за последние семь дней"></div>
+        </section>
+
+        <section id="dailyHistoryEmpty" class="panel ui-empty-state daily-history-empty" aria-live="polite">
+          <h2>История пока пуста</h2>
+          <p>Завершите сегодняшнюю раздачу — результат появится здесь.</p>
+          <button id="dailyHistoryEmptyCta" class="ui-button-primary" type="button" data-route="daily">Открыть раздачу дня</button>
+        </section>
+
+        <section id="dailyHistoryContent" class="daily-history-content" aria-labelledby="dailyHistoryListTitle" hidden>
+          <div class="daily-history-section-heading">
+            <h2 id="dailyHistoryListTitle">Завершённые раздачи</h2>
+          </div>
+          <div id="dailyHistoryList" class="daily-history-list"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="screen-daily-review" class="screen">
+      <button class="back" type="button" data-route="daily-history">‹ К истории</button>
+      <div class="daily-history-layout">
+        <section id="dailyReviewUnavailable" class="panel ui-empty-state" hidden>
+          <h1>Разбор недоступен</h1>
+          <p>Эта запись не найдена или повреждена.</p>
+        </section>
+        <div id="dailyReviewContent" class="daily-review-content">
+          <header class="panel daily-challenge-header">
+            <div class="daily-challenge-card-head">
+              <span id="dailyReviewDate" class="tag">—</span>
+              <span id="dailyReviewDifficulty" class="chip">—</span>
+            </div>
+            <h1 id="dailyReviewTitle">Раздача дня</h1>
+            <p id="dailyReviewFallback" class="daily-review-fallback" hidden></p>
+            <div class="daily-meta-grid" aria-label="Результат архивной раздачи">
+              <div class="daily-meta-item"><small>Улица</small><strong id="dailyReviewStreet">—</strong></div>
+              <div class="daily-meta-item"><small>Результат</small><strong id="dailyReviewOutcome">—</strong></div>
+              <div class="daily-meta-item"><small>Ваше действие</small><strong id="dailyReviewSelected">—</strong></div>
+              <div class="daily-meta-item"><small>Верное действие</small><strong id="dailyReviewCorrect">—</strong></div>
+              <div class="daily-meta-item"><small>Награда</small><strong id="dailyReviewXp">—</strong></div>
+            </div>
+          </header>
+
+          <div id="dailyReviewCards" class="daily-cards-section">
+            <section class="daily-card-group" aria-labelledby="dailyReviewHeroTitle">
+              <h2 id="dailyReviewHeroTitle">Карты Hero</h2>
+              <div id="dailyReviewHeroCards" class="cards" aria-label="Карты Hero"></div>
+            </section>
+            <section class="daily-card-group" aria-labelledby="dailyReviewBoardTitle">
+              <h2 id="dailyReviewBoardTitle">Доска</h2>
+              <div id="dailyReviewBoard" class="board" aria-label="Общие карты"></div>
+            </section>
+          </div>
+
+          <section class="panel daily-review-analysis" aria-labelledby="dailyReviewAnalysisTitle">
+            <span class="eyebrow">READ-ONLY REVIEW</span>
+            <h2 id="dailyReviewAnalysisTitle">Разбор решения</h2>
+            <p id="dailyReviewContext" class="daily-context"></p>
+            <p id="dailyReviewExplanation"></p>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -747,6 +836,7 @@
 <script src="src/daily/daily-challenge-catalog.js"></script>
 <script src="src/daily/daily-challenge-schedule.js"></script>
 <script src="src/daily/daily-challenge-storage.js"></script>
+<script src="src/daily/daily-challenge-history.js"></script>
 <script src="src/daily/daily-challenge-system.js"></script>
 <script src="src/data/learning-course.js"></script>
 <script src="src/learning/course-progress.js"></script>
@@ -782,6 +872,7 @@
 <script src="src/ui/dashboard.js"></script>
 <script src="src/ui/poker-card.js"></script>
 <script src="src/ui/daily-challenge.js"></script>
+<script src="src/ui/daily-challenge-history.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
 <script src="src/ui/decision-quality.js"></script>
@@ -909,10 +1000,21 @@ const dailyChallengeSystem = PokerPilotDailyChallengeSystem.create({
   progress: dailyChallengeProgress,
   now: () => new Date()
 });
+const dailyChallengeHistory = PokerPilotDailyChallengeHistory.create({
+  storage: dailyChallengeStore,
+  catalog: PokerPilotDailyChallengeCatalog,
+  now: () => new Date()
+});
 const dailyChallengeUi = PokerPilotDailyChallengeUI.create({
   documentRef: document,
   system: dailyChallengeSystem,
   cardRenderer: PokerCardUI
+});
+const dailyChallengeHistoryUi = PokerPilotDailyChallengeHistoryUI.create({
+  documentRef: document,
+  history: dailyChallengeHistory,
+  cardRenderer: PokerCardUI,
+  onNavigate: target => route(target)
 });
 PokerPilotNavigation.render($('#primaryNavigation'), 'home');
 let decisionSequence = 0;
@@ -1043,6 +1145,8 @@ function route(name, options = {}) {
   PokerPilotNavigation.setActive($('#primaryNavigation'), name);
   if (name === 'home') renderProgress();
   if (name === 'daily') dailyChallengeUi.open();
+  if (name === 'daily-history') dailyChallengeHistoryUi.openHistory();
+  if (name === 'daily-review') dailyChallengeHistoryUi.openReview();
   if (name === 'learning') {
     if (!learningMode) {
       learningSound = appSound;
