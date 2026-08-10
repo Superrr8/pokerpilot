@@ -2356,7 +2356,7 @@ function renderSeats(){
   const presentationState=presentationQueue.getState();
   const activeId=presentationState.activePlayerId??(session.awaiting?.startsWith('hero')?0:null);
   reconcileLiveSeats(seats,session.players,(el,p,i)=>{
-    const angle=(-90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);
+    const angle=(90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);
     const heroTurn=i===0&&/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
     const winnerReveal=p.winner&&(
       el.classList.contains('is-winner-reveal')||

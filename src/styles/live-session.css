@@ -694,6 +694,7 @@
 @media (max-width: 390px) {
   #screen-live .poker-table {
     min-height: 300px;
+    margin-bottom: 24px;
     margin-inline: 0;
   }
 
