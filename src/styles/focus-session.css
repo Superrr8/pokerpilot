@@ -1,0 +1,105 @@
+.study-focus-context,
+.range-focus-context {
+  max-width: 100%;
+  margin-inline-start: var(--space-1);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.focus-result {
+  min-width: 0;
+  padding: var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0, rgba(80, 222, 169, 0.12), transparent 46%),
+    var(--surface-elevated);
+}
+
+.focus-result-header {
+  display: grid;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.focus-result-header h2,
+.focus-result-header p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.focus-result-header h2 {
+  font-size: var(--font-size-2xl);
+}
+
+.focus-result-complete {
+  color: var(--status-success);
+  font-weight: 800;
+}
+
+.focus-result-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-block: var(--space-5);
+}
+
+.focus-result-metric {
+  min-width: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-interactive);
+  text-align: center;
+}
+
+.focus-result-metric span,
+.focus-result-metric strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.focus-result-metric span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.focus-result-metric strong {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xl);
+}
+
+.focus-result-feedback {
+  margin: 0 0 var(--space-5);
+  color: var(--text-secondary);
+  line-height: 1.55;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.focus-result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.focus-result-actions button {
+  min-width: 0;
+  min-height: 44px;
+}
+
+@media (max-width: 430px) {
+  .focus-result {
+    min-width: 0;
+    padding: var(--space-5);
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+  }
+
+  .focus-result-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .focus-result-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

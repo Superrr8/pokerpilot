@@ -22,6 +22,7 @@
     ranges: 'learning',
     training: 'training',
     study: 'training',
+    'focus-result': 'training',
     live: 'training',
     analyzer: 'analysis',
     analysis: 'analysis',

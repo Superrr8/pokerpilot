@@ -40,6 +40,7 @@
   <link rel="stylesheet" href="src/styles/decision-quality.css">
   <link rel="stylesheet" href="src/styles/poker-iq.css">
   <link rel="stylesheet" href="src/styles/home.css">
+  <link rel="stylesheet" href="src/styles/focus-session.css">
   <link rel="stylesheet" href="src/styles/daily-challenge.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
   <link rel="stylesheet" href="src/styles/progress-overview.css">
@@ -463,7 +464,7 @@
     <section id="screen-ranges" class="screen">
       <button class="back" data-route="learning">‹ К обучению</button>
       <div class="panel decision-panel">
-        <div class="panel-head"><div><span class="tag">Позиции и руки</span><h3>Быстрый тест</h3></div><span id="rangeCounter" class="chip">1/10</span></div>
+        <div class="panel-head"><div><span class="tag">Позиции и руки</span><span id="rangeFocusContext" class="chip range-focus-context hidden"></span><h3>Быстрый тест</h3></div><span id="rangeCounter" class="chip">1/10</span></div>
         <div id="rangeSpot"></div>
         <div id="rangeActions" class="actions neutral-actions"></div>
         <div id="rangeFeedback" class="feedback hidden"></div>
@@ -475,6 +476,26 @@
         <button id="rangeNext" class="primary wide hidden">Следующая рука</button>
       </div>
       <div class="panel"><span class="tag">Результат теста</span><h3>Точность по категориям</h3><div id="rangeScore" class="score-list">Ответь хотя бы на одну руку.</div></div>
+    </section>
+
+    <section id="screen-focus-result" class="screen">
+      <div class="panel focus-result" role="status" aria-live="polite" aria-labelledby="focusResultTopic">
+        <header class="focus-result-header">
+          <span class="tag">Фокус-сессия завершена</span>
+          <p class="focus-result-complete">5/5 решений</p>
+          <h2 id="focusResultTopic">Тема</h2>
+        </header>
+        <div class="focus-result-metrics">
+          <div class="focus-result-metric"><span>Верно</span><strong id="focusResultCorrect">0/5</strong></div>
+          <div class="focus-result-metric"><span>Точность</span><strong id="focusResultAccuracy">0%</strong></div>
+          <div id="focusResultDecisionQualityMetric" class="focus-result-metric"><span>Decision Quality</span><strong id="focusResultDecisionQuality">—</strong></div>
+        </div>
+        <p id="focusResultFeedback" class="focus-result-feedback"></p>
+        <div class="focus-result-actions">
+          <button id="focusResultContinue" class="primary" type="button">Продолжить тренировку</button>
+          <button id="focusResultHome" class="ghost" type="button">На главную</button>
+        </div>
+      </div>
     </section>
 
     <section id="screen-profile" class="screen">
@@ -878,6 +899,7 @@
 <script src="src/profile/profile-statistics.js"></script>
 <script src="src/progress/progress-system.js"></script>
 <script src="src/progress/weakness-model.js"></script>
+<script src="src/training/focus-session.js"></script>
 <script src="src/progress/progress-feedback.js"></script>
 <script src="src/progress/progress-integration.js"></script>
 <script src="src/daily/daily-challenge-progress.js"></script>
@@ -937,6 +959,7 @@ let currentStudy = null;
 let studyAnswered = false;
 let studyHintLevel = 0;
 let activeTrainingFocus = null;
+const focusSessionController = PokerPilotFocusSession.create();
 let rangeState = { number: 0, correctPoints: 0, maxPoints: 0, categories: {}, current: null, answered: false };
 let session = null;
 const LIVE_PACING = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -1155,8 +1178,80 @@ function renderSoundControls() {
   }
 }
 
+function clearFocusSession() {
+  const hadFocus = Boolean(focusSessionController.getSnapshot());
+  focusSessionController.clear();
+  activeTrainingFocus = null;
+  if (!hadFocus) return;
+  studyIndex = 0;
+  currentStudy = null;
+  studyAnswered = false;
+  rangeState = { number: 0, correctPoints: 0, maxPoints: 0, categories: {}, current: null, answered: false };
+}
+
+function startFocusSession(target) {
+  if (!target?.skillId) return null;
+  const label = PokerPilotWeaknessModel.SKILL_LABELS[target.skillId] || target.skillId;
+  const skill = ProgressSystem.getSnapshot()?.skills?.[target.skillId] || {};
+  const state = focusSessionController.start({
+    topicId: target.skillId,
+    topicLabel: label,
+    route: target.route,
+    preferredScenarioIds: target.scenarioIds,
+    availableScenarioIds: target.route === 'study' ? STUDY_SPOTS.map(spot => spot.id) : [],
+    dynamicScenarios: target.route === 'ranges',
+    fallback: target.fallback,
+    baseline: { score: skill.score, attempts: skill.attempts }
+  });
+  activeTrainingFocus = {
+    ...target,
+    label,
+    scenarioIds: state.scenarioPlan,
+    fallback: state.usedFallback
+  };
+  studyIndex = 0;
+  currentStudy = null;
+  studyAnswered = false;
+  rangeState = { number: 0, correctPoints: 0, maxPoints: 0, categories: {}, current: null, answered: false };
+  route(target.route, { reset: true });
+  return state;
+}
+
+function recordFocusDecision(record, scenarioId, grade) {
+  const focusState = focusSessionController.getSnapshot();
+  if (!focusState || focusState.status !== 'active') return null;
+  return focusSessionController.recordDecision({
+    decisionId: record?.decisionId,
+    scenarioId,
+    isCorrect: (GRADE[grade]?.points || 0) >= 2,
+    decisionQualityScore: record?.decisionQuality?.isRated === true
+      ? record.decisionQuality.score
+      : null
+  });
+}
+
+function renderFocusResult() {
+  const result = focusSessionController.getResult();
+  if (!result) return false;
+  $('#focusResultTopic').textContent = result.topicLabel;
+  $('#focusResultCorrect').textContent = `${result.correctDecisions}/${result.totalDecisions}`;
+  $('#focusResultAccuracy').textContent = `${result.accuracy}%`;
+  const decisionQualityMetric = $('#focusResultDecisionQualityMetric');
+  const hasDecisionQuality = Number.isFinite(result.averageDecisionQuality);
+  decisionQualityMetric.classList.toggle('hidden', !hasDecisionQuality);
+  $('#focusResultDecisionQuality').textContent = hasDecisionQuality
+    ? String(Math.round(result.averageDecisionQuality))
+    : '—';
+  $('#focusResultFeedback').textContent = result.comparison.text;
+  return true;
+}
+
 function route(name, options = {}) {
   name = PokerPilotNavigation.resolveRoute(name);
+  if (
+    focusSessionController.getSnapshot()
+    && !['study', 'ranges', 'focus-result'].includes(name)
+  ) clearFocusSession();
   if (
     session &&
     name !== 'live' &&
@@ -1193,6 +1288,7 @@ function route(name, options = {}) {
   if (name === 'study' && options.reset) currentStudy = null;
   if (name === 'study' && !currentStudy) renderStudy();
   if (name === 'ranges' && !rangeState.current) nextRangeSpot();
+  if (name === 'focus-result') renderFocusResult();
   if (name === 'profile') {
     achievementCenterUi.close({ restoreFocus: false });
     progressAnalyticsUi.close({ restoreFocus: false });
@@ -1207,17 +1303,26 @@ $$('[data-route]').forEach(b => b.addEventListener('click', () => {
   appSound.handleUserGesture().then(() => appSound.play('navigation'));
   if (b.id === 'homeFocusAction') {
     const target = PokerPilotWeaknessModel.trainingTargetFor(b.dataset.focusSkill);
-    activeTrainingFocus = target.skillId
-      ? { ...target, label: PokerPilotWeaknessModel.SKILL_LABELS[target.skillId] }
-      : null;
-    studyIndex = 0;
-    currentStudy = null;
-    route(target.route, { reset: true });
+    if (target.skillId) startFocusSession(target);
+    else {
+      clearFocusSession();
+      route(target.route, { reset: true });
+    }
     return;
   }
-  if (b.dataset.route === 'study' || b.dataset.route === 'ranges') activeTrainingFocus = null;
+  if (b.dataset.route === 'study' || b.dataset.route === 'ranges') clearFocusSession();
   route(b.dataset.route, { resume: b.dataset.resume === 'true' });
 }));
+$('#focusResultContinue').addEventListener('click', () => {
+  const completed = focusSessionController.getSnapshot();
+  if (!completed?.topicId) return;
+  const target = PokerPilotWeaknessModel.trainingTargetFor(completed.topicId);
+  startFocusSession(target);
+});
+$('#focusResultHome').addEventListener('click', () => {
+  clearFocusSession();
+  route('home');
+});
 $('#soundToggle').addEventListener('click', async () => {
   await appSound.handleUserGesture();
   const enabled = appSound.toggle();
@@ -1370,13 +1475,17 @@ function mathHTML(math, s) {
 }
 
 function renderStudy() {
+  const focusState = focusSessionController.getSnapshot();
   const focusedSpots = activeTrainingFocus?.scenarioIds?.length
     ? activeTrainingFocus.scenarioIds
       .map(id => STUDY_SPOTS.find(spot => spot.id === id))
       .filter(Boolean)
     : [];
   const studyPool = focusedSpots.length ? focusedSpots : STUDY_SPOTS;
-  currentStudy = studyPool[studyIndex % studyPool.length];
+  const focusScenarioId = focusSessionController.getCurrentScenarioId();
+  currentStudy = focusState?.route === 'study' && focusScenarioId
+    ? STUDY_SPOTS.find(spot => spot.id === focusScenarioId) || studyPool[0]
+    : studyPool[studyIndex % studyPool.length];
   studyAnswered = false;
   studyHintLevel = 0;
   const s = currentStudy;
@@ -1384,7 +1493,9 @@ function renderStudy() {
   const board = parseCards(s.board || []);
   const pot = C.potMath({ potBefore: s.potBefore || 0, bet: s.bet || 0 });
   $('#studyTitle').textContent = s.title;
-  $('#studyCounter').textContent = `${studyIndex % studyPool.length + 1}/${studyPool.length}`;
+  $('#studyCounter').textContent = focusState?.route === 'study'
+    ? focusState.progressLabel
+    : `${studyIndex % studyPool.length + 1}/${studyPool.length}`;
   const focusContext = $('#studyFocusContext');
   focusContext.classList.toggle('hidden', !activeTrainingFocus);
   focusContext.textContent = activeTrainingFocus
@@ -1399,6 +1510,7 @@ function renderStudy() {
   $('#studyHintBox').classList.add('hidden');
   $('#studyMath').classList.add('hidden');
   $('#studyNext').classList.add('hidden');
+  $('#studyNext').textContent = 'Следующая ситуация';
   $('#studyHint').textContent = '💡 Подсказка';
   $$('[data-study-action]').forEach(b => b.addEventListener('click', () => answerStudy(b.dataset.studyAction)));
   if (assistMode() === 'review') showStudyMath();
@@ -1472,6 +1584,7 @@ function answerStudy(choice) {
     source: 'study',
     topic: s.category || studyStreet(s)
   });
+  const focusDecision = recordFocusDecision(record, s.id, grade);
   renderDecisionQuality('#studyDecisionQuality', record);
   const g = GRADE[grade];
   const f = $('#studyFeedback');
@@ -1486,6 +1599,9 @@ function answerStudy(choice) {
   });
   $('#studyCoach').classList.remove('hidden');
   $('#studyCoachAnswer').innerHTML = `<strong>Что произошло:</strong> ${s.missed}`;
+  if (focusDecision?.state?.status === 'completed') {
+    $('#studyNext').textContent = 'Посмотреть результат';
+  }
   $('#studyNext').classList.remove('hidden');
   showStudyMath(math);
 }
@@ -1499,7 +1615,16 @@ $$('[data-coach-q]').forEach(b => b.addEventListener('click', () => {
   if (q === 'line') $('#studyCoachAnswer').innerHTML = `<strong>Альтернативная линия:</strong> ${s.alternative}`;
   if (q === 'alternatives') $('#studyCoachAnswer').innerHTML = Object.entries(s.why).map(([a, text]) => `<p><strong>${actionLabel(a)}:</strong> ${text}</p>`).join('');
 }));
-$('#studyNext').addEventListener('click', () => { studyIndex += 1; renderStudy(); });
+$('#studyNext').addEventListener('click', () => {
+  const focusState = focusSessionController.getSnapshot();
+  if (focusState?.route === 'study') {
+    if (focusState.status === 'completed') route('focus-result');
+    else renderStudy();
+    return;
+  }
+  studyIndex += 1;
+  renderStudy();
+});
 
 // ----- Preflop range trainer -----
 function classInRange(cards, text) { return C.expandRange(text).has(C.handClass(cards)); }
@@ -1566,18 +1691,38 @@ function buildRangeSpot() {
   return { category: 'threebet', pos, cards, context: 'Ты открылся до $12 и получил 3-бет до $42.', actions: ['fold','call','raise'], grades: bucket === 'raise' ? {fold:'mistake',call:'good',raise:'best'} : bucket === 'call' ? {fold:'acceptable',call:'best',raise:'mistake'} : {fold:'best',call:'mistake',raise:'mistake'}, preferred: bucket, size: 115, reason: bucket === 'raise' ? 'Премиальная рука может 4-бетить на вэлью.' : bucket === 'call' ? 'Рука сохраняет доминируемые комбинации и реализует эквити в позиции.' : 'Против 3-бета эта рука слишком часто доминирована.', coach: 'Учитывай позицию, размер 3-бета и эффективный стек; не защищайся только потому, что уже вложил $12.', range: `${VS_3BET.raise} | call: ${VS_3BET.call}` };
 }
 
+function rangeScenarioId(spot) {
+  return `${spot.category}-${spot.pos}-${C.handClass(spot.cards)}`;
+}
+
 function nextRangeSpot() {
+  const focusState = focusSessionController.getSnapshot();
   rangeState.number += 1;
-  rangeState.current = buildRangeSpot();
+  let nextSpot = buildRangeSpot();
+  if (focusState?.route === 'ranges') {
+    const usedScenarioIds = new Set(focusState.decisions.map(decision => decision.scenarioId));
+    for (let attempt = 0; attempt < 16 && usedScenarioIds.has(rangeScenarioId(nextSpot)); attempt += 1) {
+      nextSpot = buildRangeSpot();
+    }
+  }
+  rangeState.current = nextSpot;
   rangeState.answered = false;
   const s = rangeState.current;
-  $('#rangeCounter').textContent = `${((rangeState.number - 1) % 10) + 1}/10`;
+  $('#rangeCounter').textContent = focusState?.route === 'ranges'
+    ? focusState.progressLabel
+    : `${((rangeState.number - 1) % 10) + 1}/10`;
+  const focusContext = $('#rangeFocusContext');
+  focusContext.classList.toggle('hidden', focusState?.route !== 'ranges');
+  focusContext.textContent = focusState?.route === 'ranges'
+    ? `Фокус: ${focusState.topicLabel}`
+    : '';
   $('#rangeSpot').innerHTML = `<div class="row"><div><span class="tag">${s.pos}</span><h3>${C.handClass(s.cards)}</h3></div><span class="chip">Эффективный стек $300</span></div><div class="cards hero-cards">${cardsHTML(s.cards)}</div><p class="spot-question">${s.context} Что делать?</p>`;
   $('#rangeActions').innerHTML = s.actions.map(a => `<button data-range-action="${a}">${actionLabel(a, a === 'call' ? (s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3) : a === 'raise' ? s.size : 0)}</button>`).join('');
   $('#rangeFeedback').className = 'feedback hidden';
   $('#rangeDecisionQuality').classList.add('hidden');
   $('#rangeCoach').classList.add('hidden');
   $('#rangeNext').classList.add('hidden');
+  $('#rangeNext').textContent = 'Следующая рука';
   $$('[data-range-action]').forEach(b => b.addEventListener('click', () => answerRange(b.dataset.rangeAction)));
   renderRangeScore();
 }
@@ -1598,6 +1743,7 @@ function answerRange(choice) {
     ...s,
     bet: s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3
   };
+  const scenarioId = rangeScenarioId(s);
   const record = recordDecision({
     grade,
     tag: grade === 'mistake' ? (choice === 'fold' ? 'too_tight' : choice === 'call' ? 'passive' : 'too_loose') : null,
@@ -1616,7 +1762,7 @@ function answerRange(choice) {
       explanation: s.reason
     }),
     context: {
-      scenarioId: `${s.category}-${s.pos}-${C.handClass(s.cards)}`,
+      scenarioId,
       street: 'preflop',
       position: s.pos,
       effectiveStack: 300,
@@ -1624,12 +1770,13 @@ function answerRange(choice) {
     }
   });
   progressIntegration.completeTrainingScenario({
-    scenarioId: `${s.category}-${s.pos}-${C.handClass(s.cards)}`,
+    scenarioId,
     decisionId: record.decisionId,
     source: 'ranges',
     topic: 'preflop'
   });
-  if (assistMode() === 'exam' && rangeState.number % 10 === 0) {
+  const focusDecision = recordFocusDecision(record, scenarioId, grade);
+  if (!focusSessionController.getSnapshot() && assistMode() === 'exam' && rangeState.number % 10 === 0) {
     progressIntegration.completeExam({
       moduleId: 'preflop-ranges',
       attemptId: record.decisionId,
@@ -1650,6 +1797,9 @@ function answerRange(choice) {
   });
   $('#rangeCoach').classList.remove('hidden');
   $('#rangeCoachAnswer').innerHTML = `<strong>Почему:</strong> ${s.coach}<br><span class="muted">Учебный диапазон: ${s.range}</span>`;
+  if (focusDecision?.state?.status === 'completed') {
+    $('#rangeNext').textContent = 'Посмотреть результат';
+  }
   $('#rangeNext').classList.remove('hidden');
   renderRangeScore();
 }
@@ -1659,7 +1809,14 @@ function renderRangeScore() {
   const rows = Object.entries(rangeState.categories);
   $('#rangeScore').innerHTML = rows.length ? rows.map(([k,v]) => `<div class="score-row"><span>${names[k]}</span><strong>${Math.round(v[0]/v[1]*100)}%</strong></div>`).join('') : 'Ответь хотя бы на одну руку.';
 }
-$('#rangeNext').addEventListener('click', nextRangeSpot);
+$('#rangeNext').addEventListener('click', () => {
+  const focusState = focusSessionController.getSnapshot();
+  if (focusState?.route === 'ranges' && focusState.status === 'completed') {
+    route('focus-result');
+    return;
+  }
+  nextRangeSpot();
+});
 
 // ----- Coach report -----
 function renderCoachReport() {
