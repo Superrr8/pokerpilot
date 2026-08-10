@@ -149,7 +149,7 @@
           <span id="homeFocusEyebrow" class="eyebrow">ФОКУС НЕДЕЛИ</span>
           <h2 id="homeFocusTitle">Фокус формируется</h2>
           <p id="homeFocusDescription">Персональный фокус появится после нескольких тренировок.</p>
-          <button id="homeFocusAction" class="ui-button-ghost small hidden" type="button">Тренировать тему</button>
+          <button id="homeFocusAction" class="ui-button-ghost small hidden" type="button" data-route="study">Тренировать тему</button>
         </section>
 
         <section id="dashboardResume" class="home-secondary-card home-recent-card hidden" aria-labelledby="homeSecondaryTitle">
@@ -435,7 +435,7 @@
     <section id="screen-study" class="screen">
       <button class="back" data-route="training">‹ К тренировке</button>
       <div class="panel decision-panel">
-        <div class="panel-head"><div><span class="tag">Учебный режим</span><h3 id="studyTitle">Ситуация</h3></div><span id="studyCounter" class="chip">1/1</span></div>
+        <div class="panel-head"><div><span class="tag">Учебный режим</span><span id="studyFocusContext" class="chip study-focus-context hidden"></span><h3 id="studyTitle">Ситуация</h3></div><span id="studyCounter" class="chip">1/1</span></div>
         <div id="studySpot"></div>
         <div id="studyCoachTools" class="coach-tools">
           <button id="studyHint" class="ghost">💡 Подсказка</button>
@@ -877,6 +877,7 @@
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
 <script src="src/progress/progress-system.js"></script>
+<script src="src/progress/weakness-model.js"></script>
 <script src="src/progress/progress-feedback.js"></script>
 <script src="src/progress/progress-integration.js"></script>
 <script src="src/daily/daily-challenge-progress.js"></script>
@@ -935,6 +936,7 @@ let studyIndex = 0;
 let currentStudy = null;
 let studyAnswered = false;
 let studyHintLevel = 0;
+let activeTrainingFocus = null;
 let rangeState = { number: 0, correctPoints: 0, maxPoints: 0, categories: {}, current: null, answered: false };
 let session = null;
 const LIVE_PACING = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -1091,7 +1093,7 @@ function recordDecision({
   progressIntegration.recordTrainingDecision({
     decisionRecord: record,
     source: decisionMode || mode || 'unknown',
-    topic: tag || context.topic || '',
+    topic: context.topic || tag || '',
     localDate: date.slice(0, 10)
   });
   saveProgress();
@@ -1203,6 +1205,17 @@ function route(name, options = {}) {
 
 $$('[data-route]').forEach(b => b.addEventListener('click', () => {
   appSound.handleUserGesture().then(() => appSound.play('navigation'));
+  if (b.id === 'homeFocusAction') {
+    const target = PokerPilotWeaknessModel.trainingTargetFor(b.dataset.focusSkill);
+    activeTrainingFocus = target.skillId
+      ? { ...target, label: PokerPilotWeaknessModel.SKILL_LABELS[target.skillId] }
+      : null;
+    studyIndex = 0;
+    currentStudy = null;
+    route(target.route, { reset: true });
+    return;
+  }
+  if (b.dataset.route === 'study' || b.dataset.route === 'ranges') activeTrainingFocus = null;
   route(b.dataset.route, { resume: b.dataset.resume === 'true' });
 }));
 $('#soundToggle').addEventListener('click', async () => {
@@ -1357,7 +1370,13 @@ function mathHTML(math, s) {
 }
 
 function renderStudy() {
-  currentStudy = STUDY_SPOTS[studyIndex % STUDY_SPOTS.length];
+  const focusedSpots = activeTrainingFocus?.scenarioIds?.length
+    ? activeTrainingFocus.scenarioIds
+      .map(id => STUDY_SPOTS.find(spot => spot.id === id))
+      .filter(Boolean)
+    : [];
+  const studyPool = focusedSpots.length ? focusedSpots : STUDY_SPOTS;
+  currentStudy = studyPool[studyIndex % studyPool.length];
   studyAnswered = false;
   studyHintLevel = 0;
   const s = currentStudy;
@@ -1365,7 +1384,12 @@ function renderStudy() {
   const board = parseCards(s.board || []);
   const pot = C.potMath({ potBefore: s.potBefore || 0, bet: s.bet || 0 });
   $('#studyTitle').textContent = s.title;
-  $('#studyCounter').textContent = `${studyIndex % STUDY_SPOTS.length + 1}/${STUDY_SPOTS.length}`;
+  $('#studyCounter').textContent = `${studyIndex % studyPool.length + 1}/${studyPool.length}`;
+  const focusContext = $('#studyFocusContext');
+  focusContext.classList.toggle('hidden', !activeTrainingFocus);
+  focusContext.textContent = activeTrainingFocus
+    ? `Фокус: ${activeTrainingFocus.label}${activeTrainingFocus.fallback ? ' · ближайший набор' : ''}`
+    : '';
   $('#studySpot').innerHTML = `<div class="row"><span class="tag">${s.position} • ${s.category}</span><span class="chip">${TYPES[s.villain]?.name || 'Соперник'}</span></div><div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length ? `<div class="cards">${cardsHTML(board, true)}</div>` : ''}<div class="spot-meta"><div class="stat"><small>Банк до ставки</small><strong>${money(s.potBefore || 0)}</strong></div><div class="stat"><small>Ставка</small><strong>${s.bet ? money(s.bet) : '—'}</strong></div><div class="stat"><small>Банк сейчас</small><strong>${money(pot.potNow)}</strong></div></div><p class="spot-question">${s.text}</p>`;
   $('#studyActions').innerHTML = s.actions.map(a => `<button data-study-action="${a}">${actionLabel(a, a === 'call' ? s.bet : a === 'bet' ? s.betSize : a === 'raise' ? s.raiseSize : 0)}</button>`).join('');
   $('#studyFeedback').className = 'feedback hidden';
@@ -1438,7 +1462,8 @@ function answerStudy(choice) {
       pot: s.potBefore || 0,
       toCall: s.bet || 0,
       position: s.position,
-      opponentType: s.villain
+      opponentType: s.villain,
+      topic: PokerPilotWeaknessModel.topicForScenario(s.id)
     }
   });
   progressIntegration.completeTrainingScenario({
@@ -1594,7 +1619,8 @@ function answerRange(choice) {
       scenarioId: `${s.category}-${s.pos}-${C.handClass(s.cards)}`,
       street: 'preflop',
       position: s.pos,
-      effectiveStack: 300
+      effectiveStack: 300,
+      topic: 'preflop'
     }
   });
   progressIntegration.completeTrainingScenario({
@@ -2530,7 +2556,8 @@ function handleHeroAction(action,amount=0){
       toCall:session.toCall,
       effectiveStack:session.players[0].stack,
       position:positionsFor(session.n,session.button)[0],
-      opponents:activeOpponents().length
+      opponents:activeOpponents().length,
+      topic:session.street==='preflop'?'preflop':'postflop'
     }
   });
   renderDecisionQuality('#liveDecisionQuality',record);

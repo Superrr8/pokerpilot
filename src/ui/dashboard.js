@@ -4,6 +4,8 @@
   const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
   const LiveMode = root.PokerPilotLiveMode
     || (typeof require === 'function' ? require('../live/live-mode.js') : null);
+  const WeaknessModel = root.PokerPilotWeaknessModel
+    || (typeof require === 'function' ? require('../progress/weakness-model.js') : null);
   const WEAK_TOPICS = Object.freeze({
     too_tight: 'Слишком тайтовые фолды',
     too_loose: 'Слишком широкие входы',
@@ -299,22 +301,34 @@
   }
 
   function focusSnapshot(input) {
-    const weakness = topWeakness(input);
+    const summary = typeof WeaknessModel?.derive === 'function'
+      ? WeaknessModel.derive(object(input).progressSnapshot)
+      : {
+          primary: null,
+          hasReliableData: false,
+          emptyMessage: 'Персональный фокус появится после нескольких тренировок.'
+        };
+    const weakness = summary.primary;
     if (!weakness) {
       return {
         eyebrow: 'ФОКУС НЕДЕЛИ',
-        title: 'Фокус формируется',
-        description: 'Персональный фокус появится после нескольких тренировок.',
-        actionLabel: null,
-        target: null
+        title: summary.hasReliableData ? 'Поддерживайте сильную форму' : 'Фокус формируется',
+        description: summary.emptyMessage,
+        actionLabel: 'Начать тренировку',
+        target: 'study',
+        skillId: null,
+        fallback: true
       };
     }
+    const trend = weakness.trendLabel ? ` ${weakness.trendLabel}.` : '';
     return {
       eyebrow: 'ФОКУС НЕДЕЛИ',
       title: weakness.label,
-      description: `По этой теме зафиксировано ошибок: ${weakness.count}. Короткая практика поможет закрепить решение.`,
+      description: `Средняя оценка ${weakness.scoreLabel} по ${weakness.relevantDecisions} решениям.${trend}`,
       actionLabel: 'Тренировать тему',
-      target: 'study'
+      target: weakness.trainingTarget.route,
+      skillId: weakness.id,
+      fallback: weakness.trainingTarget.fallback
     };
   }
 
@@ -476,6 +490,8 @@
       focusAction.classList.toggle('hidden', !model.focus.target);
       setRoute(focusAction, model.focus.target);
       focusAction.textContent = model.focus.actionLabel || '';
+      focusAction.dataset.focusSkill = model.focus.skillId || '';
+      focusAction.dataset.focusFallback = String(Boolean(model.focus.fallback));
     }
 
     const secondary = scope.querySelector('#dashboardResume');

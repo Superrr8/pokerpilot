@@ -345,6 +345,22 @@
     linear-gradient(145deg, rgba(19, 31, 35, 0.98), rgba(15, 23, 28, 0.96));
 }
 
+.home-focus-card h2,
+.home-focus-card p {
+  overflow-wrap: anywhere;
+}
+
+#homeFocusAction {
+  min-height: 44px;
+}
+
+.study-focus-context {
+  max-width: 100%;
+  margin-inline-start: var(--space-1);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 .home-focus-card::before {
   content: "";
   position: absolute;
@@ -483,6 +499,15 @@
 
   .home-secondary-card {
     padding: var(--space-5);
+  }
+
+  .home-focus-card {
+    min-width: 0;
+  }
+
+  .home-focus-card p,
+  #homeFocusAction {
+    max-width: 100%;
   }
 }
 
