@@ -186,6 +186,7 @@
           <div class="daily-challenge-card-head">
             <span class="tag">Раздача дня</span>
             <span id="dailyDifficulty" class="chip">Средняя</span>
+            <span id="dailyCompletionState" class="chip daily-completion-state hidden">Завершено</span>
           </div>
           <h1 id="dailyTitle">Daily Challenge</h1>
           <div class="daily-meta-grid" aria-label="Параметры раздачи">
@@ -209,22 +210,30 @@
           </section>
         </div>
 
-        <section class="panel" aria-labelledby="dailyDecisionTitle">
+        <section class="panel daily-decision-panel" aria-labelledby="dailyDecisionTitle">
           <span class="eyebrow">ТВОЁ РЕШЕНИЕ</span>
           <h2 id="dailyDecisionTitle">Как сыграть?</h2>
           <p id="dailyContext" class="daily-context"></p>
           <div id="dailyActions" class="daily-actions" role="group" aria-label="Доступные действия"></div>
+          <p id="dailySelectionStatus" class="daily-selection-status" aria-live="polite">Выберите действие</p>
           <button id="dailyConfirm" class="primary wide daily-submit" type="button" disabled>Подтвердить решение</button>
         </section>
 
         <section id="dailyFeedback" class="feedback daily-result hidden" role="status" aria-live="polite" aria-atomic="true">
-          <h2 id="dailyResultTitle"></h2>
+          <div class="daily-result-heading">
+            <span class="eyebrow">РЕЗУЛЬТАТ</span>
+            <h2 id="dailyResultTitle"></h2>
+          </div>
           <div class="daily-progress-result" aria-label="Награда за раздачу дня">
             <strong id="dailyReward"></strong>
             <span id="dailyStreak"></span>
             <p id="dailyProgressPending" class="hidden"></p>
           </div>
-          <strong id="dailyCorrectAction"></strong>
+          <div id="dailyResultComparison" class="daily-result-comparison" aria-label="Сравнение решения">
+            <div><small>Ваш выбор</small><strong id="dailySelectedAction"></strong></div>
+            <div><small>Рекомендация</small><strong id="dailyCorrectAction"></strong></div>
+          </div>
+          <h3 id="dailyWhyTitle" class="daily-why-title">Почему</h3>
           <p id="dailyExplanation"></p>
           <button id="dailyResultReviewCta" class="ui-button-primary daily-result-review" type="button">Посмотреть разбор</button>
         </section>

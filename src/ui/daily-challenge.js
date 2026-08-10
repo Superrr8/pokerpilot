@@ -43,6 +43,20 @@
       : outcome;
   }
 
+  function resultPresentation(status) {
+    if (status?.status !== 'completed' || !status.review) return null;
+    const actionFor = actionClass => status.challenge?.actions?.find(action => action.actionClass === actionClass)
+      || { actionClass, amount: null };
+    return {
+      title: status.review.isCorrect ? 'Правильно' : 'Ошибка',
+      stateLabel: 'Раздача завершена',
+      selectedActionLabel: actionLabel(actionFor(status.review.selectedAction)),
+      correctActionLabel: actionLabel(actionFor(status.review.correctAction)),
+      explanation: status.review.explanation,
+      tone: status.review.isCorrect ? 'good' : 'bad'
+    };
+  }
+
   function setText(documentRef, selector, value) {
     const element = documentRef.querySelector(selector);
     if (element) element.textContent = String(value ?? '');
@@ -95,13 +109,17 @@
     }
 
     function selectAction(actionClass) {
-      if (system.getTodayStatus().status !== 'new') return false;
+      const status = system.getTodayStatus();
+      if (status.status !== 'new') return false;
       selectedAction = actionClass;
       actionButtons.forEach(button => {
         const selected = button.dataset.action === actionClass;
         button.classList.toggle('is-selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
+      const selected = status.challenge.actions.find(action => action.actionClass === actionClass);
+      setText(documentRef, '#dailySelectionStatus', `Выбрано: ${actionLabel(selected || { actionClass })}`);
+      documentRef.querySelector('#dailySelectionStatus')?.classList.add('has-selection');
       if (confirmButton) confirmButton.disabled = false;
       return true;
     }
@@ -119,6 +137,10 @@
         button.textContent = actionLabel(action);
         button.disabled = status.status === 'completed';
         if (status.review?.selectedAction === action.actionClass) button.classList.add('is-selected');
+        if (status.status === 'completed' && status.review?.correctAction === action.actionClass) button.classList.add('is-recommended');
+        if (status.status === 'completed' && !status.review?.isCorrect && status.review?.selectedAction === action.actionClass) {
+          button.classList.add('is-incorrect-selection');
+        }
         button.addEventListener('click', () => selectAction(action.actionClass));
         actionContainer.append(button);
         actionButtons.push(button);
@@ -128,20 +150,23 @@
     function renderFeedback(status) {
       const feedback = documentRef.querySelector('#dailyFeedback');
       const correct = documentRef.querySelector('#dailyCorrectAction');
+      const selected = documentRef.querySelector('#dailySelectedAction');
       const explanation = documentRef.querySelector('#dailyExplanation');
       const completed = status.status === 'completed';
       feedback?.classList.toggle('hidden', !completed);
       if (!completed) {
         if (correct) correct.textContent = '';
+        if (selected) selected.textContent = '';
         if (explanation) explanation.textContent = '';
         setText(documentRef, '#dailyReward', '');
         setText(documentRef, '#dailyStreak', '');
         setText(documentRef, '#dailyProgressPending', '');
         return;
       }
-      feedback.classList.toggle('good', status.review.isCorrect);
-      feedback.classList.toggle('bad', !status.review.isCorrect);
-      setText(documentRef, '#dailyResultTitle', status.review.isCorrect ? 'Правильно' : 'Ошибка');
+      const presentation = resultPresentation(status);
+      feedback.classList.toggle('good', presentation.tone === 'good');
+      feedback.classList.toggle('bad', presentation.tone === 'bad');
+      setText(documentRef, '#dailyResultTitle', presentation.title);
       const recorded = status.review.progressStatus === 'recorded' && Number.isFinite(status.review.xpAwarded);
       const pending = status.review.progressStatus === 'pending' || status.review.progressStatus === null;
       const dailySnapshot = typeof progress?.getProgressSnapshot === 'function'
@@ -155,8 +180,9 @@
         ? 'Награда будет зачислена при следующем открытии'
         : '');
       documentRef.querySelector('#dailyProgressPending')?.classList.toggle('hidden', !pending);
-      if (correct) correct.textContent = `Правильное действие: ${ACTION_LABELS[status.review.correctAction] || status.review.correctAction}`;
-      if (explanation) explanation.textContent = status.review.explanation;
+      if (selected) selected.textContent = presentation.selectedActionLabel;
+      if (correct) correct.textContent = presentation.correctActionLabel;
+      if (explanation) explanation.textContent = presentation.explanation;
     }
 
     function renderScreen() {
@@ -173,13 +199,24 @@
       setText(documentRef, '#dailyCall', challenge.amountToCall > 0 ? money(challenge.amountToCall) : 'Нет ставки');
       setText(documentRef, '#dailyStack', money(challenge.effectiveStack));
       setText(documentRef, '#dailyContext', challenge.context);
+      const completed = status.status === 'completed';
+      const completionState = documentRef.querySelector('#dailyCompletionState');
+      completionState?.classList.toggle('hidden', !completed);
+      if (completionState) completionState.textContent = completed ? 'Завершено' : '';
       renderCards('#dailyHeroCards', challenge.heroCards);
       renderCards('#dailyBoard', challenge.board, true);
       documentRef.querySelector('#dailyBoardWrap')?.classList.toggle('hidden', challenge.board.length === 0);
       renderActions(status);
+      const selectedDefinition = challenge.actions.find(action => action.actionClass === selectedAction);
+      setText(documentRef, '#dailySelectionStatus', completed
+        ? `Ответ сохранён: ${actionLabel(selectedDefinition || { actionClass: selectedAction })}`
+        : selectedAction
+          ? `Выбрано: ${actionLabel(selectedDefinition || { actionClass: selectedAction })}`
+          : 'Выберите действие');
+      documentRef.querySelector('#dailySelectionStatus')?.classList.toggle('has-selection', Boolean(selectedAction));
       if (confirmButton) {
-        confirmButton.disabled = status.status === 'completed' || !selectedAction;
-        confirmButton.classList.toggle('hidden', status.status === 'completed');
+        confirmButton.disabled = completed || !selectedAction;
+        confirmButton.classList.toggle('hidden', completed);
       }
       renderFeedback(status);
       return status;
@@ -187,6 +224,7 @@
 
     function submit() {
       if (!selectedAction) return { accepted: false, reason: 'NO_SELECTION' };
+      if (confirmButton) confirmButton.disabled = true;
       const result = system.submitAnswer(selectedAction);
       renderScreen();
       renderDashboard();
@@ -201,7 +239,7 @@
     return Object.freeze({ renderDashboard, renderScreen, open: renderScreen, selectAction, submit });
   }
 
-  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS, dashboardResultLabel });
+  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS, dashboardResultLabel, resultPresentation });
   root.PokerPilotDailyChallengeUI = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
