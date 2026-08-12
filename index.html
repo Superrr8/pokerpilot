@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07110d">
   <title>PokerPilot v2.0</title>
+  <script src="src/ui/theme-manager.js"></script>
   <link rel="stylesheet" href="src/styles/design-tokens.css">
+  <link rel="stylesheet" href="src/styles/themes.css">
   <style>
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;background:radial-gradient(circle at 90% 0,rgba(59,224,155,.13),transparent 31%),linear-gradient(180deg,#06100c,#0b1712);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.app{width:min(100%,500px);margin:auto;padding:env(safe-area-inset-top) 14px calc(96px + env(safe-area-inset-bottom))}.topbar{height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;background:none;border:0;color:inherit;padding:0;text-align:left}.brand>span:last-child{display:flex;flex-direction:column}.brand strong{font-size:20px}.brand small{color:var(--muted);font-size:11px}.logo{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#03110b;font-weight:1000;box-shadow:0 8px 20px rgba(59,224,155,.2)}button,select,input{font:inherit}.chip,.tag{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}.chip{border:1px solid var(--line);color:var(--muted);background:rgba(255,255,255,.03)}.tag{background:rgba(59,224,155,.11);color:var(--accent)}.screen{display:none}.screen.active{display:block}.hero,.panel,.mode-card{border:1px solid var(--line);background:linear-gradient(155deg,var(--panel2),var(--panel));border-radius:22px;box-shadow:var(--shadow)}.hero{padding:20px;background:linear-gradient(145deg,rgba(59,224,155,.11),rgba(255,255,255,.02))}.eyebrow{color:var(--accent);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:900}.hero h1{font-size:27px;line-height:1.1;margin:9px 0}.hero p,.muted{color:var(--muted);line-height:1.48;font-size:13px}.section-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:19px 2px 9px}.mode-list{display:grid;gap:10px}.mode-card{width:100%;display:grid;grid-template-columns:38px 1fr 18px;gap:10px;align-items:center;padding:15px;color:inherit;text-align:left}.mode-card span:nth-child(2){display:flex;flex-direction:column;gap:4px}.mode-card small{color:var(--muted);line-height:1.35}.mode-card b{font-size:22px;color:var(--muted)}.mode-icon{font-size:25px}.panel{padding:15px;margin-bottom:12px}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panel h3{font-size:19px;margin:9px 0 0}.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.stats-grid.four{grid-template-columns:repeat(4,1fr)}.stat{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:14px;text-align:center;padding:9px 4px}.stat small{display:block;color:var(--muted);font-size:10px}.stat strong{font-size:16px}.back,.ghost{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:13px;padding:9px 11px}.back{border:0;padding-left:1px;margin-bottom:10px}.small{font-size:11px;padding:7px 9px}.wide{width:100%}.primary{border:0;background:var(--accent);color:#03110b;border-radius:14px;padding:14px 11px;font-weight:1000}.hidden{display:none!important}.cards{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.playing-card{width:65px;height:90px;border-radius:12px;background:#f7faf8;color:#131a16;padding:7px;display:flex;flex-direction:column;justify-content:space-between;font-size:22px;font-weight:1000;box-shadow:0 9px 19px rgba(0,0,0,.25)}.playing-card.red{color:#d33e3e}.playing-card.small-card{width:48px;height:67px;font-size:17px;border-radius:9px;padding:5px}.hero-cards{margin:14px 0}.spot-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:13px 0}.spot-question{font-size:14px;line-height:1.45;color:#dce9e2}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:13px}.actions button{border-radius:14px;padding:13px 7px;border:1px solid var(--line);background:#1a2d25;color:var(--text);font-weight:900;transition:.15s}.neutral-actions button{background:#1a2d25;color:var(--text);border-color:var(--line)}.actions button:active{transform:scale(.98)}.actions button.selected-correct{background:var(--accent);color:#03110b;border-color:var(--accent)}.actions button.selected-wrong{background:#4a2424;color:#ffdcdc;border-color:#8a4242}.actions button.reveal-best:not(.selected-correct){box-shadow:0 0 0 2px var(--accent) inset;color:var(--accent)}.actions button.good-choice{box-shadow:0 0 0 2px var(--blue) inset;color:var(--blue)}.feedback{margin-top:12px;padding:12px;border-radius:15px;line-height:1.48;font-size:13px}.feedback.good{background:rgba(59,224,155,.1);border:1px solid rgba(59,224,155,.3)}.feedback.warn{background:rgba(239,189,79,.1);border:1px solid rgba(239,189,79,.3)}.feedback.bad{background:rgba(255,116,116,.1);border:1px solid rgba(255,116,116,.3)}.feedback.info{background:rgba(113,170,255,.1);border:1px solid rgba(113,170,255,.3)}.field{display:flex;flex-direction:column;gap:6px;color:var(--muted);font-size:12px;margin:12px 0}.field select{background:#13251e;color:var(--text);border:1px solid var(--line);border-radius:13px;padding:12px}.mode-settings{display:grid;gap:7px}.mode-settings label{display:flex;gap:10px;align-items:flex-start;padding:11px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(255,255,255,.02)}.mode-settings input{margin-top:4px;accent-color:var(--accent)}.mode-settings span{display:flex;flex-direction:column;gap:3px}.mode-settings small{color:var(--muted)}.coach-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.coach-box,.coach-panel{margin-top:11px;padding:12px;border-radius:15px;background:rgba(194,140,255,.08);border:1px solid rgba(194,140,255,.28);font-size:13px;line-height:1.5}.coach-title{color:var(--purple);font-weight:900;margin-bottom:8px}.coach-questions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.coach-questions button{border:1px solid var(--line);border-radius:11px;padding:9px 6px;background:#1a2d25;color:var(--muted);font-size:11px}.coach-answer{margin-top:9px;color:#e5efe9}.math-box{margin:10px 0;border-left:4px solid var(--accent);padding:10px;background:rgba(59,224,155,.06);border-radius:0 12px 12px 0;font-size:12px;line-height:1.55}.math-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:8px 0}.math-cell{padding:8px;border-radius:10px;background:rgba(255,255,255,.04)}.math-cell small{display:block;color:var(--muted);font-size:10px}.math-cell strong{font-size:14px}.outs-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.out-pill{border-radius:999px;padding:5px 8px;background:rgba(255,255,255,.05);color:#dce9e2;font-size:10px}.out-pill.conditional{color:var(--warn)}.decision-panel{overflow:hidden}.poker-table{height:320px;position:relative;margin:8px 0 14px;border-radius:46%;border:11px solid #452f1f;background:radial-gradient(circle,#207650,#155b3d 67%,#0c402b);box-shadow:inset 0 0 44px rgba(0,0,0,.35),var(--shadow)}.table-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:7px;min-width:220px}.table-center small{color:#d0e1d8}.table-center strong{background:rgba(3,17,11,.66);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:7px 10px}.board{display:flex;gap:4px}.seat{position:absolute;width:64px;height:60px;border-radius:16px;background:#102019;border:2px solid #4b6c5b;padding:5px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:0 5px 12px rgba(0,0,0,.25)}.seat.hero{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,224,155,.14)}.seat.folded{opacity:.35}.seat.active-player{border-color:var(--warn)}.seat small{font-size:9px;color:var(--muted)}.seat strong{font-size:11px}.seat em{font-style:normal;font-size:10px;color:var(--accent)}.action-log{max-height:118px;overflow:auto;background:rgba(0,0,0,.12);border-radius:13px;padding:9px;font-size:12px;line-height:1.5;color:#cfe0d7}.action-log p{margin:0 0 4px}.bet-sizer{margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:14px}.bet-sizer label{display:flex;justify-content:space-between}.bet-sizer input{width:100%;accent-color:var(--accent)}.quick-sizes{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}.quick-sizes button{background:#1a2d25;border:1px solid var(--line);color:var(--muted);padding:8px 2px;border-radius:9px;font-size:10px}.score-list{display:grid;gap:7px}.score-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}.history-list{display:grid;gap:8px}.history-item{padding:10px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}.history-item strong{display:block;font-size:13px}.history-item small{color:var(--muted)}.coach-summary-card{padding:12px;border-radius:15px;background:rgba(255,255,255,.03);margin:10px 0}.coach-summary-card h4{margin:0 0 5px}.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,500px);padding:8px 14px calc(12px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:linear-gradient(180deg,transparent,rgba(5,12,9,.96) 30%)}.bottom-nav button{border:1px solid var(--line);border-radius:14px;padding:11px 5px;background:#0f1d18;color:var(--muted);font-size:12px}.bottom-nav button.active{background:#19352a;color:var(--accent)}@media(max-width:390px){.poker-table{height:290px}.seat{width:58px}.stats-grid.four{grid-template-columns:repeat(2,1fr)}.playing-card{width:59px;height:83px}.actions button{font-size:12px}.coach-questions{grid-template-columns:1fr}.spot-meta{grid-template-columns:repeat(2,1fr)}}
 
@@ -48,6 +50,7 @@
   <link rel="stylesheet" href="src/styles/progress-analytics-view.css">
   <link rel="stylesheet" href="src/styles/progress-feedback.css">
   <link rel="stylesheet" href="src/styles/stage11-refresh.css">
+  <link rel="stylesheet" href="src/styles/stage1101-redesign.css">
 </head>
 <body>
 <div class="app app-shell" data-active-route="home">
@@ -78,18 +81,42 @@
 
   <main>
     <section id="screen-home" class="screen active dashboard-screen" data-smoke="dashboard-ready">
-      <div class="home-dashboard">
+      <div class="home-dashboard home-dashboard-pro">
         <header class="home-welcome">
           <h1 id="homeGreeting">С возвращением, Player</h1>
           <p id="homeStatus">Poker IQ формируется</p>
         </header>
 
-        <section class="dashboard-hero home-primary-card home-primary-action" aria-labelledby="dashboardNextTitle">
-          <span id="dashboardNextEyebrow" class="eyebrow">ТВОЙ СЛЕДУЮЩИЙ ШАГ</span>
-          <h2 id="dashboardNextTitle">Быстрая тренировка</h2>
-          <p id="dashboardNextDescription">Короткая серия решений для поддержания формы.</p>
-          <span id="dashboardNextMeta" class="home-action-meta">5 раздач · около 4 минут</span>
-          <button id="dashboardContinue" class="ui-button-primary" type="button" data-route="study" data-resume="false">Начать тренировку</button>
+        <section class="home-dashboard-summary" aria-label="Прогресс игрока">
+          <section class="home-progress-strip" aria-label="Ключевые показатели">
+            <div class="home-progress-metric">
+              <small id="homePokerIqLabel">Poker IQ</small>
+              <strong id="homePokerIqValue">—</strong>
+              <span id="homePokerIqRank">Не рассчитан</span>
+            </div>
+            <div class="home-progress-metric">
+              <small id="homeLevelLabel">Уровень</small>
+              <strong id="homeLevelValue">1</strong>
+              <span id="homeXpDetail">0 / 500 XP</span>
+              <span id="homeLevelProgress" class="home-level-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс уровня 1: 0 / 500 XP"><i></i></span>
+            </div>
+            <div class="home-progress-metric">
+              <small id="homeStreakLabel">Серия</small>
+              <strong id="homeStreakValue">0</strong>
+              <span id="homeStreakDetail">пока нет серии</span>
+            </div>
+          </section>
+        </section>
+
+        <section class="dashboard-learning-row home-primary-card home-primary-action" aria-labelledby="dashboardNextTitle">
+          <span class="dashboard-learning-icon" aria-hidden="true">◇</span>
+          <div class="dashboard-learning-copy">
+            <span id="dashboardNextEyebrow" class="eyebrow">ТВОЙ СЛЕДУЮЩИЙ ШАГ</span>
+            <h2 id="dashboardNextTitle">Быстрая тренировка</h2>
+            <p id="dashboardNextDescription">Короткая серия решений для поддержания формы.</p>
+            <span id="dashboardNextMeta" class="home-action-meta">5 раздач · около 4 минут</span>
+          </div>
+          <button id="dashboardContinue" class="ui-button-primary" type="button" data-route="study" data-resume="false" aria-label="Продолжить обучение">Продолжить</button>
         </section>
 
         <section id="dailyChallengeCard" class="daily-challenge-card" aria-labelledby="dailyChallengeCardTitle" data-state="new">
@@ -97,10 +124,16 @@
             <div class="daily-challenge-card-head">
               <span class="tag">Раздача дня</span>
               <span id="dailyChallengeStatus" class="chip">Новая</span>
+              <span id="dailyChallengeSummary" class="daily-hand-meta">Сегодняшняя покерная ситуация</span>
             </div>
-            <h2 id="dailyChallengeCardTitle">Раздача дня</h2>
-            <p id="dailyChallengeSummary">Сегодняшняя покерная ситуация</p>
-            <small id="dailyChallengeResult">Одно решение на сегодня</small>
+            <div class="daily-hand-preview">
+              <div id="dailyChallengePreviewCards" class="daily-hand-cards" aria-label="Карты раздачи дня"></div>
+              <div class="daily-hand-copy">
+                <h2 id="dailyChallengeCardTitle">Раздача дня</h2>
+                <p id="dailyChallengeHandLabel">Сегодняшняя покерная ситуация</p>
+                <small id="dailyChallengeResult">Одно решение на сегодня</small>
+              </div>
+            </div>
             <div id="dailyChallengeProgress" class="daily-challenge-progress" aria-label="Прогресс раздачи дня">
               <span id="dailyChallengeTodayState">Сегодня доступно</span>
               <span id="dailyChallengeStreak">Серия раздачи дня: 0 дней</span>
@@ -110,25 +143,6 @@
           <div class="daily-challenge-card-actions">
             <button id="dailyChallengeCta" class="ui-button-primary daily-challenge-primary" type="button" data-route="daily">Решить</button>
             <button id="dailyChallengeHistoryCta" class="ui-button-ghost small" type="button" data-route="daily-history">История</button>
-          </div>
-        </section>
-
-        <section class="home-progress-strip" aria-label="Ключевые показатели">
-          <div class="home-progress-metric">
-            <small id="homePokerIqLabel">Poker IQ</small>
-            <strong id="homePokerIqValue">—</strong>
-            <span id="homePokerIqRank">Не рассчитан</span>
-          </div>
-          <div class="home-progress-metric">
-            <small id="homeLevelLabel">Уровень</small>
-            <strong id="homeLevelValue">1</strong>
-            <span id="homeXpDetail">0 / 500 XP</span>
-            <span id="homeLevelProgress" class="home-level-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Прогресс уровня 1: 0 / 500 XP"><i></i></span>
-          </div>
-          <div class="home-progress-metric">
-            <small id="homeStreakLabel">Серия</small>
-            <strong id="homeStreakValue">0</strong>
-            <span id="homeStreakDetail">пока нет серии</span>
           </div>
         </section>
 
@@ -517,6 +531,28 @@
               <span id="profileXpLabel">0 / 500 XP</span>
             </div>
             <div id="profileXpProgress" class="profile-xp-progress" role="progressbar" aria-label="Прогресс Level 1: 0 / 500 XP" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+          </div>
+        </section>
+
+        <section id="profileAppearance" class="profile-appearance" aria-labelledby="profileAppearanceTitle">
+          <header class="profile-appearance-header">
+            <div>
+              <span class="tag">Интерфейс</span>
+              <h2 id="profileAppearanceTitle">Оформление</h2>
+              <p>Одна структура — восемь характеров PokerPilot.</p>
+            </div>
+            <span class="theme-current" data-theme-current>Emerald</span>
+          </header>
+          <div class="theme-picker" role="group" aria-label="Выбор темы">
+            <button class="theme-option" type="button" data-theme-choice="auto" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>System / Auto</strong><small>Тема устройства</small></span></button>
+            <button class="theme-option is-selected" type="button" data-theme-choice="emerald" aria-pressed="true"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Emerald</strong><small>Глубокий зелёный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="amber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Amber</strong><small>Тёплый янтарный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="indigo" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Indigo</strong><small>Прохладный индиго</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="minimal" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Minimal Light</strong><small>Светлый минимализм</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="cyber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Neon Cyber</strong><small>Неон и энергия</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="glass" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Glass</strong><small>Стекло и глубина</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="warm-wood" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Warm Wood</strong><small>Тёплый клубный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="soft-pastel" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Soft Pastel</strong><small>Мягкий светлый</small></span></button>
           </div>
         </section>
 

@@ -176,7 +176,7 @@ test('Home view model содержит ровно три action shortcuts с в�
   const model = loadDashboard().buildHomeViewModel(state());
   assert.deepEqual(
     Array.from(model.quickActions, action => action.label),
-    ['Быстрая тренировка', 'Ввести раздачу', 'Equity']
+    ['Тренировка', 'Ввести раздачу', 'Equity']
   );
   assert.deepEqual(
     Array.from(model.quickActions, action => action.target),

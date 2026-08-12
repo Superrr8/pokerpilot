@@ -395,7 +395,7 @@
       nextAction,
       progress: homeProgress,
       quickActions: [
-        { id: 'training', label: 'Быстрая тренировка', icon: '◎', target: 'study' },
+        { id: 'training', label: 'Тренировка', icon: '◎', target: 'study' },
         { id: 'hand', label: 'Ввести раздачу', icon: '＋', target: 'analyzer' },
         { id: 'equity', label: 'Equity', icon: '%', target: 'analyzer', focus: 'equity' }
       ],

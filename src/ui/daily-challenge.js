@@ -95,6 +95,8 @@
       const completed = status.status === 'completed';
       setText(documentRef, '#dailyChallengeStatus', completed ? 'Завершено' : 'Новая');
       setText(documentRef, '#dailyChallengeSummary', `${STREET_LABELS[status.challenge.street]} · ${status.challenge.difficulty}`);
+      setText(documentRef, '#dailyChallengeHandLabel', status.challenge.title);
+      renderCards('#dailyChallengePreviewCards', status.challenge.heroCards, true);
       setText(documentRef, '#dailyChallengeResult', completed
         ? dashboardResultLabel(status.review)
         : 'Одно решение на сегодня');
