@@ -1,0 +1,637 @@
+/* Stage 11.0 — presentation-only design system and mobile UX refresh. */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% -12rem, rgba(105, 217, 167, 0.07), transparent 34rem),
+    var(--surface-canvas);
+  font-size: var(--font-size-sm);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-family-ui);
+}
+
+button,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+.app-shell {
+  width: min(100%, var(--content-max));
+  padding-bottom: calc(108px + env(safe-area-inset-bottom));
+}
+
+.screen {
+  min-width: 0;
+}
+
+.screen h1 {
+  color: var(--text-primary);
+  font-size: var(--font-size-screen);
+  font-weight: 760;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.panel h2,
+.section-header h2,
+.section-intro h2 {
+  color: var(--text-primary);
+  font-size: var(--font-size-section);
+  font-weight: 720;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.panel h3,
+.mode-card strong,
+.card-title {
+  font-size: var(--font-size-card);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.stat strong,
+.stat-card strong,
+.home-progress-metric strong,
+.progress-overview strong,
+.pot-display,
+.bet-display,
+.seat strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.muted,
+.panel p,
+.mode-card small,
+.field-help {
+  color: var(--text-secondary);
+}
+
+.eyebrow,
+.section-title,
+.tag {
+  letter-spacing: 0.08em;
+}
+
+/* Lighter surfaces replace the legacy card-inside-card dashboard feel. */
+.panel {
+  min-width: 0;
+  padding: var(--space-5);
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-section);
+  box-shadow: var(--elevation-card);
+}
+
+.panel .panel,
+.panel > .panel {
+  border-color: var(--border-subtle);
+  background: var(--surface-interactive);
+  box-shadow: none;
+}
+
+.mode-card,
+.progress-card,
+.stat-card,
+.daily-card-group,
+.ui-empty-state {
+  border-color: var(--border-subtle);
+  background: var(--surface-section);
+  box-shadow: none;
+}
+
+.chip,
+.tag,
+.ui-chip,
+.ui-badge {
+  min-height: 28px;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 720;
+  line-height: 1;
+}
+
+.tag {
+  border: 1px solid rgba(105, 217, 167, 0.12);
+  background: rgba(105, 217, 167, 0.08);
+}
+
+/* Controls */
+.ui-button-primary,
+.ui-button-secondary,
+.ui-button-ghost,
+.primary,
+.ghost,
+.back,
+.actions button,
+.coach-questions button,
+.quick-sizes button {
+  min-height: var(--control-height);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 720;
+  letter-spacing: -0.01em;
+}
+
+.ui-button-primary,
+.primary {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: 0 8px 20px rgba(49, 183, 125, 0.15);
+}
+
+.ui-button-secondary {
+  border: 1px solid var(--border-default);
+  background: var(--surface-control);
+  color: var(--text-primary);
+}
+
+.ui-button-ghost,
+.ghost,
+.back {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+
+.back {
+  width: fit-content;
+  min-height: var(--control-height-compact);
+  margin-bottom: var(--space-3);
+  padding-inline: var(--space-2) var(--space-3);
+  border-color: transparent;
+}
+
+.small,
+.compact-hand-action {
+  min-height: var(--control-height-compact);
+}
+
+.ui-button-primary:hover,
+.primary:hover,
+.mode-card:hover,
+.home-quick-action:hover {
+  transform: translateY(-1px);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.field {
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 620;
+}
+
+.field input,
+.field select,
+.field textarea,
+.card-select {
+  min-width: 0;
+  min-height: var(--control-height);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-control);
+  color: var(--text-primary);
+  padding: var(--space-3);
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover,
+.card-select:hover {
+  border-color: var(--border-strong);
+}
+
+/* Navigation */
+.top-navigation {
+  min-height: 64px;
+  margin-bottom: var(--space-5);
+}
+
+.brand,
+.sound-toggle {
+  min-height: var(--control-height-compact);
+}
+
+.bottom-nav {
+  bottom: max(var(--space-2), env(safe-area-inset-bottom));
+  width: min(calc(100% - var(--space-4)), 700px);
+  gap: 2px;
+  padding: 5px;
+  border-color: var(--separator);
+  border-radius: var(--radius-lg);
+  background: rgba(10, 17, 21, 0.94);
+  box-shadow: var(--elevation-overlay);
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+}
+
+.bottom-nav button {
+  position: relative;
+  min-height: var(--control-height);
+  gap: 3px;
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+}
+
+.bottom-nav button.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: none;
+}
+
+.bottom-nav button.active::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  transform: translateX(-50%);
+}
+
+.primary-nav-icon {
+  color: currentColor;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.primary-nav-label {
+  color: currentColor;
+  font-size: clamp(9px, 2.5vw, 11px);
+  font-weight: 650;
+}
+
+/* Dashboard */
+.home-dashboard {
+  width: min(100%, var(--content-narrow));
+  gap: var(--space-3);
+}
+
+.home-welcome h1 {
+  font-size: var(--font-size-screen);
+}
+
+.home-primary-card {
+  padding: var(--space-6);
+  border-color: rgba(105, 217, 167, 0.14);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(145deg, rgba(105, 217, 167, 0.07), transparent 52%),
+    var(--surface-section);
+  box-shadow: var(--elevation-card);
+}
+
+.home-primary-card::after,
+.home-focus-card::before {
+  display: none;
+}
+
+.home-primary-card h2 {
+  font-size: clamp(1.65rem, 5vw, 2.15rem);
+}
+
+.home-secondary-card {
+  padding: var(--space-5);
+  border-color: var(--border-subtle);
+  background: var(--surface-section);
+  box-shadow: none;
+}
+
+.home-progress-strip {
+  border-color: var(--border-subtle);
+  background: rgba(14, 22, 27, 0.76);
+}
+
+.home-quick-action {
+  border-color: var(--border-subtle);
+  background: var(--surface-interactive);
+}
+
+/* Shared core screens */
+#screen-study,
+#screen-ranges,
+#screen-analyzer,
+#screen-profile,
+#screen-learning,
+#screen-training,
+#screen-daily,
+#screen-daily-history,
+#screen-live {
+  min-width: 0;
+  padding-bottom: var(--space-5);
+}
+
+#screen-learning .section-intro,
+#screen-training .section-intro {
+  padding: var(--space-5);
+  border-color: var(--border-subtle);
+  background: var(--surface-section);
+  box-shadow: none;
+}
+
+.section-tool-card {
+  min-height: 80px;
+  border-radius: var(--radius-md);
+}
+
+.decision-panel {
+  border-color: rgba(105, 217, 167, 0.12);
+}
+
+.panel-head {
+  align-items: flex-start;
+}
+
+.spot-meta,
+.stats-grid,
+.math-grid {
+  gap: var(--space-2);
+}
+
+.stat,
+.math-cell,
+.coach-summary-card,
+.history-item {
+  border-color: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--surface-interactive);
+}
+
+.actions button,
+.neutral-actions button,
+.coach-questions button,
+.quick-sizes button {
+  border-color: var(--border-default);
+  background: var(--surface-control);
+  color: var(--text-primary);
+}
+
+.coach-box,
+.coach-panel {
+  border-color: rgba(182, 154, 232, 0.18);
+  background: rgba(182, 154, 232, 0.055);
+}
+
+.math-box {
+  border-left-width: 2px;
+  background: rgba(105, 217, 167, 0.045);
+}
+
+.analyzer-panel .form-grid,
+.saved-hands-panel,
+.progress-overview,
+.profile-hero-card {
+  min-width: 0;
+}
+
+/* Daily Challenge stays useful without dominating the mobile viewport. */
+.daily-challenge-card {
+  border-color: var(--border-subtle);
+  background: var(--surface-section);
+  box-shadow: none;
+}
+
+.daily-challenge-card h2 {
+  font-size: var(--font-size-lg);
+}
+
+.daily-challenge-card-actions {
+  align-items: center;
+}
+
+/* Live visual shell only: ownership and action order remain in existing JS. */
+#screen-live .poker-table {
+  min-height: 330px;
+  border: 8px solid var(--felt-edge);
+  background:
+    radial-gradient(ellipse at center, var(--felt-highlight), var(--felt-base) 68%, #0c3028);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 20px 60px rgba(255, 255, 255, 0.025),
+    inset 0 -26px 60px rgba(0, 0, 0, 0.22),
+    var(--elevation-card);
+}
+
+#screen-live .seat {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: rgba(9, 17, 20, 0.94);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+#screen-live .seat.hero {
+  transform-origin: center bottom;
+  border-color: rgba(105, 217, 167, 0.66);
+  background: rgba(12, 28, 23, 0.97);
+}
+
+#screen-live .seat small {
+  color: var(--text-tertiary);
+}
+
+#screen-live .seat strong {
+  color: var(--text-primary);
+}
+
+#screen-live .table-center strong {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(5, 13, 11, 0.72);
+  box-shadow: none;
+}
+
+#screen-live .playing-card,
+#screen-live .mini-hole-card {
+  border-color: rgba(12, 24, 20, 0.16);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.2);
+}
+
+#screen-live .session-bar {
+  border-color: var(--border-subtle);
+  background: rgba(14, 22, 27, 0.82);
+}
+
+@media (min-width: 900px) {
+  .panel {
+    padding: var(--space-6);
+  }
+
+  #screen-live .poker-table {
+    min-height: 390px;
+  }
+}
+
+@media (max-width: 430px) {
+  html,
+  body,
+  .app-shell,
+  .screen {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .app-shell {
+    padding-inline: var(--space-3);
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
+  }
+
+  .top-navigation {
+    min-height: 58px;
+    margin-bottom: var(--space-3);
+  }
+
+  .panel {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .home-dashboard {
+    gap: var(--space-3);
+  }
+
+  .home-primary-card {
+    padding: var(--space-5);
+  }
+
+  .home-primary-card h2 {
+    font-size: 1.75rem;
+  }
+
+  .home-secondary-card {
+    padding: var(--space-4);
+  }
+
+  .daily-challenge-card {
+    padding: var(--space-3);
+    gap: var(--space-2);
+    border-radius: var(--radius-md);
+  }
+
+  .daily-challenge-card-head {
+    margin-bottom: 2px;
+  }
+
+  .daily-challenge-card h2 {
+    margin-bottom: 1px;
+    font-size: var(--font-size-md);
+  }
+
+  .daily-challenge-progress {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px var(--space-2);
+    font-size: 0.6875rem;
+  }
+
+  #dailyChallengeTodayState {
+    grid-column: 1 / -1;
+  }
+
+  .daily-challenge-card-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .daily-challenge-primary,
+  .daily-challenge-card-actions .ui-button-ghost {
+    min-height: var(--control-height-compact);
+  }
+
+  .home-progress-metric {
+    padding: var(--space-3) 9px;
+  }
+
+  .home-quick-action {
+    min-height: 58px;
+  }
+
+  .section-tool-card {
+    min-height: 72px;
+    padding: var(--space-3);
+  }
+
+  .form-grid.two,
+  .daily-cards-section,
+  .daily-result-comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .actions,
+  .daily-actions {
+    gap: 6px;
+  }
+
+  #screen-live .poker-table {
+    min-height: 292px;
+    margin-bottom: 26px;
+    border-width: 7px;
+  }
+
+  #screen-live .seat {
+    width: 56px;
+    min-height: 58px;
+  }
+
+  #screen-live .decision-panel {
+    margin-top: var(--space-2);
+  }
+
+  .bottom-nav {
+    width: calc(100% - var(--space-4));
+  }
+}
+
+@media (max-width: 350px) {
+  .primary-nav-label {
+    font-size: 8px;
+  }
+
+  .bottom-nav {
+    width: calc(100% - var(--space-2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
