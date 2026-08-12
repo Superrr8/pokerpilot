@@ -463,8 +463,8 @@
         <div id="studyMath" class="math-box hidden"></div>
         <div id="studyActions" class="actions neutral-actions"></div>
         <div id="studyFeedback" class="feedback hidden"></div>
-        <div id="studyDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="studyExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
+        <div id="studyDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="studyCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div class="coach-questions">
@@ -486,8 +486,8 @@
         <div id="rangeSpot"></div>
         <div id="rangeActions" class="actions neutral-actions"></div>
         <div id="rangeFeedback" class="feedback hidden"></div>
-        <div id="rangeDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="rangeExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
+        <div id="rangeDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
         <div id="rangeCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div id="rangeCoachAnswer" class="coach-answer"></div>
@@ -1469,7 +1469,7 @@ function renderDecisionQuality(selector, record) {
   if (container) DecisionQualityUI.renderResult(document, container, record?.decisionQuality);
 }
 
-function renderTrainerExplanation(selector, input, trainerResult, decisionQuality = null) {
+function renderTrainerExplanation(selector, input, trainerResult, decisionQuality = null, presentationDetails = null) {
   const container = $(selector);
   if (!container) return null;
   const explanation = TrainerExplanationEngine.generateExplanation({
@@ -1477,7 +1477,7 @@ function renderTrainerExplanation(selector, input, trainerResult, decisionQualit
     trainerResult,
     decisionQuality
   });
-  return TrainerExplanationUI.render(document, container, explanation, trainerResult);
+  return TrainerExplanationUI.render(document, container, explanation, trainerResult, decisionQuality, presentationDetails);
 }
 
 function studyStreet(scenario) {
@@ -1664,7 +1664,7 @@ function answerStudy(choice) {
   }, trainerResult, record.decisionQuality);
   const g = GRADE[grade];
   const f = $('#studyFeedback');
-  f.className = `feedback ${g.cls}`;
+  f.className = `feedback ${g.cls} trainer-feedback-superseded`;
   f.innerHTML = `<strong>${g.label}.</strong><br>${s.summary}<br><span class="muted">Ты выбрал: ${actionLabel(choice, choice === 'call' ? s.bet : choice === 'bet' ? s.betSize : choice === 'raise' ? s.raiseSize : 0)}. Предпочтительная линия: ${actionLabel(preferred, preferred === 'call' ? s.bet : preferred === 'bet' ? s.betSize : preferred === 'raise' ? s.raiseSize : 0)}.</span>`;
   $$('[data-study-action]').forEach(b => {
     b.disabled = true;
@@ -1876,9 +1876,11 @@ function answerRange(choice) {
     pot: null,
     bet: rangeSource.bet,
     stack: 300
-  }, trainerResult, record.decisionQuality);
+  }, trainerResult, record.decisionQuality, {
+    keyFactors: [`Учебный диапазон: ${s.range}`]
+  });
   const f = $('#rangeFeedback');
-  f.className = `feedback ${GRADE[grade].cls}`;
+  f.className = `feedback ${GRADE[grade].cls} trainer-feedback-superseded`;
   f.innerHTML = `<strong>${GRADE[grade].label}.</strong><br>${s.reason}<br><span class="muted">Базовая линия: ${actionLabel(preferred, preferred === 'raise' ? s.size : 0)}.</span>`;
   $$('[data-range-action]').forEach(b => {
     b.disabled = true;
@@ -1886,8 +1888,6 @@ function answerRange(choice) {
     if (a === choice) b.classList.add(GRADE[grade].points >= 2 ? 'selected-correct' : 'selected-wrong');
     if (a === preferred) b.classList.add('reveal-best');
   });
-  $('#rangeCoach').classList.remove('hidden');
-  $('#rangeCoachAnswer').innerHTML = `<strong>Почему:</strong> ${s.coach}<br><span class="muted">Учебный диапазон: ${s.range}</span>`;
   if (focusDecision?.state?.status === 'completed') {
     $('#rangeNext').textContent = 'Посмотреть результат';
   }
