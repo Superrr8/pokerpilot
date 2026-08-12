@@ -1,0 +1,234 @@
+/* Stage 12.0 semantic component color layer. Layout and behavior stay shared. */
+
+body {
+  background: var(--app-backdrop);
+}
+
+.logo,
+.ui-button-primary,
+.primary {
+  border-color: var(--accent-border);
+  background: var(--accent);
+  color: var(--accent-foreground);
+  box-shadow: var(--glow-accent);
+}
+
+.ui-button-primary:hover,
+.primary:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--glow-accent);
+}
+
+.ui-button-primary:active,
+.primary:active {
+  background: var(--accent-active);
+}
+
+.ui-button-secondary,
+.actions button,
+.coach-questions button,
+.quick-sizes button {
+  border-color: var(--border-default);
+  background: var(--surface-control);
+  color: var(--text-primary);
+}
+
+.ui-button-secondary:hover,
+.actions button:hover,
+.coach-questions button:hover,
+.quick-sizes button:hover {
+  border-color: var(--accent-border);
+  background: var(--interactive-hover);
+}
+
+.ui-button-secondary:active,
+.actions button:active,
+.coach-questions button:active,
+.quick-sizes button:active {
+  background: var(--interactive-active);
+}
+
+.ui-button-ghost,
+.ghost,
+.back {
+  border-color: var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.ui-button-ghost:hover,
+.ghost:hover,
+.back:hover {
+  border-color: var(--accent-border);
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+
+.bottom-nav button.active,
+.bottom-nav button[aria-current="page"] {
+  background: var(--interactive-selected);
+  color: var(--accent);
+}
+
+.bottom-nav button.active::before,
+.bottom-nav button[aria-current="page"]::before {
+  background: var(--accent);
+  box-shadow: var(--glow-accent);
+}
+
+.tag,
+.ui-chip.is-accent,
+.ui-badge.is-accent,
+.eyebrow {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.theme-option.is-selected,
+[aria-selected="true"],
+[role="tab"][aria-selected="true"],
+.profile-avatar-option.is-selected,
+.learning-position-seat.is-selected,
+.daily-action.is-selected,
+.progress-analytics-period.is-active,
+.achievement-filter.is-active {
+  border-color: var(--accent-border);
+  background: var(--interactive-selected);
+  color: var(--accent);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+.theme-option:focus-visible,
+.trainer-explanation__section summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  color: var(--text-disabled);
+}
+
+.actions button.selected-correct,
+.learning-choice.selected-correct {
+  border-color: var(--status-success);
+  background: var(--status-success-soft);
+  color: var(--status-success);
+}
+
+.actions button.selected-wrong,
+.learning-choice.selected-wrong {
+  border-color: var(--status-danger);
+  background: var(--status-danger-soft);
+  color: var(--status-danger);
+}
+
+.actions button.reveal-best:not(.selected-correct) {
+  color: var(--status-success);
+  box-shadow: inset 0 0 0 2px var(--status-success);
+}
+
+.feedback.good {
+  border-color: var(--status-success);
+  background: var(--status-success-soft);
+}
+
+.feedback.warn {
+  border-color: var(--status-warning);
+  background: var(--status-warning-soft);
+}
+
+.feedback.bad {
+  border-color: var(--status-danger);
+  background: var(--status-danger-soft);
+}
+
+.feedback.info {
+  border-color: var(--status-info);
+  background: var(--status-info-soft);
+}
+
+.trainer-explanation[data-status="strong"] {
+  --coach-status-color: var(--status-success);
+}
+
+.trainer-explanation[data-status="mixed"] {
+  --coach-status-color: var(--status-warning);
+}
+
+.trainer-explanation[data-status="mistake"] {
+  --coach-status-color: var(--status-danger);
+}
+
+.dashboard-learning-row .ui-button-primary,
+.daily-challenge-primary {
+  border-color: var(--accent-border);
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.dashboard-learning-row .eyebrow,
+.home-secondary-card .eyebrow {
+  background: transparent;
+  color: var(--accent);
+}
+
+.home-secondary-card p {
+  color: var(--text-secondary);
+}
+
+.home-secondary-card .ui-button-ghost {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.home-quick-action {
+  border-color: var(--border-subtle);
+  background: var(--surface-control);
+  color: var(--text-primary);
+}
+
+.home-quick-action strong {
+  color: var(--text-primary);
+}
+
+.home-quick-action:hover,
+.mode-card:hover {
+  border-color: var(--accent-border);
+  background: var(--interactive-hover);
+}
+
+.home-level-progress > i,
+.profile-mini-progress > i,
+.ui-progress-bar > i,
+.progress-bar > i {
+  background: var(--accent);
+}
+
+input[type="range"],
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+.math-box {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.trainer-explanation__section[open] summary,
+.trainer-explanation__section summary:hover {
+  background: var(--accent-soft);
+}
+
+.trainer-explanation__list--takeaway {
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}

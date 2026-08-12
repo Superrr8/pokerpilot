@@ -11,11 +11,13 @@
   --surface-glass: rgba(17, 27, 33, 0.78);
   --surface-glass-strong: rgba(19, 31, 37, 0.9);
   --surface-interactive: rgba(255, 255, 255, 0.045);
+  --surface-muted: rgba(255, 255, 255, 0.028);
 
   /* Content and borders */
   --text-primary: #f3f7f5;
   --text-secondary: #a9b8b2;
   --text-tertiary: #74837e;
+  --text-disabled: #5f6b67;
   --text-on-accent: #04120d;
   --border-default: rgba(207, 230, 220, 0.13);
   --border-subtle: rgba(207, 230, 220, 0.08);
@@ -24,12 +26,23 @@
   /* Brand and semantic color */
   --accent: #69d9a7;
   --accent-hover: #82e4b9;
+  --accent-active: #55c891;
   --accent-strong: #31b77d;
   --accent-soft: rgba(105, 217, 167, 0.12);
+  --accent-border: rgba(105, 217, 167, 0.34);
+  --accent-foreground: #04120d;
+  --interactive-hover: var(--surface-elevated);
+  --interactive-active: var(--surface-muted);
+  --interactive-selected: var(--accent-soft);
+  --interactive-disabled: var(--surface-muted);
   --status-success: #72dca9;
+  --status-success-soft: rgba(114, 220, 169, 0.12);
   --status-warning: #e4bd6a;
+  --status-warning-soft: rgba(228, 189, 106, 0.12);
   --status-danger: #eb7d82;
+  --status-danger-soft: rgba(235, 125, 130, 0.12);
   --status-info: #80aee8;
+  --status-info-soft: rgba(128, 174, 232, 0.12);
   --status-purple: #b69ae8;
 
   /* Poker surfaces */
@@ -46,7 +59,8 @@
   --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.22);
   --shadow-md: 0 18px 48px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 28px 80px rgba(0, 0, 0, 0.4);
-  --shadow-focus: 0 0 0 3px rgba(105, 217, 167, 0.25);
+  --focus-ring: 0 0 0 3px rgba(105, 217, 167, 0.25);
+  --shadow-focus: var(--focus-ring);
   --blur-glass: 18px;
 
   /* Shape */
