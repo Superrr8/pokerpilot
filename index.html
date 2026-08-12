@@ -51,6 +51,7 @@
   <link rel="stylesheet" href="src/styles/progress-feedback.css">
   <link rel="stylesheet" href="src/styles/stage11-refresh.css">
   <link rel="stylesheet" href="src/styles/stage1101-redesign.css">
+  <link rel="stylesheet" href="src/styles/trainer-explanation.css">
 </head>
 <body>
 <div class="app app-shell" data-active-route="home">
@@ -437,8 +438,9 @@
           <p id="anOneLine" class="muted"></p>
         </div>
         <div id="anVisual" class="analyzer-visual"></div>
-        <div id="anMath" class="math-box"></div>
-        <div class="analysis-sections">
+        <div id="anMath" class="math-box hidden"></div>
+        <div id="anExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
+        <div class="analysis-sections hidden" aria-hidden="true">
           <details open><summary>Почему это действие</summary><div id="anWhy"></div></details>
           <details><summary>Что ты можешь упускать</summary><div id="anMissed"></div></details>
           <details><summary>Почему не другие варианты</summary><div id="anAlternatives"></div></details>
@@ -462,6 +464,7 @@
         <div id="studyActions" class="actions neutral-actions"></div>
         <div id="studyFeedback" class="feedback hidden"></div>
         <div id="studyDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
+        <div id="studyExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
         <div id="studyCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div class="coach-questions">
@@ -484,6 +487,7 @@
         <div id="rangeActions" class="actions neutral-actions"></div>
         <div id="rangeFeedback" class="feedback hidden"></div>
         <div id="rangeDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
+        <div id="rangeExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
         <div id="rangeCoach" class="coach-panel hidden">
           <div class="coach-title">Тренер</div>
           <div id="rangeCoachAnswer" class="coach-answer"></div>
@@ -937,6 +941,7 @@
 <script src="src/progress/progress-system.js"></script>
 <script src="src/progress/weakness-model.js"></script>
 <script src="src/training/focus-session.js"></script>
+<script src="src/training/trainer-explanation-engine.js"></script>
 <script src="src/progress/progress-feedback.js"></script>
 <script src="src/progress/progress-integration.js"></script>
 <script src="src/daily/daily-challenge-progress.js"></script>
@@ -957,6 +962,7 @@
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
 <script src="src/ui/decision-quality.js"></script>
+<script src="src/ui/trainer-explanation.js"></script>
 <script src="src/ui/profile.js"></script>
 <script src="src/ui/learning-mode.js"></script>
 <script>
@@ -1463,6 +1469,17 @@ function renderDecisionQuality(selector, record) {
   if (container) DecisionQualityUI.renderResult(document, container, record?.decisionQuality);
 }
 
+function renderTrainerExplanation(selector, input, trainerResult, decisionQuality = null) {
+  const container = $(selector);
+  if (!container) return null;
+  const explanation = TrainerExplanationEngine.generateExplanation({
+    ...input,
+    trainerResult,
+    decisionQuality
+  });
+  return TrainerExplanationUI.render(document, container, explanation, trainerResult);
+}
+
 function studyStreet(scenario) {
   const count = Array.isArray(scenario?.board) ? scenario.board.length : 0;
   return count >= 5 ? 'river' : count === 4 ? 'turn' : count >= 3 ? 'flop' : 'preflop';
@@ -1542,6 +1559,8 @@ function renderStudy() {
   $('#studyActions').innerHTML = s.actions.map(a => `<button data-study-action="${a}">${actionLabel(a, a === 'call' ? s.bet : a === 'bet' ? s.betSize : a === 'raise' ? s.raiseSize : 0)}</button>`).join('');
   $('#studyFeedback').className = 'feedback hidden';
   $('#studyDecisionQuality').classList.add('hidden');
+  $('#studyExplanation').classList.add('hidden');
+  $('#studyExplanation').replaceChildren();
   $('#studyCoach').classList.add('hidden');
   $('#studyCoachAnswer').innerHTML = '';
   $('#studyHintBox').classList.add('hidden');
@@ -1586,6 +1605,15 @@ function answerStudy(choice) {
   const grade = s.grades[choice] || 'mistake';
   const preferred = topGradeAction(s.grades);
   const math = computeStudyMath(s);
+  const trainerResult = legacyTrainerSnapshot({
+    preferred,
+    grades: s.grades,
+    source: s,
+    confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
+    callEV: math.equity?.exact ? (math.ev?.ev ?? null) : null,
+    callEVMethod: math.equity?.exact && math.ev ? 'exact' : null,
+    explanation: s.summary
+  });
   const record = recordDecision({
     grade,
     tag: grade === 'mistake' ? mistakeTag(choice, s) : null,
@@ -1596,15 +1624,7 @@ function answerStudy(choice) {
     preferred,
     userAmount: decisionAmount(s, choice),
     userAmountUnit: decisionAmountUnit(choice),
-    trainer: legacyTrainerSnapshot({
-      preferred,
-      grades: s.grades,
-      source: s,
-      confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
-      callEV: math.equity?.exact ? (math.ev?.ev ?? null) : null,
-      callEVMethod: math.equity?.exact && math.ev ? 'exact' : null,
-      explanation: s.summary
-    }),
+    trainer: trainerResult,
     context: {
       scenarioId: s.id,
       street: studyStreet(s),
@@ -1623,6 +1643,25 @@ function answerStudy(choice) {
   });
   const focusDecision = recordFocusDecision(record, s.id, grade);
   renderDecisionQuality('#studyDecisionQuality', record);
+  renderTrainerExplanation('#studyExplanation', {
+    street: studyStreet(s),
+    handClass: C.handClass(math.hero),
+    hero: math.hero,
+    board: math.board,
+    boardTexture: math.board.length ? analyzerTexture(math.board) : null,
+    position: s.position,
+    opponents: Number(s.opponents) || 1,
+    actionContext: s.bet ? 'facing_bet' : 'checked_to',
+    pot: s.potBefore || 0,
+    bet: s.bet || 0,
+    stack: s.stack,
+    math: {
+      ...math,
+      handName: C.handName(C.best7([...math.hero, ...math.board])),
+      required: math.pot.requiredEquity,
+      callEV: math.ev?.ev ?? null
+    }
+  }, trainerResult, record.decisionQuality);
   const g = GRADE[grade];
   const f = $('#studyFeedback');
   f.className = `feedback ${g.cls}`;
@@ -1640,7 +1679,7 @@ function answerStudy(choice) {
     $('#studyNext').textContent = 'Посмотреть результат';
   }
   $('#studyNext').classList.remove('hidden');
-  showStudyMath(math);
+  $('#studyMath').classList.add('hidden');
 }
 
 $$('[data-coach-q]').forEach(b => b.addEventListener('click', () => {
@@ -1757,6 +1796,8 @@ function nextRangeSpot() {
   $('#rangeActions').innerHTML = s.actions.map(a => `<button data-range-action="${a}">${actionLabel(a, a === 'call' ? (s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3) : a === 'raise' ? s.size : 0)}</button>`).join('');
   $('#rangeFeedback').className = 'feedback hidden';
   $('#rangeDecisionQuality').classList.add('hidden');
+  $('#rangeExplanation').classList.add('hidden');
+  $('#rangeExplanation').replaceChildren();
   $('#rangeCoach').classList.add('hidden');
   $('#rangeNext').classList.add('hidden');
   $('#rangeNext').textContent = 'Следующая рука';
@@ -1781,6 +1822,13 @@ function answerRange(choice) {
     bet: s.category === 'open' ? 12 : s.category === 'threebet' ? 30 : 3
   };
   const scenarioId = rangeScenarioId(s);
+  const trainerResult = legacyTrainerSnapshot({
+    preferred,
+    grades: s.grades,
+    source: rangeSource,
+    confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
+    explanation: s.reason
+  });
   const record = recordDecision({
     grade,
     tag: grade === 'mistake' ? (choice === 'fold' ? 'too_tight' : choice === 'call' ? 'passive' : 'too_loose') : null,
@@ -1791,13 +1839,7 @@ function answerRange(choice) {
     preferred,
     userAmount: choice === 'call' ? rangeCallAmount : decisionAmount(rangeSource, choice),
     userAmountUnit: decisionAmountUnit(choice),
-    trainer: legacyTrainerSnapshot({
-      preferred,
-      grades: s.grades,
-      source: rangeSource,
-      confidence: Object.values(s.grades).filter(value => value !== 'mistake').length > 1 ? 'medium' : 'high',
-      explanation: s.reason
-    }),
+    trainer: trainerResult,
     context: {
       scenarioId,
       street: 'preflop',
@@ -1823,6 +1865,18 @@ function answerRange(choice) {
     });
   }
   renderDecisionQuality('#rangeDecisionQuality', record);
+  renderTrainerExplanation('#rangeExplanation', {
+    street: 'preflop',
+    handClass: C.handClass(s.cards),
+    hero: s.cards,
+    position: s.pos,
+    opponents: s.category === 'limpers' ? Number(s.context.match(/^\d+/)?.[0]) || 1 : 1,
+    limpers: s.category === 'limpers' ? Number(s.context.match(/^\d+/)?.[0]) || 1 : 0,
+    actionContext: s.category,
+    pot: null,
+    bet: rangeSource.bet,
+    stack: 300
+  }, trainerResult, record.decisionQuality);
   const f = $('#rangeFeedback');
   f.className = `feedback ${GRADE[grade].cls}`;
   f.innerHTML = `<strong>${GRADE[grade].label}.</strong><br>${s.reason}<br><span class="muted">Базовая линия: ${actionLabel(preferred, preferred === 'raise' ? s.size : 0)}.</span>`;
@@ -3465,8 +3519,23 @@ function runAnalyzer(){
     $('#anRecommendation').textContent=result.recommendation; $('#anOneLine').textContent=result.oneLine;
     const conf=$('#anConfidence');conf.textContent=`Уверенность: ${result.confidenceLabel||result.confidence}`;conf.className=`tag confidence-${result.confidence}`;
     $('#anVisual').innerHTML=`<div class="cards hero-cards">${cardsHTML(hero)}</div>${board.length?`<div class="board">${cardsHTML(board,true)}</div>`:''}`;
-    $('#anMath').innerHTML=analyzerMathHTML(result.math);
-    $('#anWhy').innerHTML=`<p>${result.why}</p>`; $('#anMissed').innerHTML=`<p>${result.missed}</p>`; $('#anAlternatives').innerHTML=`<p>${result.alternativesText||result.alternatives}</p>`; $('#anModel').innerHTML=`<p>${result.model}</p>`;
+    renderTrainerExplanation('#anExplanation', {
+      street: data.street,
+      handClass: C.handClass(hero),
+      hero,
+      board,
+      boardTexture: board.length ? analyzerTexture(board) : null,
+      position: data.position,
+      positionState: data.street === 'preflop' ? null : analyzerPositionContext(data.position, data.opponentPosition).state,
+      opponents: data.opponents,
+      actionContext: data.situation,
+      pot: data.pot,
+      bet: data.bet,
+      stack: data.stack,
+      customRange: data.customRange,
+      math: result.math
+    }, result);
+    $('#anWhy').textContent=result.why; $('#anMissed').textContent=result.missed; $('#anAlternatives').textContent=result.alternativesText; $('#anModel').textContent=result.model;
     const box=$('#analyzerResult'); box.classList.remove('hidden','reveal'); requestAnimationFrame(()=>box.classList.add('reveal')); setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'start'}),80);
   }catch(e){error.textContent=e.message||String(e);error.classList.remove('hidden');}
 }
