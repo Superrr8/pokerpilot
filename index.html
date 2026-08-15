@@ -1302,6 +1302,7 @@ function renderFocusResult() {
 
 function route(name, options = {}) {
   name = PokerPilotNavigation.resolveRoute(name);
+  if (name !== 'live') document.querySelector('.app-shell').classList.remove('is-live-hero-turn');
   if (
     focusSessionController.getSnapshot()
     && !['study', 'ranges', 'focus-result'].includes(name)
@@ -2735,6 +2736,7 @@ function renderLive(){
   const heroTurn=/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
   $('#liveGame').classList.toggle('is-hero-turn',heroTurn);
   $('#screen-live .decision-panel').classList.toggle('is-hero-turn',heroTurn);
+  document.querySelector('.app-shell').classList.toggle('is-live-hero-turn',heroTurn);
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);
   $('#betRange').disabled=paused;

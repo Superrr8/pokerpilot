@@ -1038,6 +1038,69 @@
   }
 }
 
+/* Stage 12.4.2 — Hero turn vertical compression. */
+@media (max-width: 430px) {
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation {
+    height: 44px;
+    min-height: 44px;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .brand {
+    min-height: 40px;
+    gap: 7px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .logo {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .brand strong {
+    font-size: 16px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-header-actions,
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation-actions {
+    height: 40px;
+    gap: 4px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-control {
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    gap: 0;
+    padding: 0;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-toggle {
+    width: 40px;
+    min-height: 40px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-volume {
+    display: none;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back {
+    position: relative;
+    min-height: 32px;
+    margin-bottom: 2px;
+    padding: 3px 8px 3px 1px;
+    font-size: 11px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back::after {
+    content: "";
+    position: absolute;
+    inset: -6px -4px;
+  }
+
+}
+
 @media (prefers-reduced-motion: reduce) {
   .live-learning-panel,
   .live-learning-chevron,
