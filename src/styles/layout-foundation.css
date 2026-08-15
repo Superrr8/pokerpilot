@@ -1,0 +1,24 @@
+/* Stage 12.1 — shared mobile viewport, safe-area and fixed-navigation geometry. */
+
+html {
+  scroll-padding-top: var(--app-content-top-inset);
+  scroll-padding-bottom: var(--app-content-bottom-inset);
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-block-start: var(--app-content-top-inset);
+  padding-block-end: var(--app-content-bottom-inset);
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: calc(var(--safe-area-bottom) + var(--bottom-navigation-offset));
+  min-height: var(--bottom-navigation-height);
+}

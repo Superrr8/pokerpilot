@@ -53,6 +53,7 @@
   <link rel="stylesheet" href="src/styles/stage1101-redesign.css">
   <link rel="stylesheet" href="src/styles/trainer-explanation.css">
   <link rel="stylesheet" href="src/styles/theme-system.css">
+  <link rel="stylesheet" href="src/styles/layout-foundation.css">
 </head>
 <body>
 <div class="app app-shell" data-active-route="home">
@@ -1339,7 +1340,7 @@ function route(name, options = {}) {
     renderCoachReport();
   }
   if (name === 'analyzer') renderSavedHands();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: 'auto' });
   return true;
 }
 

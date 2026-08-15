@@ -84,6 +84,22 @@
   --space-12: 48px;
   --space-16: 64px;
 
+  /* Mobile shell and safe-area geometry */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --bottom-navigation-height: 60px;
+  --bottom-navigation-offset: var(--space-2);
+  --app-content-bottom-gap: var(--space-10);
+  --app-content-top-inset: calc(var(--safe-area-top) + var(--space-2));
+  --app-content-bottom-inset: calc(
+    var(--bottom-navigation-height)
+    + var(--bottom-navigation-offset)
+    + var(--safe-area-bottom)
+    + var(--app-content-bottom-gap)
+  );
+
   /* Typography */
   --font-family-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-size-xs: 0.75rem;
