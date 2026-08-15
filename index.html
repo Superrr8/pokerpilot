@@ -862,6 +862,7 @@
           <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
           <div id="liveActions" class="actions neutral-actions"></div>
           <div id="liveFeedback" class="feedback hidden"></div>
+          <div id="liveExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
           <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
           <button id="nextHand" class="primary wide hidden">Следующая раздача</button>
           <button id="endSession" class="ghost wide">Закончить сессию</button>
@@ -2732,7 +2733,7 @@ function renderLive(){
   syncLivePauseButton();
 }
 function showLiveMath(precomputed=null){const box=$('#mathBox');box.innerHTML='Считаю…';box.classList.remove('hidden');setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);}
-function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#liveDecisionQuality').classList.add('hidden');$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
+function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#liveExplanation').classList.add('hidden');$('#liveDecisionQuality').classList.add('hidden');$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
 function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
 $('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
 $('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
@@ -2770,6 +2771,7 @@ function handleHeroAction(action,amount=0){
   if(!session||!session.awaiting?.startsWith('hero')||!flowController.canHeroAct())return;
   if((action==='bet'||action==='raise')&&!amount){toggleSizer(action);return;}
   const evaluation=evaluateLiveAction(action,amount);
+  const hero=session.players[0];
   session.decisionGrades.push(GRADE[evaluation.grade].points);
   const liveCallEV=evaluation.math?.equity?.exact&&session.toCall>0
     ? C.callEV({equity:evaluation.math.equity.equity,potBefore:session.pot,bet:0,call:session.toCall}).ev
@@ -2777,6 +2779,17 @@ function handleHeroAction(action,amount=0){
   const liveAlternatives=evaluation.grade==='good'||evaluation.grade==='acceptable'
     ? [{actionClass:action,amount:null,amountUnit:null,reason:'Допустимая линия в текущей учебной модели.'}]
     : [];
+  const liveTrainerResult={
+    actionClass:evaluation.best,
+    amount:null,
+    amountUnit:null,
+    confidence:normalizeDecisionConfidence(evaluation.confidence),
+    isMarginal:normalizeDecisionConfidence(evaluation.confidence)==='low'||evaluation.grade==='acceptable',
+    callEV:liveCallEV,
+    callEVMethod:liveCallEV!==null?'exact':null,
+    alternatives:liveAlternatives,
+    explanation:evaluation.why
+  };
   const record=recordDecision({
     grade:evaluation.grade,
     tag:evaluation.grade==='mistake'?(action==='fold'?'too_tight':action==='call'||action==='check'?'passive':'overplay'):null,
@@ -2787,17 +2800,7 @@ function handleHeroAction(action,amount=0){
     preferred:evaluation.best,
     userAmount:action==='call'?session.toCall:amount,
     userAmountUnit:decisionAmountUnit(action),
-    trainer:{
-      actionClass:evaluation.best,
-      amount:null,
-      amountUnit:null,
-      confidence:normalizeDecisionConfidence(evaluation.confidence),
-      isMarginal:normalizeDecisionConfidence(evaluation.confidence)==='low'||evaluation.grade==='acceptable',
-      callEV:liveCallEV,
-      callEVMethod:liveCallEV!==null?'exact':null,
-      alternatives:liveAlternatives,
-      explanation:evaluation.why
-    },
+    trainer:liveTrainerResult,
     context:{
       scenarioId:`${session.id}-${session.hands}-${session.street}-${session.actionHistory.length}`,
       sessionId:session.id,
@@ -2811,11 +2814,42 @@ function handleHeroAction(action,amount=0){
     }
   });
   renderDecisionQuality('#liveDecisionQuality',record);
+  const livePosition=positionsFor(session.n,session.button)[0];
+  const liveLimpers=session.street==='preflop'?activeOpponents().filter(player=>player.lastAction==='limp').length:0;
+  const liveOpener=session.street==='preflop'&&session.currentBet>3
+    ? session.players.find((player,index)=>index!==0&&!player.folded&&player.lastAction?.includes('raise'))
+    : null;
+  const liveOpenerPosition=liveOpener?positionsFor(session.n,session.button)[liveOpener.id]:null;
+  const liveActionContext=session.street==='preflop'
+    ? session.currentBet>3
+      ? ['UTG','UTG+1','MP'].includes(liveOpenerPosition)?'vs_raise_early':'vs_raise_late'
+      : liveLimpers?'limpers':'firstin'
+    : session.toCall>0?'facing_bet':'checked_to';
+  const liveExplanationModel=renderTrainerExplanation('#liveExplanation',{
+    street:session.street,
+    handClass:C.handClass(hero.cards),
+    hero:hero.cards,
+    board:session.board,
+    boardTexture:session.board.length?analyzerTexture(session.board):null,
+    position:livePosition,
+    positionState:session.street==='preflop'?null:(heroActsFirstPostflop()?'oop':'ip'),
+    opponents:activeOpponents().length,
+    limpers:liveLimpers,
+    actionContext:liveActionContext,
+    pot:session.pot,
+    bet:session.toCall,
+    stack:hero.stack,
+    customRange:evaluation.math?.range,
+    math:evaluation.math?{
+      ...evaluation.math,
+      handName:session.board.length?C.handName(C.best7([...hero.cards,...session.board])):'',
+      callEV:liveCallEV
+    }:{}
+  },liveTrainerResult,record.decisionQuality);
   const feedback=$('#liveFeedback');
-  feedback.className=`feedback ${GRADE[evaluation.grade].cls}`;
+  feedback.className=`feedback ${GRADE[evaluation.grade].cls}${liveExplanationModel ? ' trainer-feedback-superseded' : ''}`;
   feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;
   showLiveMath(evaluation.math||null);
-  const hero=session.players[0];
   if(action==='fold'){
     $('#betSizer').classList.add('hidden');
     presentHeroAction(
