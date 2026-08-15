@@ -842,9 +842,25 @@
         </div>
         <div id="pokerTable" class="poker-table"><div id="seats" class="seats"></div><div class="table-center"><small id="streetLabel">Префлоп</small><strong id="potLabel" class="pot-display">Банк $0</strong><div id="board" class="board"></div></div></div>
         <div class="panel decision-panel">
-          <div class="panel-head"><div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle">Новая раздача</h3></div><span id="toCallChip" class="chip bet-display">К действию</span></div>
-          <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
-          <div id="heroCards" class="cards hero-cards"></div>
+          <div id="liveDecisionCore" class="live-decision-core">
+            <div class="panel-head"><div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle">Новая раздача</h3></div><span id="toCallChip" class="chip bet-display">К действию</span></div>
+            <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
+            <div id="heroCards" class="cards hero-cards"></div>
+            <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
+            <div id="liveActions" class="actions neutral-actions"></div>
+          </div><!-- /live-decision-core -->
+          <div class="coach-tools"><button id="liveHint" class="ghost">💡 Тренер</button><button id="liveMathToggle" class="ghost">🧮 Ауты и шансы</button></div>
+          <div id="liveHintBox" class="coach-box hidden"></div>
+          <div id="liveResultSummary" class="live-result-summary hidden" aria-live="polite"><strong data-live-result-grade>Результат</strong><span data-live-result-copy></span></div>
+          <div id="liveFeedback" class="feedback hidden"></div>
+          <details id="liveLearningPanel" class="live-learning-panel hidden">
+            <summary><span><strong>Разбор решения</strong><small>Почему, ключевые факторы и математика</small></span><span class="live-learning-chevron" aria-hidden="true"></span></summary>
+            <div class="live-learning-content">
+              <div id="mathBox" class="math-box hidden"></div>
+              <div id="liveExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
+              <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
+            </div>
+          </details>
           <section id="liveHistoryPanel" class="live-history-panel" aria-label="История раздачи">
             <button id="liveHistoryToggle" class="live-history-toggle" type="button" aria-expanded="false" aria-controls="liveHistoryBody">
               <span class="live-history-title">📝 Ход раздачи <small id="liveHistoryCount">· 0</small></span>
@@ -856,14 +872,6 @@
               </div>
             </div>
           </section>
-          <div class="coach-tools"><button id="liveHint" class="ghost">💡 Тренер</button><button id="liveMathToggle" class="ghost">🧮 Ауты и шансы</button></div>
-          <div id="liveHintBox" class="coach-box hidden"></div>
-          <div id="mathBox" class="math-box hidden"></div>
-          <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
-          <div id="liveActions" class="actions neutral-actions"></div>
-          <div id="liveFeedback" class="feedback hidden"></div>
-          <div id="liveExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
-          <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
           <button id="nextHand" class="primary wide hidden">Следующая раздача</button>
           <button id="endSession" class="ghost wide">Закончить сессию</button>
         </div>
@@ -2202,6 +2210,7 @@ function dealLiveHand(){
   session.boardRevealActive=false;
   session.winnerSummary='';
   $('#liveDecisionQuality').classList.add('hidden');
+  resetLiveLearningPanel({clear:true});
   session.players.forEach(p=>{
     p.cards=[session.deck.pop(),session.deck.pop()];
     p.folded=false;
@@ -2724,6 +2733,7 @@ function renderLive(){
   observing.classList.toggle('hidden',!session.observing);
   observing.textContent=session.observing?'You folded — watching the action':'';
   const heroTurn=/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
+  $('#liveGame').classList.toggle('is-hero-turn',heroTurn);
   $('#screen-live .decision-panel').classList.toggle('is-hero-turn',heroTurn);
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);
@@ -2732,8 +2742,53 @@ function renderLive(){
   renderSeats();
   syncLivePauseButton();
 }
-function showLiveMath(precomputed=null){const box=$('#mathBox');box.innerHTML='Считаю…';box.classList.remove('hidden');setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);}
-function showHeroActions(){historyPanel.onHeroTurn();renderLive();const box=$('#liveActions');box.innerHTML='';$('#liveFeedback').className='feedback hidden';$('#liveExplanation').classList.add('hidden');$('#liveDecisionQuality').classList.add('hidden');$('#nextHand').classList.add('hidden');$('#betSizer').classList.add('hidden');$('#liveHintBox').classList.add('hidden');$('#mathBox').classList.add('hidden');if(!flowController.canHeroAct())return;const facing=session.toCall>0;let acts=session.street==='preflop'?(facing?['fold','call','raise']:['check','raise']):(facing?['fold','call','raise']:['check','bet','allin']);acts.forEach(a=>{const b=document.createElement('button');b.dataset.liveAction=a;b.textContent=actionLabel(a,a==='call'?session.toCall:0);b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});box.appendChild(b);});if(assistMode()==='review')showLiveMath();}
+function resetLiveLearningPanel({clear=false}={}){
+  const panel=$('#liveLearningPanel');
+  if(panel){
+    panel.open=false;
+    if(clear)panel.classList.add('hidden');
+  }
+  const summary=$('#liveResultSummary');
+  if(clear&&summary)summary.className='live-result-summary hidden';
+}
+function showLiveResultSummary(evaluation){
+  const summary=$('#liveResultSummary');
+  if(!summary)return;
+  summary.className=`live-result-summary ${GRADE[evaluation.grade].cls}`;
+  $('[data-live-result-grade]',summary).textContent=`${GRADE[evaluation.grade].label}.`;
+  $('[data-live-result-copy]',summary).textContent=`Модель предпочитает ${actionLabel(evaluation.best)} · уверенность ${evaluation.confidence||'средняя'}.`;
+}
+function showLiveMath(precomputed=null,{openLearning=true}={}){
+  const box=$('#mathBox'),panel=$('#liveLearningPanel');
+  if(openLearning&&panel){panel.classList.remove('hidden');panel.open=true;}
+  box.innerHTML='Считаю…';
+  box.classList.remove('hidden');
+  setTimeout(()=>box.innerHTML=liveMathHTML(precomputed||currentLiveMath(3000)),20);
+}
+function showHeroActions(){
+  historyPanel.onHeroTurn();
+  renderLive();
+  const box=$('#liveActions');
+  box.innerHTML='';
+  $('#liveFeedback').className='feedback hidden';
+  $('#nextHand').classList.add('hidden');
+  $('#betSizer').classList.add('hidden');
+  $('#liveHintBox').classList.add('hidden');
+  resetLiveLearningPanel();
+  if(!flowController.canHeroAct())return;
+  const facing=session.toCall>0;
+  const acts=session.street==='preflop'
+    ?(facing?['fold','call','raise']:['check','raise'])
+    :(facing?['fold','call','raise']:['check','bet','allin']);
+  acts.forEach(a=>{
+    const b=document.createElement('button');
+    b.dataset.liveAction=a;
+    b.textContent=actionLabel(a,a==='call'?session.toCall:0);
+    b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});
+    box.appendChild(b);
+  });
+  if(assistMode()==='review')showLiveMath();
+}
 function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
 $('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
 $('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
@@ -2846,10 +2901,16 @@ function handleHeroAction(action,amount=0){
       callEV:liveCallEV
     }:{}
   },liveTrainerResult,record.decisionQuality);
+  const liveLearningPanel=$('#liveLearningPanel');
+  if(liveExplanationModel&&liveLearningPanel){
+    liveLearningPanel.classList.remove('hidden');
+    liveLearningPanel.open=false;
+  }
+  showLiveResultSummary(evaluation);
   const feedback=$('#liveFeedback');
   feedback.className=`feedback ${GRADE[evaluation.grade].cls}${liveExplanationModel ? ' trainer-feedback-superseded' : ''}`;
   feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;
-  showLiveMath(evaluation.math||null);
+  showLiveMath(evaluation.math||null,{openLearning:false});
   if(action==='fold'){
     $('#betSizer').classList.add('hidden');
     presentHeroAction(

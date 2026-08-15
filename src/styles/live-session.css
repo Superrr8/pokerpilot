@@ -794,3 +794,249 @@
     transform: none !important;
   }
 }
+
+/* Stage 12.4 — play-first Live decision hierarchy. */
+.live-decision-core {
+  min-width: 0;
+}
+
+#screen-live .decision-panel {
+  min-width: 0;
+  padding-bottom: max(var(--space-4), calc(var(--safe-area-bottom) + var(--space-2)));
+}
+
+.live-result-summary {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  overflow-wrap: anywhere;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+.live-result-summary strong {
+  color: var(--accent);
+  font-size: var(--font-size-sm);
+}
+
+.live-result-summary span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+.live-result-summary.warn strong {
+  color: var(--warning);
+}
+
+.live-result-summary.bad strong {
+  color: var(--danger);
+}
+
+.live-learning-panel {
+  min-width: 0;
+  margin-top: var(--space-3);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+  color: var(--text-primary);
+}
+
+.live-learning-panel > summary {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  list-style: none;
+}
+
+.live-learning-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.live-learning-panel > summary > span:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.live-learning-panel > summary strong {
+  font-size: var(--font-size-sm);
+}
+
+.live-learning-panel > summary small {
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-learning-panel > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+
+.live-learning-chevron {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg) translate(-2px, 2px);
+  transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.live-learning-panel[open] .live-learning-chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+
+.live-learning-content {
+  min-width: 0;
+  padding: 0 var(--space-3) var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.live-learning-content .trainer-explanation,
+.live-learning-content .decision-quality-card {
+  margin-inline: 0;
+}
+
+@media (max-width: 430px) {
+  #screen-live #liveGame.is-hero-turn .session-bar {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 6px;
+    padding: 8px 10px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .stats-grid.four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 0;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat {
+    min-width: 0;
+    padding: 5px 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat small {
+    overflow: hidden;
+    font-size: 8px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat strong {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #screen-live #liveGame.is-hero-turn .live-hand-controls {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+    margin-inline-start: 0;
+  }
+
+  #screen-live #liveGame.is-hero-turn .compact-hand-action {
+    min-height: 36px;
+    padding: 5px 9px;
+    font-size: 10px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .poker-table {
+    height: clamp(232px, 30vh, 252px);
+    min-height: clamp(232px, 30vh, 252px);
+    margin: 4px 0 12px;
+    border-width: 6px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .seat {
+    width: 52px;
+    height: 50px;
+    min-height: 50px;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  #screen-live #liveGame.is-hero-turn .table-center {
+    min-width: min(210px, 62vw);
+    gap: 5px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .board {
+    min-height: 48px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .decision-panel {
+    margin-top: 0;
+    padding: 10px;
+    padding-bottom: max(10px, calc(var(--safe-area-bottom) + 4px));
+  }
+
+  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head {
+    align-items: center;
+  }
+
+  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head h3 {
+    margin-top: 4px;
+    font-size: 17px;
+  }
+
+  #screen-live #liveGame.is-hero-turn #heroCards {
+    margin-block: 6px;
+  }
+
+  #screen-live #liveGame.is-hero-turn #heroCards .playing-card {
+    width: 54px;
+    height: 76px;
+    padding: 6px;
+    font-size: 20px;
+  }
+
+  #screen-live #liveActions {
+    min-width: 0;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  #screen-live #liveActions button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 5px;
+  }
+
+  #screen-live .coach-tools {
+    margin-top: 8px;
+  }
+
+  #screen-live .live-result-summary,
+  #screen-live .live-learning-panel,
+  #screen-live .live-history-panel {
+    max-width: 100%;
+  }
+
+  #screen-live .live-learning-content {
+    padding-inline: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-learning-panel,
+  .live-learning-chevron,
+  .live-result-summary {
+    animation: none !important;
+    transition: none !important;
+  }
+}
