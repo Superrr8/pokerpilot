@@ -19,12 +19,12 @@
     { id: 'indigo', name: 'Indigo', description: 'Прохладный индиго' },
     { id: 'minimal', name: 'Minimal Light', description: 'Светлый минимализм' },
     { id: 'cyber', name: 'Neon Cyber', description: 'Неон и энергия' },
-    { id: 'glass', name: 'Glass Morphism', description: 'Стекло и глубина' },
+    { id: 'glass', name: 'Glass', description: 'Стекло и глубина' },
     { id: 'warm-wood', name: 'Warm Wood', description: 'Тёплый клубный' },
     { id: 'soft-pastel', name: 'Soft Pastel', description: 'Мягкий светлый' }
   ]);
   const VALID_PREFERENCES = new Set(['auto', ...THEME_IDS]);
-  const LIGHT_THEMES = new Set(['minimal', 'soft-pastel']);
+  const LIGHT_THEMES = new Set(['amber', 'minimal', 'soft-pastel']);
 
   function safeStorage(candidate) {
     if (candidate !== undefined) return candidate;
@@ -81,8 +81,8 @@
       const meta = root.document?.querySelector?.('meta[name="theme-color"]');
       if (meta) {
         const colors = {
-          emerald: '#07100d', amber: '#120e08', indigo: '#080b17', minimal: '#f5f3ee',
-          cyber: '#090711', glass: '#07111a', 'warm-wood': '#160f0b', 'soft-pastel': '#faf4f1'
+          emerald: '#07100d', amber: '#f3ede1', indigo: '#080b17', minimal: '#f5f3ee',
+          cyber: '#090711', glass: '#050b14', 'warm-wood': '#110b08', 'soft-pastel': '#faf4f1'
         };
         meta.setAttribute('content', colors[resolvedTheme]);
       }

@@ -12,6 +12,13 @@
   --surface-glass-strong: rgba(19, 31, 37, 0.9);
   --surface-interactive: rgba(255, 255, 255, 0.045);
   --surface-muted: rgba(255, 255, 255, 0.028);
+  --nav-surface: var(--surface-glass-strong);
+  --interactive-surface: var(--surface-secondary);
+  --surface-overlay: var(--surface-elevated);
+  --material-border: var(--border-subtle);
+  --material-highlight: transparent;
+  --material-blur: 0px;
+  --material-saturation: 100%;
 
   /* Content and borders */
   --text-primary: #f3f7f5;
