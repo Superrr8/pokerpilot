@@ -911,11 +911,17 @@
 }
 
 @media (max-width: 430px) {
+  #screen-live #liveGame.is-hero-turn {
+    --live-mobile-nav-safety-gap: 20px;
+  }
+
   #screen-live #liveGame.is-hero-turn .session-bar {
     display: grid;
-    gap: 6px;
-    margin-bottom: 6px;
-    padding: 8px 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+    padding: 6px 8px;
   }
 
   #screen-live #liveGame.is-hero-turn .stats-grid.four {
@@ -943,9 +949,9 @@
   }
 
   #screen-live #liveGame.is-hero-turn .live-hand-controls {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 6px;
+    width: auto;
+    justify-content: flex-end;
+    gap: 4px;
     margin-inline-start: 0;
   }
 
@@ -956,9 +962,9 @@
   }
 
   #screen-live #liveGame.is-hero-turn .poker-table {
-    height: clamp(232px, 30vh, 252px);
-    min-height: clamp(232px, 30vh, 252px);
-    margin: 4px 0 12px;
+    height: clamp(220px, 27dvh, 232px);
+    min-height: clamp(220px, 27dvh, 232px);
+    margin: 2px 0 8px;
     border-width: 6px;
   }
 
