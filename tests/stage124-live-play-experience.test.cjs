@@ -50,8 +50,9 @@ test('Live keeps the shared Stage 12.3 structured explanation renderer', () => {
   assert.match(html, /id="liveExplanation"[^>]*class="trainer-explanation hidden"/);
 });
 
-test('Hero-turn presentation state is reflected on the Live game container only', () => {
-  assert.match(html, /\$\('#liveGame'\)\.classList\.toggle\('is-hero-turn',heroTurn\)/);
+test('Hero-turn presentation state is synchronized on the Live game and app shell only', () => {
+  assert.match(html, /PokerPilotLivePresentationState\.sync\(\{/);
+  assert.match(html, /game,\s*decisionPanel:\s*\$\('#screen-live \.decision-panel'\)/);
   assert.doesNotMatch(html, /PokerCore[\s\S]{0,80}is-hero-turn/);
 });
 

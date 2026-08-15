@@ -961,6 +961,7 @@
 <script src="src/ui/progress-analytics-view.js"></script>
 <script src="src/live/saved-hands.js"></script>
 <script src="src/live/live-flow-controller.js"></script>
+<script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
 <script src="src/audio/sound-manager.js"></script>
@@ -1300,9 +1301,22 @@ function renderFocusResult() {
   return true;
 }
 
+function syncLivePresentationState(routeName = $('.app-shell')?.dataset.activeRoute || '') {
+  const game = $('#liveGame');
+  return PokerPilotLivePresentationState.sync({
+    shell: $('.app-shell'),
+    game,
+    decisionPanel: $('#screen-live .decision-panel')
+  }, {
+    route: routeName,
+    gameVisible: Boolean(session && game && !game.classList.contains('hidden')),
+    awaiting: session?.awaiting || null,
+    canHeroAct: Boolean(session && flowController.canHeroAct())
+  });
+}
+
 function route(name, options = {}) {
   name = PokerPilotNavigation.resolveRoute(name);
-  if (name !== 'live') document.querySelector('.app-shell').classList.remove('is-live-hero-turn');
   if (
     focusSessionController.getSnapshot()
     && !['study', 'ranges', 'focus-result'].includes(name)
@@ -1317,6 +1331,7 @@ function route(name, options = {}) {
   if (!screen) return false;
   screen.classList.add('active');
   $('.app-shell').dataset.activeRoute = name;
+  syncLivePresentationState(name);
   PokerPilotNavigation.setActive($('#primaryNavigation'), name);
   if (name === 'home') renderProgress();
   if (name === 'daily') dailyChallengeUi.open();
@@ -2733,10 +2748,7 @@ function renderLive(){
   const observing=$('#liveObservingStatus');
   observing.classList.toggle('hidden',!session.observing);
   observing.textContent=session.observing?'You folded — watching the action':'';
-  const heroTurn=/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
-  $('#liveGame').classList.toggle('is-hero-turn',heroTurn);
-  $('#screen-live .decision-panel').classList.toggle('is-hero-turn',heroTurn);
-  document.querySelector('.app-shell').classList.toggle('is-live-hero-turn',heroTurn);
+  syncLivePresentationState();
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);
   $('#betRange').disabled=paused;
@@ -2798,6 +2810,7 @@ function presentHeroAction(perform,onComplete){
   const hero=session.players[0],token=session.handToken;
   session.awaiting='hero-presentation';
   $('#liveActions').replaceChildren();
+  syncLivePresentationState();
   return presentationQueue.playAction({
     token,
     playerId:0,

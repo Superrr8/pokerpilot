@@ -18,8 +18,9 @@ function rule(source, selector) {
 }
 
 test('Hero turn exposes one presentation-only active-play state on the app shell', () => {
-  assert.match(html, /document\.querySelector\('\.app-shell'\)\.classList\.toggle\('is-live-hero-turn',heroTurn\)/);
-  assert.match(html, /if \(name !== 'live'\) document\.querySelector\('\.app-shell'\)\.classList\.remove\('is-live-hero-turn'\)/);
+  assert.match(html, /function renderLive\(\)\{[\s\S]*?syncLivePresentationState\(\)/);
+  assert.match(html, /PokerPilotLivePresentationState\.sync/);
+  assert.match(html, /\.app-shell'\)\.dataset\.activeRoute = name;[\s\S]*?syncLivePresentationState\(name\)/);
   assert.doesNotMatch(html, /PokerCore[\s\S]{0,100}is-live-hero-turn/);
 });
 
@@ -86,5 +87,5 @@ test('fixed navigation architecture and safe-area ownership remain unchanged', (
 
 test('compact header state does not alter gameplay or trainer calculations', () => {
   assert.doesNotMatch(liveCss, /PokerCore|analyzerPreflop|analyzerPostflop|callEV/);
-  assert.match(html, /const heroTurn=\/\^\(hero-preflop\|hero-postflop\)\$\/\.test/);
+  assert.match(html, /canHeroAct:\s*Boolean\(session && flowController\.canHeroAct\(\)\)/);
 });
