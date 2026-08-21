@@ -87,5 +87,7 @@ test('fixed navigation architecture and safe-area ownership remain unchanged', (
 
 test('compact header state does not alter gameplay or trainer calculations', () => {
   assert.doesNotMatch(liveCss, /PokerCore|analyzerPreflop|analyzerPostflop|callEV/);
-  assert.match(html, /canHeroAct:\s*Boolean\(session && flowController\.canHeroAct\(\)\)/);
+  assert.match(html, /function getCanonicalLiveHeroDecision/);
+  assert.match(html, /flowCanHeroAct:\s*Boolean\(session && flowController\.canHeroAct\(\)\)/);
+  assert.match(html, /PokerPilotLivePresentationState\.deriveHeroDecision/);
 });

@@ -1301,17 +1301,42 @@ function renderFocusResult() {
   return true;
 }
 
-function syncLivePresentationState(routeName = $('.app-shell')?.dataset.activeRoute || '') {
+function getCanonicalLiveHeroDecision(routeName = $('.app-shell')?.dataset.activeRoute || '') {
   const game = $('#liveGame');
+  const flowState = flowController.getState();
+  return PokerPilotLivePresentationState.deriveHeroDecision({
+    route: routeName,
+    gameVisible: Boolean(session && game && !game.classList.contains('hidden')),
+    awaiting: session?.awaiting || null,
+    flowCanHeroAct: Boolean(session && flowController.canHeroAct()),
+    flowPhase: flowState.phase,
+    heroFolded: Boolean(session?.players?.[0]?.folded),
+    street: session?.street || null,
+    toCall: session?.toCall || 0
+  });
+}
+
+function syncLivePresentationState(
+  routeName = $('.app-shell')?.dataset.activeRoute || '',
+  decision = getCanonicalLiveHeroDecision(routeName)
+) {
+  const game = $('#liveGame');
+  const presentation = presentationQueue.getState();
+  const actionsVisible = Boolean(game && !game.classList.contains('hidden') && $('#liveActions button'));
+  const currentActor = decision.heroCanAct
+    ? 'hero'
+    : Number.isInteger(presentation.activePlayerId)
+      ? String(presentation.activePlayerId)
+      : 'none';
   return PokerPilotLivePresentationState.sync({
     shell: $('.app-shell'),
     game,
     decisionPanel: $('#screen-live .decision-panel')
-  }, {
-    route: routeName,
-    gameVisible: Boolean(session && game && !game.classList.contains('hidden')),
-    awaiting: session?.awaiting || null,
-    canHeroAct: Boolean(session && flowController.canHeroAct())
+  }, decision, {
+    actionsVisible,
+    currentActor,
+    heroSeat: session?.players?.[0]?.id ?? 'none',
+    street: session?.street || 'none'
   });
 }
 
@@ -2665,10 +2690,11 @@ function renderSeats(){
   const seats=$('#seats');
   const positions=positionsFor(session.n,session.button);
   const presentationState=presentationQueue.getState();
-  const activeId=presentationState.activePlayerId??(session.awaiting?.startsWith('hero')?0:null);
+  const decision=getCanonicalLiveHeroDecision();
+  const activeId=presentationState.activePlayerId??(decision.heroCanAct?0:null);
   reconcileLiveSeats(seats,session.players,(el,p,i)=>{
     const angle=(90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);
-    const heroTurn=i===0&&/^(hero-preflop|hero-postflop)$/.test(session.awaiting||'');
+    const heroTurn=i===0&&decision.heroCanAct;
     const winnerReveal=p.winner&&(
       el.classList.contains('is-winner-reveal')||
       motionLedger.consume('winner',String(p.id))
@@ -2703,6 +2729,7 @@ function renderLive(){
   const hero=session.players[0];
   const profit=hero.stack+hero.contrib-session.initial;
   const phase=flowController.getState().phase;
+  const decision=getCanonicalLiveHeroDecision();
   $('#liveStack').textContent=money(hero.stack);
   $('#liveProfit').textContent=signedMoney(profit);
   $('#liveProfit').style.color=profit>=0?'var(--accent)':'var(--danger)';
@@ -2735,7 +2762,7 @@ function renderLive(){
     ?'Сессия на паузе'
     :phase==='completed'
       ?(session.winnerSummary||'Раздача завершена')
-      :session.awaiting?.startsWith('hero')
+      :decision.heroCanAct
         ?'Твоё решение'
         :session.awaiting==='dealing'
           ?'Раздача карт'
@@ -2748,7 +2775,7 @@ function renderLive(){
   const observing=$('#liveObservingStatus');
   observing.classList.toggle('hidden',!session.observing);
   observing.textContent=session.observing?'You folded — watching the action':'';
-  syncLivePresentationState();
+  syncLivePresentationState(undefined,decision);
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);
   $('#betRange').disabled=paused;
@@ -2781,26 +2808,24 @@ function showLiveMath(precomputed=null,{openLearning=true}={}){
 }
 function showHeroActions(){
   historyPanel.onHeroTurn();
-  renderLive();
   const box=$('#liveActions');
-  box.innerHTML='';
+  box.replaceChildren();
+  const decision=getCanonicalLiveHeroDecision();
+  renderLive();
   $('#liveFeedback').className='feedback hidden';
   $('#nextHand').classList.add('hidden');
   $('#betSizer').classList.add('hidden');
   $('#liveHintBox').classList.add('hidden');
   resetLiveLearningPanel();
-  if(!flowController.canHeroAct())return;
-  const facing=session.toCall>0;
-  const acts=session.street==='preflop'
-    ?(facing?['fold','call','raise']:['check','raise'])
-    :(facing?['fold','call','raise']:['check','bet','allin']);
-  acts.forEach(a=>{
+  if(!decision.controlsAvailable){syncLivePresentationState(undefined,decision);return;}
+  decision.actionOptions.forEach(a=>{
     const b=document.createElement('button');
     b.dataset.liveAction=a;
     b.textContent=actionLabel(a,a==='call'?session.toCall:0);
     b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});
     box.appendChild(b);
   });
+  syncLivePresentationState(undefined,decision);
   if(assistMode()==='review')showLiveMath();
 }
 function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
@@ -2838,7 +2863,8 @@ function queueVillainResponseAfterHeroBet(){
   );
 }
 function handleHeroAction(action,amount=0){
-  if(!session||!session.awaiting?.startsWith('hero')||!flowController.canHeroAct())return;
+  const decision=getCanonicalLiveHeroDecision();
+  if(!session||!decision.controlsAvailable||!decision.actionOptions.includes(action))return;
   if((action==='bet'||action==='raise')&&!amount){toggleSizer(action);return;}
   const evaluation=evaluateLiveAction(action,amount);
   const hero=session.players[0];
