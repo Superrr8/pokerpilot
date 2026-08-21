@@ -855,7 +855,6 @@
                   <div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle" aria-live="polite">Новая раздача</h3></div>
                   <span id="toCallChip" class="chip bet-display">К действию</span>
                 </div>
-                <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
                 <div id="betSizer" class="bet-sizer hidden">
                   <label>Размер <strong id="betValue">$15</strong></label>
                   <div class="live-v2-sizing-row">
@@ -2652,14 +2651,10 @@ function createLiveSeatElement(playerId){
   const handLabel=document.createElement('span');
   handLabel.dataset.seatPart='hand-label';
   handLabel.className='showdown-hand-label hidden';
-  const fold=document.createElement('span');
-  fold.dataset.seatPart='fold';
-  fold.className='fold-badge hidden';
-  fold.textContent='FOLD';
   const betZone=document.createElement('span');
   betZone.dataset.seatPart='bet-zone';
   betZone.className='seat-bet-zone';
-  el.append(avatar,label,stack,lastAction,hole,handLabel,fold,betZone);
+  el.append(avatar,label,stack,lastAction,hole,handLabel,betZone);
   return el;
 }
 function reconcileLiveSeats(container,players,update){
@@ -2792,7 +2787,6 @@ function renderSeats(){
     const handLabel=$('[data-seat-part="hand-label"]',el);
     handLabel.classList.toggle('hidden',!p.showdownLabel);
     handLabel.textContent=p.showdownLabel||'';
-    $('[data-seat-part="fold"]',el).classList.toggle('hidden',!p.folded);
     syncLiveActionBubble(el,p);
     syncLiveBetZone($('[data-seat-part="bet-zone"]',el),p);
   });
@@ -2847,9 +2841,6 @@ function renderLive(){
             ?'Ход соперника'
             :'Раздача завершена';
   $('#toCallChip').textContent=session.observing?'Hero — Fold':session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';
-  const observing=$('#liveObservingStatus');
-  observing.classList.toggle('hidden',!session.observing);
-  observing.textContent=session.observing?'You folded — watching the action':'';
   const dock=$('#screen-live .decision-panel');
   if(dock){
     dock.dataset.liveDockState=phase==='paused'

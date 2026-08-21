@@ -31,11 +31,13 @@ test('Разбор содержит Saved Hands и может открыть р�
   assert.match(html, /openSavedHandInAnalyzer/);
 });
 
-test('стол показывает отдельные action bubble и fold badge возле игроков', () => {
+test('стол показывает action bubble и компактный folded state возле игроков', () => {
   assert.match(html, /player-action-bubble/);
-  assert.match(html, /fold-badge/);
+  assert.match(html, /seat-last-action/);
+  assert.doesNotMatch(html, /fold-badge/);
   assert.match(css, /\.player-action-bubble/);
-  assert.match(css, /\.fold-badge/);
+  assert.match(css, /\.seat-last-action/);
+  assert.doesNotMatch(css, /\.fold-badge/);
   assert.match(css, /\.seat\.folded/);
 });
 
@@ -123,7 +125,7 @@ test('action badges и стабильные bet zones имеют мобильн�
   assert.match(css, /\.player-action-bubble\[data-action="FOLD"\]/);
   assert.match(css, /\.player-action-bubble\.is-exiting/);
   assert.match(css, /\.board-card\.is-revealing/);
-  assert.match(css, /\.live-observing-status/);
+  assert.match(css, /\.live-v2-action-dock\[data-live-dock-state="observing"\]/);
   assert.match(css, /@media \(max-width:\s*390px\)[\s\S]*\.seat-bet-zone/);
   assert.match(css, /prefers-reduced-motion:\s*reduce[\s\S]*\.player-action-bubble/);
 });
