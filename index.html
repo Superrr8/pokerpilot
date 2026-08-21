@@ -852,7 +852,13 @@
             <div class="panel decision-panel live-v2-action-dock" data-live-dock-state="waiting">
               <div id="liveDecisionCore" class="live-decision-core">
                 <div class="live-v2-dock-heading">
-                  <div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle" aria-live="polite">Новая раздача</h3></div>
+                  <div class="live-v2-dock-context">
+                    <span id="heroPosition" class="tag">BTN</span>
+                    <span class="live-v2-dock-copy">
+                      <h3 id="actionTitle" aria-live="polite">Новая раздача</h3>
+                      <small id="liveDockHelper" class="live-v2-dock-helper" aria-live="polite">Стол готовит раздачу</small>
+                    </span>
+                  </div>
                   <span id="toCallChip" class="chip bet-display">К действию</span>
                 </div>
                 <div id="betSizer" class="bet-sizer hidden">
@@ -2709,7 +2715,8 @@ function syncLiveHoleCards(hole,player,{x,y}){
 }
 function syncLiveActionBubble(el,player){
   let bubble=$('.player-action-bubble',el);
-  const action=player.folded||player.visualAction?.type==='POST_BLIND'?null:player.visualAction;
+  const actionType=player.visualAction?.type;
+  const action=player.folded||['POST_BLIND','FOLD'].includes(actionType)?null:player.visualAction;
   if(!action){
     if(bubble)bubble.remove();
     return;
@@ -2840,6 +2847,21 @@ function renderLive(){
           :session.awaiting==='ai'
             ?'Ход соперника'
             :'Раздача завершена';
+  $('#liveDockHelper').textContent=phase==='paused'
+    ?'Продолжи сессию, когда будешь готов'
+    :phase==='completed'
+      ?'Итог раздачи сохранён · следующая скоро'
+      :decision.heroCanAct
+        ?session.toCall
+          ?`Выбери линию · к коллу ${money(session.toCall)}`
+          :'Выбери линию · можно Check'
+        :session.awaiting==='dealing'
+          ?'Карты занимают свои места'
+          :session.observing
+            ?'Ты сфолдил · следи за действиями соперников'
+            :session.awaiting==='ai'
+              ?'Ожидаем действие игрока'
+              :'Стол готовит следующую раздачу';
   $('#toCallChip').textContent=session.observing?'Hero — Fold':session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';
   const dock=$('#screen-live .decision-panel');
   if(dock){

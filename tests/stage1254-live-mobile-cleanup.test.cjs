@@ -33,7 +33,8 @@ test('folded pods use dimming and their integrated status without an external FO
   assert.doesNotMatch(css, /\.fold-badge/);
   assert.match(css, /#screen-live \.seat\.folded/);
   assert.match(html, /lastAction\.dataset\.action=p\.lastActionType\|\|''/);
-  assert.match(html, /const action=player\.folded\|\|player\.visualAction\?\.type==='POST_BLIND'\?null:player\.visualAction/);
+  assert.match(html, /const actionType=player\.visualAction\?\.type/);
+  assert.match(html, /const action=player\.folded\|\|\['POST_BLIND','FOLD'\]\.includes\(actionType\)\?null:player\.visualAction/);
 });
 
 test('Hero controls, canonical diagnostics and accepted seat layouts remain wired', () => {

@@ -1266,6 +1266,10 @@
 .app-shell[data-active-route="live"].is-live-game-active #screen-live .live-v2-action-dock[data-live-dock-state="observing"] {
   min-height: 54px;
   padding-block: 7px;
+  border-color: rgba(218, 168, 99, .18);
+  background:
+    linear-gradient(90deg, rgba(180, 111, 45, .075), transparent 38%),
+    linear-gradient(165deg, rgba(35, 25, 19, .97), var(--live-v2-dock-surface) 58%, #100e0c 100%);
 }
 
 .live-v2-action-dock[data-live-dock-state="waiting"] #liveActions,
@@ -1288,20 +1292,42 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding-right: 88px;
+  padding-right: 94px;
 }
 
-.live-v2-dock-heading > div {
-  display: flex;
+.live-v2-dock-context {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   min-width: 0;
   align-items: center;
   gap: 8px;
+}
+
+.live-v2-dock-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
 }
 
 .live-v2-dock-heading h3 {
   margin: 0;
   font-size: 16px;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-v2-dock-helper {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(222, 209, 193, .58);
+  font-size: 10px;
+  font-weight: 620;
+  line-height: 1.2;
+  letter-spacing: .005em;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -1327,7 +1353,9 @@
   grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
   align-items: stretch;
   gap: 7px;
-  margin-top: 5px;
+  margin-top: 6px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(226, 205, 178, .09);
 }
 
 #screen-live .live-v2-action-dock #liveActions button {
@@ -1336,6 +1364,7 @@
   padding: 9px 7px;
   border-radius: var(--radius-md);
   font-size: 15px;
+  box-shadow: inset 0 1px rgba(255,255,255,.055), 0 6px 14px rgba(0,0,0,.2);
 }
 
 #screen-live .live-v2-action-dock #liveActions button[data-live-action="fold"] {
@@ -1379,13 +1408,14 @@
 
 .live-v2-coach-trigger {
   position: absolute;
-  top: 9px;
-  right: 9px;
+  top: 10px;
+  right: 10px;
   width: auto;
-  min-height: 36px;
+  min-height: 38px;
   padding: 6px 9px;
   border-color: rgba(218, 168, 99, .16);
-  background: rgba(22, 17, 13, .5);
+  background: linear-gradient(180deg, rgba(45, 31, 21, .78), rgba(22, 17, 13, .68));
+  box-shadow: inset 0 1px rgba(255,255,255,.035), 0 4px 12px rgba(0,0,0,.16);
   color: #d1a366;
   font-size: 11px;
   font-weight: 850;
@@ -1395,9 +1425,10 @@
 #screen-live .live-v2-action-dock .bet-sizer {
   position: static;
   z-index: auto;
-  margin: 4px 0 0;
-  padding: 0;
+  margin: 6px 0 0;
+  padding: 7px 0 0;
   border: 0;
+  border-top: 1px solid rgba(226, 205, 178, .09);
   background: transparent;
   box-shadow: none;
 }
@@ -1412,6 +1443,10 @@
   align-items: center;
   gap: 7px;
   margin-top: 4px;
+  padding: 4px;
+  border: 1px solid rgba(218,168,99,.12);
+  border-radius: var(--radius-md);
+  background: rgba(9, 10, 9, .28);
 }
 
 .live-v2-size-step {
