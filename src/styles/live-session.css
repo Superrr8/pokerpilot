@@ -1109,3 +1109,186 @@
     transition: none !important;
   }
 }
+
+/* Stage 12.5.2 — Canonical Hero-decision viewport compression. */
+@media (max-width: 480px) and (orientation: portrait) {
+  .app-shell[data-active-route="live"].is-live-hero-turn {
+    padding-block-end: max(8px, var(--safe-area-bottom));
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation {
+    height: 40px;
+    min-height: 40px;
+    margin-bottom: 2px;
+    gap: 4px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .brand {
+    min-height: 36px;
+    gap: 0;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .brand > span:last-child {
+    display: none;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .logo {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-xs);
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-header-actions,
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation-actions {
+    height: 36px;
+    gap: 4px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .top-stakes {
+    display: inline-flex;
+    min-height: 28px;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-control {
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-toggle {
+    width: 36px;
+    min-height: 36px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn .sound-volume {
+    display: none;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back {
+    display: none;
+  }
+
+  .app-shell[data-active-route="live"].is-live-hero-turn #primaryNavigation {
+    display: none;
+    pointer-events: none;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar {
+    min-height: 42px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3px;
+    margin: 0 0 3px;
+    padding: 4px 6px;
+    border-radius: var(--radius-sm);
+  }
+
+  #screen-live #liveGame.is-hero-turn .stats-grid.four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2px;
+    margin: 0;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat {
+    min-width: 0;
+    padding: 2px 1px;
+    border: 0;
+    border-radius: var(--radius-xs);
+    background: transparent;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat small {
+    font-size: 7px;
+    line-height: 1;
+  }
+
+  #screen-live #liveGame.is-hero-turn .session-bar .stat strong {
+    font-size: 11px;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #screen-live #liveGame.is-hero-turn .live-hand-controls {
+    width: auto;
+    gap: 2px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .compact-hand-action {
+    width: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  #screen-live #liveGame.is-hero-turn #pauseLive::before {
+    content: "Ⅱ";
+    color: var(--text-primary);
+    font-size: 14px;
+  }
+
+  #screen-live #liveGame.is-hero-turn #saveLiveHand::before {
+    content: "☆";
+    color: var(--text-primary);
+    font-size: 17px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .poker-table {
+    height: clamp(190px, 24dvh, 210px);
+    min-height: clamp(190px, 24dvh, 210px);
+    margin: 1px 0 4px;
+    border-width: 6px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .seat {
+    width: 50px;
+    height: 46px;
+    min-height: 46px;
+    padding: 3px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .table-center {
+    min-width: min(204px, 60vw);
+    gap: 3px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .board {
+    min-height: 44px;
+  }
+
+  #screen-live #liveGame.is-hero-turn .decision-panel {
+    padding: 8px;
+    padding-bottom: max(8px, calc(var(--safe-area-bottom) + 4px));
+  }
+
+  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head h3 {
+    margin-top: 2px;
+    font-size: 16px;
+  }
+
+  #screen-live #liveGame.is-hero-turn #heroCards {
+    margin-block: 4px;
+  }
+
+  #screen-live #liveGame.is-hero-turn #heroCards .playing-card {
+    width: 54px;
+    height: 76px;
+  }
+
+  #screen-live #liveActions {
+    margin-top: 4px;
+  }
+
+  #screen-live #liveActions button {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) and (orientation: portrait) and (max-height: 720px) {
+  #screen-live #liveGame.is-hero-turn .poker-table {
+    height: clamp(180px, 25dvh, 190px);
+    min-height: clamp(180px, 25dvh, 190px);
+  }
+}
