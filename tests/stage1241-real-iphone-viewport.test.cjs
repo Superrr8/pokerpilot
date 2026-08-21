@@ -10,77 +10,50 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const liveCss = fs.readFileSync(path.join(root, 'src/styles/live-session.css'), 'utf8');
 const layoutCss = fs.readFileSync(path.join(root, 'src/styles/layout-foundation.css'), 'utf8');
 const tokensCss = fs.readFileSync(path.join(root, 'src/styles/design-tokens.css'), 'utf8');
-const stage11Css = fs.readFileSync(path.join(root, 'src/styles/stage11-refresh.css'), 'utf8');
 const explanationEngine = fs.readFileSync(path.join(root, 'src/training/trainer-explanation-engine.js'), 'utf8');
 
-function block(source, marker, endMarker) {
-  const start = source.indexOf(marker);
-  assert.notEqual(start, -1, `missing marker: ${marker}`);
-  const end = source.indexOf(endMarker, start + marker.length);
-  assert.notEqual(end, -1, `missing end marker: ${endMarker}`);
-  return source.slice(start, end);
-}
-
-test('Hero cards and all primary actions remain inside the play-first decision core', () => {
-  const core = block(html, '<div id="liveDecisionCore"', '</div><!-- /live-decision-core -->');
-  assert.ok(core.indexOf('id="heroCards"') < core.indexOf('id="liveActions"'));
-  assert.match(core, /id="liveActions"/);
+test('Hero cards remain attached to the table before the persistent action dock', () => {
+  assert.match(html, /id="pokerTable"[\s\S]*?id="heroCards"[\s\S]*?id="liveDecisionCore"[\s\S]*?id="liveActions"/);
   assert.match(html, /\['fold','call','raise'\]/);
 });
 
-test('learning content remains after the primary decision controls', () => {
+test('learning and history remain secondary to primary decision controls', () => {
   assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveLearningPanel"'));
   assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveHistoryPanel"'));
+  assert.match(html, /id="liveCoachSheet"/);
 });
 
-test('short iPhone viewport uses a single-row compact session bar', () => {
-  assert.match(
-    liveCss,
-    /@media \(max-width:\s*430px\)[\s\S]*?#screen-live #liveGame\.is-hero-turn \.session-bar\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)\s+auto/
-  );
-  assert.match(
-    liveCss,
-    /#screen-live #liveGame\.is-hero-turn \.live-hand-controls\s*\{[\s\S]*?width:\s*auto/
-  );
+test('short iPhone viewport uses one stable table and action-dock budget', () => {
+  assert.match(liveCss, /@media \(max-width:\s*480px\) and \(orientation:\s*portrait\)/);
+  assert.match(liveCss, /\.live-v2-game-shell\s*\{[\s\S]*?grid-template-rows:\s*var\(--live-v2-table-stage-height\)\s+108px\s+232px/);
+  assert.match(liveCss, /@media \(max-width:\s*480px\) and \(orientation:\s*portrait\) and \(max-height:\s*720px\)[\s\S]*?grid-template-rows:\s*var\(--live-v2-table-stage-height\)\s+88px\s+180px/);
 });
 
-test('mobile table budget leaves a practical navigation safety margin', () => {
-  assert.match(liveCss, /--live-mobile-nav-safety-gap:\s*20px/);
-  assert.match(
-    liveCss,
-    /#screen-live #liveGame\.is-hero-turn \.poker-table\s*\{[\s\S]*?height:\s*clamp\(220px,\s*27dvh,\s*232px\)/
-  );
-  assert.match(
-    liveCss,
-    /#screen-live #liveGame\.is-hero-turn \.poker-table\s*\{[\s\S]*?margin:\s*2px 0 8px/
-  );
+test('mobile table budget uses stable session geometry rather than Hero-turn geometry', () => {
+  assert.match(liveCss, /\.live-v2-table-stage\s*\{[\s\S]*?min-height:\s*0/);
+  assert.match(liveCss, /#screen-live \.poker-table\.live-v2-poker-table\s*\{[\s\S]*?height:\s*var\(--live-table-camera-height\)/);
+  assert.doesNotMatch(liveCss, /#liveGame\.is-hero-turn \.poker-table\s*\{[^}]*height:/);
 });
 
-test('Hero cards preserve the accepted readable Stage 12.4 size', () => {
-  assert.match(
-    liveCss,
-    /#screen-live #liveGame\.is-hero-turn #heroCards \.playing-card\s*\{[\s\S]*?width:\s*54px;[\s\S]*?height:\s*76px/
-  );
+test('Hero cards retain readable adaptive dimensions without changing state geometry', () => {
+  assert.match(liveCss, /#screen-live #heroCards\.live-v2-hero-cards \.playing-card\s*\{[\s\S]*?width:\s*56px/);
+  assert.match(liveCss, /#screen-live #heroCards\.live-v2-hero-cards\s*\{[\s\S]*?position:\s*relative/);
 });
 
-test('primary Live actions retain a 44px minimum touch target', () => {
-  assert.match(
-    liveCss,
-    /#screen-live #liveActions button\s*\{[\s\S]*?min-height:\s*44px/
-  );
+test('primary Live actions retain a 48px minimum touch target', () => {
+  assert.match(liveCss, /#screen-live \.live-v2-action-dock #liveActions button\s*\{[\s\S]*?min-height:\s*48px/);
 });
 
-test('mobile width remains constrained without a fixed or sticky action dock', () => {
+test('mobile width remains constrained without a fixed viewport action bar', () => {
   assert.match(liveCss, /\.live-decision-core\s*\{[\s\S]*?min-width:\s*0/);
-  assert.match(stage11Css, /@media \(max-width:\s*430px\)[\s\S]*?overflow-x:\s*clip/);
-  assert.doesNotMatch(liveCss, /#liveActions[^}]*position:\s*(?:fixed|sticky)/);
-  assert.doesNotMatch(liveCss, /\.live-decision-core[^}]*position:\s*(?:fixed|sticky)/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active\s*\{[\s\S]*?overflow-x:\s*clip/);
+  assert.doesNotMatch(liveCss, /\.live-v2-action-dock[^}]*position:\s*fixed/);
 });
 
-test('Stage 12.1 safe-area and fixed-navigation contract remains intact', () => {
+test('Stage 12.1 safe-area contract remains available outside the isolated Live shell', () => {
   assert.match(tokensCss, /--safe-area-bottom:\s*env\(safe-area-inset-bottom,\s*0px\)/);
   assert.match(layoutCss, /\.bottom-nav\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-area-bottom\) \+ var\(--bottom-navigation-offset\)\)/);
-  assert.match(layoutCss, /\.app-shell\s*\{[\s\S]*?padding-block-end:\s*var\(--app-content-bottom-inset\)/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active\s*\{[\s\S]*?padding-block-end:\s*max\(8px,\s*env\(safe-area-inset-bottom\)\)/);
 });
 
 test('Stage 12.3 structured explanation remains wired to the shared engine', () => {
@@ -89,12 +62,11 @@ test('Stage 12.3 structured explanation remains wired to the shared engine', () 
   assert.match(explanationEngine, /function generateExplanation\(input = \{\}\)/);
 });
 
-test('compact geometry is mobile-only and leaves desktop Live rules untouched', () => {
-  const stage124Start = liveCss.indexOf('/* Stage 12.4');
-  assert.notEqual(stage124Start, -1);
-  const compactRule = liveCss.indexOf('grid-template-columns: minmax(0, 1fr) auto', stage124Start);
-  assert.notEqual(compactRule, -1);
-  const mediaStart = liveCss.lastIndexOf('@media (max-width: 430px)', compactRule);
-  assert.ok(mediaStart >= stage124Start);
-  assert.ok(mediaStart < compactRule);
+test('stable Live geometry is session-scoped on both desktop and mobile', () => {
+  const marker = liveCss.indexOf('/* Stage 12.5.3 — Live Mode V2 stable premium shell. */');
+  assert.notEqual(marker, -1);
+  const sessionRule = liveCss.indexOf('.app-shell[data-active-route="live"].is-live-game-active', marker);
+  const mobileRule = liveCss.indexOf('@media (max-width: 480px) and (orientation: portrait)', marker);
+  assert.ok(sessionRule > marker);
+  assert.ok(mobileRule > sessionRule);
 });

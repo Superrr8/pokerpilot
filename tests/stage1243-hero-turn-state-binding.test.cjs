@@ -133,10 +133,11 @@ test('application wires state binding before the inline app and at critical tran
   assert.match(html, /function route\([\s\S]*?syncLivePresentationState\(name\)/);
 });
 
-test('Stage 12.4.2 compact geometry remains unchanged and state-scoped', () => {
-  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn \.top-navigation\s*\{[^}]*height:\s*44px/);
-  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn #screen-live > \.back\s*\{[^}]*min-height:\s*32px/);
-  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn \.sound-volume\s*\{[^}]*display:\s*none/);
-  assert.match(liveCss, /height:\s*clamp\(220px,\s*27dvh,\s*232px\)/);
-  assert.match(liveCss, /#screen-live #liveActions button\s*\{[\s\S]*?min-height:\s*44px/);
+test('Live V2 geometry consumes the same canonical state without Hero-only resizing', () => {
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active \.top-navigation\s*\{[^}]*height:\s*48px/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active #screen-live > \.back,[\s\S]*?display:\s*none/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active \.sound-volume\s*\{[^}]*display:\s*none/);
+  assert.match(liveCss, /#screen-live \.poker-table\.live-v2-poker-table\s*\{[\s\S]*?height:\s*var\(--live-table-camera-height\)/);
+  assert.match(liveCss, /#screen-live \.live-v2-action-dock #liveActions button\s*\{[\s\S]*?min-height:\s*48px/);
+  assert.doesNotMatch(liveCss, /#liveGame\.is-hero-turn \.poker-table\s*\{[^}]*height:/);
 });

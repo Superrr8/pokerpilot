@@ -37,7 +37,9 @@ test('Daily Challenge mobile actions render below content with primary visual pr
 });
 
 test('Live table rotates presentation so Hero is bottom-center', () => {
-  assert.match(html, /const angle=\(90\+360\*i\/session\.n\)\*Math\.PI\/180/);
+  assert.match(html, /PokerPilotLiveSeatLayouts\.getLayout\(session\.n\)/);
+  assert.match(html, /const \{x,y\}=layout\.slots\[i\]/);
+  assert.match(html, /layout\.slots\[i\]\.id/);
   assert.match(html, /const positions=positionsFor\(session\.n,session\.button\)/);
   assert.match(html, /textContent=`\$\{positions\[i\]\}[^`]*\$\{i===session\.button\?/);
 });

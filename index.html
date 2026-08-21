@@ -58,6 +58,7 @@
 <body>
 <div class="app app-shell" data-active-route="home">
   <header class="topbar top-navigation">
+    <button id="liveBackControl" class="live-v2-top-control live-v2-back-control" type="button" data-route="training" aria-label="Выйти из Live Cash">‹</button>
     <button class="brand" data-route="home" aria-label="Главная">
       <span class="logo">PP</span>
       <span><strong>PokerPilot</strong><small>Тренировка и разбор решений</small></span>
@@ -76,8 +77,8 @@
         <span class="chip top-stakes">$1/$3</span>
         <div class="sound-control" aria-label="Настройки звука">
           <button id="soundToggle" class="sound-toggle" type="button" aria-label="Выключить звук" aria-pressed="true">🔊</button>
-          <input id="soundVolume" class="sound-volume" type="range" min="0" max="1" step="0.05" value="0.35" aria-label="Громкость звука">
         </div>
+        <button id="liveMoreToggle" class="live-v2-top-control live-v2-more-control" type="button" aria-label="Дополнительные настройки Live Cash" aria-haspopup="dialog" aria-controls="liveMoreSheet">•••</button>
       </div>
     </div>
   </header>
@@ -832,48 +833,44 @@
         <button id="startSession" class="primary wide">Сесть за стол</button>
       </div>
 
-      <div id="liveGame" class="hidden">
-        <div class="panel session-bar">
-          <div class="stats-grid four"><div class="stat"><small>Стек</small><strong id="liveStack">$300</strong></div><div class="stat"><small>Результат</small><strong id="liveProfit">+$0</strong></div><div class="stat"><small>Раздачи</small><strong id="liveHands">0</strong></div><div class="stat"><small>Тильт</small><strong id="liveTilt">Низкий</strong></div></div>
-          <div class="live-hand-controls" aria-label="Управление Live Cash">
-            <button id="pauseLive" class="ghost compact-hand-action" type="button" aria-pressed="false">Ⅱ Пауза</button>
-            <button id="saveLiveHand" class="ghost compact-hand-action hidden" type="button">☆ Save Hand</button>
-          </div>
-        </div>
-        <div id="pokerTable" class="poker-table"><div id="seats" class="seats"></div><div class="table-center"><small id="streetLabel">Префлоп</small><strong id="potLabel" class="pot-display">Банк $0</strong><div id="board" class="board"></div></div></div>
-        <div class="panel decision-panel">
-          <div id="liveDecisionCore" class="live-decision-core">
-            <div class="panel-head"><div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle">Новая раздача</h3></div><span id="toCallChip" class="chip bet-display">К действию</span></div>
-            <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
-            <div id="heroCards" class="cards hero-cards"></div>
-            <div id="betSizer" class="bet-sizer hidden"><label>Размер <strong id="betValue">$15</strong></label><input id="betRange" type="range" min="3" max="300" value="15" step="1"><div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div><button id="confirmBet" class="primary wide">Подтвердить</button></div>
-            <div id="liveActions" class="actions neutral-actions"></div>
-          </div><!-- /live-decision-core -->
-          <div class="coach-tools"><button id="liveHint" class="ghost">💡 Тренер</button><button id="liveMathToggle" class="ghost">🧮 Ауты и шансы</button></div>
-          <div id="liveHintBox" class="coach-box hidden"></div>
-          <div id="liveResultSummary" class="live-result-summary hidden" aria-live="polite"><strong data-live-result-grade>Результат</strong><span data-live-result-copy></span></div>
-          <div id="liveFeedback" class="feedback hidden"></div>
-          <details id="liveLearningPanel" class="live-learning-panel hidden">
-            <summary><span><strong>Разбор решения</strong><small>Почему, ключевые факторы и математика</small></span><span class="live-learning-chevron" aria-hidden="true"></span></summary>
-            <div class="live-learning-content">
-              <div id="mathBox" class="math-box hidden"></div>
-              <div id="liveExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
-              <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
-            </div>
-          </details>
-          <section id="liveHistoryPanel" class="live-history-panel" aria-label="История раздачи">
-            <button id="liveHistoryToggle" class="live-history-toggle" type="button" aria-expanded="false" aria-controls="liveHistoryBody">
-              <span class="live-history-title">📝 Ход раздачи <small id="liveHistoryCount">· 0</small></span>
-              <span class="live-history-chevron" aria-hidden="true">⌄</span>
-            </button>
-            <div id="liveHistoryBody" class="live-history-body" aria-hidden="true">
-              <div class="live-history-inner">
-                <div id="actionLog" class="action-log" aria-label="История раздачи"></div>
+      <div id="liveGame" class="hidden live-v2-game">
+        <div class="live-v2-game-shell">
+          <div class="live-v2-table-stage">
+            <div id="pokerTable" class="poker-table live-v2-poker-table">
+              <div id="seats" class="seats"></div>
+              <div class="table-center live-v2-board-pot">
+                <small id="streetLabel">Префлоп</small>
+                <div id="board" class="board"></div>
+                <strong id="potLabel" class="pot-display">POT $0</strong>
               </div>
             </div>
-          </section>
-          <button id="nextHand" class="primary wide hidden">Следующая раздача</button>
-          <button id="endSession" class="ghost wide">Закончить сессию</button>
+          </div>
+          <div class="live-v2-hero-zone" aria-label="Hero">
+            <div id="heroCards" class="cards hero-cards live-v2-hero-cards" aria-label="Карты Hero"></div>
+          </div>
+          <div class="live-v2-action-zone">
+            <div class="panel decision-panel live-v2-action-dock" data-live-dock-state="waiting">
+              <div id="liveDecisionCore" class="live-decision-core">
+                <div class="live-v2-dock-heading">
+                  <div><span id="heroPosition" class="tag">BTN</span><h3 id="actionTitle" aria-live="polite">Новая раздача</h3></div>
+                  <span id="toCallChip" class="chip bet-display">К действию</span>
+                </div>
+                <p id="liveObservingStatus" class="live-observing-status hidden" role="status">You folded — watching the action</p>
+                <div id="betSizer" class="bet-sizer hidden">
+                  <label>Размер <strong id="betValue">$15</strong></label>
+                  <div class="live-v2-sizing-row">
+                    <button id="decreaseBet" class="ghost live-v2-size-step" type="button" aria-label="Уменьшить размер">−</button>
+                    <input id="betRange" type="range" min="3" max="300" value="15" step="1" aria-label="Размер ставки">
+                    <button id="increaseBet" class="ghost live-v2-size-step" type="button" aria-label="Увеличить размер">+</button>
+                  </div>
+                  <div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div>
+                  <div class="live-v2-sizing-actions"><button id="cancelBet" class="ghost" type="button">Назад</button><button id="confirmBet" class="primary" type="button">Подтвердить $15</button></div>
+                </div>
+                <div id="liveActions" class="actions neutral-actions" aria-label="Действия Hero"></div>
+              </div><!-- /live-decision-core -->
+              <button id="liveHint" class="ghost live-v2-coach-trigger" type="button" aria-haspopup="dialog" aria-controls="liveCoachSheet">✦ Тренер</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -881,6 +878,45 @@
 
   <nav id="primaryNavigation" class="bottom-nav primary-navigation" aria-label="Основная навигация"></nav>
 </div>
+<dialog id="liveCoachSheet" class="live-v2-sheet live-v2-coach-sheet" aria-labelledby="liveCoachTitle">
+  <div class="live-v2-sheet-header"><div><span class="eyebrow">PokerPilot intelligence</span><h2 id="liveCoachTitle">Тренер</h2></div><button id="liveCoachClose" class="ghost live-v2-sheet-close" type="button" aria-label="Закрыть Тренер">×</button></div>
+  <div class="live-v2-sheet-body">
+    <div id="liveHintBox" class="coach-box hidden"></div>
+    <div id="liveResultSummary" class="live-result-summary hidden" aria-live="polite"><strong data-live-result-grade>Результат</strong><span data-live-result-copy></span></div>
+    <div id="liveFeedback" class="feedback hidden"></div>
+    <details id="liveLearningPanel" class="live-learning-panel hidden">
+      <summary><span><strong>Разбор решения</strong><small>Почему, ключевые факторы и математика</small></span><span class="live-learning-chevron" aria-hidden="true"></span></summary>
+      <div class="live-learning-content">
+        <div id="mathBox" class="math-box hidden"></div>
+        <div id="liveExplanation" class="trainer-explanation hidden" aria-live="polite"></div>
+        <div id="liveDecisionQuality" class="decision-quality-card hidden" aria-live="polite"></div>
+      </div>
+    </details>
+    <button id="liveMathToggle" class="ghost wide" type="button">🧮 Ауты, Equity и математика</button>
+    <section id="liveHistoryPanel" class="live-history-panel" aria-label="История раздачи">
+      <button id="liveHistoryToggle" class="live-history-toggle" type="button" aria-expanded="false" aria-controls="liveHistoryBody">
+        <span class="live-history-title">📝 Ход раздачи <small id="liveHistoryCount">· 0</small></span>
+        <span class="live-history-chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div id="liveHistoryBody" class="live-history-body" aria-hidden="true"><div class="live-history-inner"><div id="actionLog" class="action-log" aria-label="История раздачи"></div></div></div>
+    </section>
+  </div>
+</dialog>
+<dialog id="liveMoreSheet" class="live-v2-sheet live-v2-more-sheet" aria-labelledby="liveMoreTitle">
+  <div class="live-v2-sheet-header"><div><span class="eyebrow">Live Cash $1/$3</span><h2 id="liveMoreTitle">Сессия</h2></div><button id="liveMoreClose" class="ghost live-v2-sheet-close" type="button" aria-label="Закрыть настройки сессии">×</button></div>
+  <div class="live-v2-sheet-body">
+    <div id="liveSessionMeta" class="session-bar live-v2-session-meta">
+      <div class="stats-grid four"><div class="stat"><small>Стек</small><strong id="liveStack">$300</strong></div><div class="stat"><small>Результат</small><strong id="liveProfit">+$0</strong></div><div class="stat"><small>Раздачи</small><strong id="liveHands">0</strong></div><div class="stat"><small>Тильт</small><strong id="liveTilt">Низкий</strong></div></div>
+    </div>
+    <label class="live-v2-volume-setting" for="soundVolume"><span>Громкость</span><input id="soundVolume" class="sound-volume" type="range" min="0" max="1" step="0.05" value="0.35" aria-label="Громкость звука"></label>
+    <div class="live-v2-session-actions" aria-label="Управление Live Cash">
+      <button id="pauseLive" class="ghost" type="button" aria-pressed="false">Ⅱ Пауза</button>
+      <button id="saveLiveHand" class="ghost hidden" type="button">☆ Save Hand</button>
+      <button id="nextHand" class="primary hidden" type="button">Следующая раздача</button>
+      <button id="endSession" class="ghost live-v2-end-session" type="button">Закончить сессию</button>
+    </div>
+  </div>
+</dialog>
 <dialog id="appDialog" class="ui-dialog" aria-labelledby="appDialogTitle">
   <div class="ui-dialog-content">
     <h2 id="appDialogTitle" data-dialog-title>PokerPilot</h2>
@@ -961,6 +997,7 @@
 <script src="src/ui/progress-analytics-view.js"></script>
 <script src="src/live/saved-hands.js"></script>
 <script src="src/live/live-flow-controller.js"></script>
+<script src="src/live/live-seat-layouts.js"></script>
 <script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
@@ -1320,7 +1357,15 @@ function syncLivePresentationState(
   routeName = $('.app-shell')?.dataset.activeRoute || '',
   decision = getCanonicalLiveHeroDecision(routeName)
 ) {
+  const shell = $('.app-shell');
   const game = $('#liveGame');
+  const gameActive = Boolean(
+    routeName === 'live' &&
+    session &&
+    game &&
+    !game.classList.contains('hidden')
+  );
+  shell?.classList.toggle('is-live-game-active', gameActive);
   const presentation = presentationQueue.getState();
   const actionsVisible = Boolean(game && !game.classList.contains('hidden') && $('#liveActions button'));
   const currentActor = decision.heroCanAct
@@ -1329,7 +1374,7 @@ function syncLivePresentationState(
       ? String(presentation.activePlayerId)
       : 'none';
   return PokerPilotLivePresentationState.sync({
-    shell: $('.app-shell'),
+    shell,
     game,
     decisionPanel: $('#screen-live .decision-panel')
   }, decision, {
@@ -1340,8 +1385,23 @@ function syncLivePresentationState(
   });
 }
 
+function openLiveSheet(selector){
+  const sheet=$(selector);
+  if(!session||!sheet||sheet.open)return false;
+  sheet.showModal();
+  return true;
+}
+
+function closeLiveSheets(){
+  ['#liveCoachSheet','#liveMoreSheet'].forEach(selector=>{
+    const sheet=$(selector);
+    if(sheet?.open)sheet.close();
+  });
+}
+
 function route(name, options = {}) {
   name = PokerPilotNavigation.resolveRoute(name);
+  if(name!=='live')closeLiveSheets();
   if (
     focusSessionController.getSnapshot()
     && !['study', 'ranges', 'focus-result'].includes(name)
@@ -2575,6 +2635,10 @@ function evaluateLiveAction(action,amount=0){
 function createLiveSeatElement(playerId){
   const el=document.createElement('div');
   el.setAttribute('data-player-id',String(playerId));
+  const avatar=document.createElement('span');
+  avatar.dataset.seatPart='avatar';
+  avatar.className='player-pod-avatar';
+  avatar.setAttribute('aria-hidden','true');
   const label=document.createElement('small');
   label.dataset.seatPart='label';
   const stack=document.createElement('strong');
@@ -2595,7 +2659,7 @@ function createLiveSeatElement(playerId){
   const betZone=document.createElement('span');
   betZone.dataset.seatPart='bet-zone';
   betZone.className='seat-bet-zone';
-  el.append(label,stack,lastAction,hole,handLabel,fold,betZone);
+  el.append(avatar,label,stack,lastAction,hole,handLabel,fold,betZone);
   return el;
 }
 function reconcileLiveSeats(container,players,update){
@@ -2688,28 +2752,37 @@ function syncLiveBetZone(zone,player){
 }
 function renderSeats(){
   const seats=$('#seats');
+  const table=$('#pokerTable');
+  const layout=PokerPilotLiveSeatLayouts.getLayout(session.n);
+  table.dataset.tableSize=String(session.n);
+  table.dataset.layout=layout.id;
   const positions=positionsFor(session.n,session.button);
   const presentationState=presentationQueue.getState();
   const decision=getCanonicalLiveHeroDecision();
   const activeId=presentationState.activePlayerId??(decision.heroCanAct?0:null);
   reconcileLiveSeats(seats,session.players,(el,p,i)=>{
-    const angle=(90+360*i/session.n)*Math.PI/180,x=50+43*Math.cos(angle),y=50+42*Math.sin(angle);
+    const {x,y}=layout.slots[i];
+    const fromCenterX=x-50,fromCenterY=y-50;
+    const vectorLength=Math.hypot(fromCenterX,fromCenterY)||1;
     const heroTurn=i===0&&decision.heroCanAct;
     const winnerReveal=p.winner&&(
       el.classList.contains('is-winner-reveal')||
       motionLedger.consume('winner',String(p.id))
     );
-    el.className=`seat ${i===0?'hero':''} ${heroTurn?'hero-turn':''} ${y<16?'seat-edge-top':''} ${p.pendingFold?'pending-fold':''} ${p.folded?'folded':''} ${p.winner?'winner':''} ${winnerReveal?'is-winner-reveal':''} ${activeId===i?'active-player':''}`;
-    el.style.left=`calc(${x}% - 32px)`;
-    el.style.top=`calc(${y}% - 30px)`;
+    el.className=`seat player-pod ${i===0?'hero':''} ${heroTurn?'hero-turn':''} ${y<16?'seat-edge-top':''} ${p.pendingFold?'pending-fold':''} ${p.folded?'folded':''} ${p.winner?'winner':''} ${winnerReveal?'is-winner-reveal':''} ${activeId===i?'active-player':''}`;
+    el.dataset.presentationSlot=layout.slots[i].id;
+    el.dataset.playerType=p.type;
+    el.style.left=`${x}%`;
+    el.style.top=`${y}%`;
     el.style.setProperty('--live-label-left',x<20?'0%':x>80?'100%':'50%');
     el.style.setProperty('--live-label-shift',x<20?'0%':x>80?'-100%':'-50%');
-    const betZoneX=Math.round(-Math.cos(angle)*52),betZoneY=Math.round(-Math.sin(angle)*52);
+    const betZoneX=Math.round(-fromCenterX/vectorLength*52),betZoneY=Math.round(-fromCenterY/vectorLength*52);
     el.style.setProperty('--bet-zone-x',`${betZoneX}px`);
     el.style.setProperty('--bet-zone-y',`${betZoneY}px`);
     el.style.setProperty('--chip-from-x',`${-betZoneX}px`);
     el.style.setProperty('--chip-from-y',`${-betZoneY}px`);
-    $('[data-seat-part="label"]',el).textContent=`${positions[i]} • ${i===session.button?'D ':''}${p.type==='hero'?'YOU':TYPES[p.type].short}`;
+    $('[data-seat-part="avatar"]',el).textContent=p.type==='hero'?'YOU':String(p.name||TYPES[p.type].short).slice(0,2).toUpperCase();
+    $('[data-seat-part="label"]',el).textContent=`${positions[i]}${i===session.button?' · D':''}${p.type==='hero'?' · YOU':` · ${TYPES[p.type].short}`}`;
     $('[data-seat-part="stack"]',el).textContent=money(p.stack);
     const lastAction=$('[data-seat-part="last-action"]',el);
     lastAction.classList.toggle('hidden',!p.lastActionLabel);
@@ -2757,11 +2830,13 @@ function renderLive(){
     collectionKey:session.handToken
   });
   $('#streetLabel').textContent=streetText();
-  $('#potLabel').textContent=`Банк ${money(session.presentedPot??session.pot)}`;
+  $('#potLabel').textContent=`POT ${money(session.presentedPot??session.pot)}`;
+  const completedSummary=session.winnerSummary||'Раздача завершена';
+  $('#actionTitle').title=phase==='completed'?completedSummary:'';
   $('#actionTitle').textContent=phase==='paused'
     ?'Сессия на паузе'
     :phase==='completed'
-      ?(session.winnerSummary||'Раздача завершена')
+      ?'Раздача завершена'
       :decision.heroCanAct
         ?'Твоё решение'
         :session.awaiting==='dealing'
@@ -2770,11 +2845,23 @@ function renderLive(){
           ?'Наблюдение за столом'
           :session.awaiting==='ai'
             ?'Ход соперника'
-            :(session.winnerSummary||'Раздача завершена');
+            :'Раздача завершена';
   $('#toCallChip').textContent=session.observing?'Hero — Fold':session.toCall?`Колл ${money(session.toCall)}`:'Можно чек';
   const observing=$('#liveObservingStatus');
   observing.classList.toggle('hidden',!session.observing);
   observing.textContent=session.observing?'You folded — watching the action':'';
+  const dock=$('#screen-live .decision-panel');
+  if(dock){
+    dock.dataset.liveDockState=phase==='paused'
+      ?'paused'
+      :phase==='completed'
+        ?'completed'
+        :decision.heroCanAct
+          ?'hero'
+          :session.observing
+            ?'observing'
+            :'waiting';
+  }
   syncLivePresentationState(undefined,decision);
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);
@@ -2814,7 +2901,7 @@ function showHeroActions(){
   renderLive();
   $('#liveFeedback').className='feedback hidden';
   $('#nextHand').classList.add('hidden');
-  $('#betSizer').classList.add('hidden');
+  closeLiveBetSizer();
   $('#liveHintBox').classList.add('hidden');
   resetLiveLearningPanel();
   if(!decision.controlsAvailable){syncLivePresentationState(undefined,decision);return;}
@@ -2828,9 +2915,55 @@ function showHeroActions(){
   syncLivePresentationState(undefined,decision);
   if(assistMode()==='review')showLiveMath();
 }
-function toggleSizer(action){const s=$('#betSizer');s.classList.remove('hidden');const hero=session.players[0],min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3,max=hero.stack+hero.streetContrib,def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));$('#betRange').min=min;$('#betRange').max=Math.max(min,max);$('#betRange').value=def;$('#betValue').textContent=money(def);s.dataset.action=action;}
-$('#betRange').addEventListener('input',e=>$('#betValue').textContent=money(+e.target.value));$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;$('#betValue').textContent=money(v);}));$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
-$('#liveHint').addEventListener('click',()=>{if(!session||!session.awaiting?.startsWith('hero'))return;const box=$('#liveHintBox');box.classList.remove('hidden');if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';else{const out=C.analyzeOuts(session.players[0].cards,session.board);box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;}});$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
+function syncLiveBetSizerOutput(value){
+  const amount=money(value);
+  $('#betValue').textContent=amount;
+  $('#confirmBet').textContent=`Подтвердить ${amount}`;
+}
+function closeLiveBetSizer(){
+  $('#betSizer').classList.add('hidden');
+  $('#screen-live .live-v2-action-dock')?.classList.remove('is-sizing');
+}
+function toggleSizer(action){
+  const s=$('#betSizer'),hero=session.players[0];
+  const min=action==='raise'?Math.min(hero.stack+hero.streetContrib,Math.max(session.currentBet*2,session.currentBet+3)):3;
+  const max=hero.stack+hero.streetContrib;
+  const def=action==='raise'?Math.min(max,Math.max(min,Math.round(session.currentBet*3))):Math.min(max,Math.max(3,Math.round(session.pot*.55)));
+  $('#betRange').min=min;
+  $('#betRange').max=Math.max(min,max);
+  $('#betRange').value=def;
+  syncLiveBetSizerOutput(def);
+  s.dataset.action=action;
+  s.classList.remove('hidden');
+  $('#screen-live .live-v2-action-dock')?.classList.add('is-sizing');
+}
+function stepLiveBet(direction){
+  const range=$('#betRange'),step=Math.max(1,+range.step||1);
+  range.value=C.clamp(+range.value+direction*step,+range.min,+range.max);
+  syncLiveBetSizerOutput(+range.value);
+}
+$('#betRange').addEventListener('input',e=>syncLiveBetSizerOutput(+e.target.value));
+$('#decreaseBet').addEventListener('click',()=>stepLiveBet(-1));
+$('#increaseBet').addEventListener('click',()=>stepLiveBet(1));
+$('#cancelBet').addEventListener('click',closeLiveBetSizer);
+$$('.quick-sizes button').forEach(b=>b.addEventListener('click',()=>{const max=+$('#betRange').max,min=+$('#betRange').min,v=C.clamp(Math.round(session.pot*(+b.dataset.size)),min,max);$('#betRange').value=v;syncLiveBetSizerOutput(v);}));
+$('#confirmBet').addEventListener('click',()=>{const a=$('#betSizer').dataset.action;if(a)handleHeroAction(a,+$('#betRange').value);});
+$('#liveHint').addEventListener('click',()=>{
+  if(!session)return;
+  openLiveSheet('#liveCoachSheet');
+  if(!session.awaiting?.startsWith('hero'))return;
+  const box=$('#liveHintBox');
+  box.classList.remove('hidden');
+  if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';
+  else{
+    const out=C.analyzeOuts(session.players[0].cards,session.board);
+    box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;
+  }
+});
+$('#liveMathToggle').addEventListener('click',()=>{if(assistMode()==='exam'&&session?.awaiting?.startsWith('hero')){$('#liveHintBox').classList.remove('hidden');$('#liveHintBox').innerHTML='В режиме «Экзамен» ауты и эквити открываются после решения.';}else showLiveMath();});
+$('#liveMoreToggle').addEventListener('click',()=>openLiveSheet('#liveMoreSheet'));
+$('#liveCoachClose').addEventListener('click',()=>$('#liveCoachSheet').close());
+$('#liveMoreClose').addEventListener('click',()=>$('#liveMoreSheet').close());
 function presentHeroAction(perform,onComplete){
   const hero=session.players[0],token=session.handToken;
   session.awaiting='hero-presentation';
@@ -2953,7 +3086,7 @@ function handleHeroAction(action,amount=0){
   feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;
   showLiveMath(evaluation.math||null,{openLearning:false});
   if(action==='fold'){
-    $('#betSizer').classList.add('hidden');
+    closeLiveBetSizer();
     presentHeroAction(
       ()=>recordLiveAction(hero,'FOLD',{text:'YOU fold',legacyAction:'fold'}),
       ()=>{session.awaiting='observer';session.observing=true;renderLive();continueAfterHeroFold();}
@@ -2987,7 +3120,7 @@ function handleHeroAction(action,amount=0){
         session.currentBet=Math.max(session.currentBet,hero.streetContrib);
         return recordLiveAction(hero,allIn?'ALL_IN':finalAction.toUpperCase(),{amount:paid,toAmount:finalAction==='raise'?finalAmount:null,text:allIn?`YOU all-in ${money(finalAmount)}`:`YOU ${finalAction} до ${money(finalAmount)}`,legacyAction:allIn?'all-in':`${finalAction} ${money(finalAmount)}`});
       },
-      ()=>{session.awaiting=null;$('#betSizer').classList.add('hidden');queueVillainResponseAfterHeroBet();}
+      ()=>{session.awaiting=null;closeLiveBetSizer();queueVillainResponseAfterHeroBet();}
     );
   }
 }
@@ -3124,7 +3257,7 @@ function endHand(){
   session.awaiting=null;
   session.observing=false;
   $('#liveActions').replaceChildren();
-  $('#betSizer').classList.add('hidden');
+  closeLiveBetSizer();
   $('#nextHand').classList.add('hidden');
   scheduleAutomaticNextHand(session.currentCompletedHand);
   renderLive();
@@ -3264,7 +3397,7 @@ function finishSession(reason='Сессия завершена.'){
   $('#liveSetup').classList.remove('hidden');
   route('home');
 }
-$('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?'))finishSession();});
+$('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?')){closeLiveSheets();finishSession();}});
 
 
 // ----- v1.6 animations -----

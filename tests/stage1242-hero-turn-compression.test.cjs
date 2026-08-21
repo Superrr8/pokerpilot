@@ -10,82 +10,58 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const liveCss = fs.readFileSync(path.join(root, 'src/styles/live-session.css'), 'utf8');
 const layoutCss = fs.readFileSync(path.join(root, 'src/styles/layout-foundation.css'), 'utf8');
 
-function rule(source, selector) {
-  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const match = source.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`));
-  assert.ok(match, `missing rule: ${selector}`);
-  return match[1];
-}
-
-test('Hero turn exposes one presentation-only active-play state on the app shell', () => {
+test('canonical Hero state remains synchronized while session geometry stays stable', () => {
   assert.match(html, /function renderLive\(\)\{[\s\S]*?syncLivePresentationState\(\)/);
   assert.match(html, /PokerPilotLivePresentationState\.sync/);
   assert.match(html, /\.app-shell'\)\.dataset\.activeRoute = name;[\s\S]*?syncLivePresentationState\(name\)/);
+  assert.match(html, /classList\.toggle\('is-live-game-active', gameActive\)/);
   assert.doesNotMatch(html, /PokerCore[\s\S]{0,100}is-live-hero-turn/);
 });
 
-test('active-play compression is scoped to Live and the mobile breakpoint', () => {
-  const marker = liveCss.indexOf('/* Stage 12.4.2 — Hero turn vertical compression. */');
-  assert.notEqual(marker, -1);
-  const media = liveCss.indexOf('@media (max-width: 430px)', marker);
-  assert.notEqual(media, -1);
-  assert.match(liveCss.slice(media), /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn/);
+test('Live V2 replaces obsolete Hero-only geometry with a session-wide shell', () => {
+  assert.match(liveCss, /\/\* Stage 12\.5\.3 — Live Mode V2 stable premium shell\. \*\//);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active/);
+  assert.doesNotMatch(liveCss, /Stage 12\.4\.2 — Hero turn vertical compression/);
+  assert.doesNotMatch(liveCss, /#liveGame\.is-hero-turn \.poker-table\s*\{[^}]*height:/);
 });
 
-test('active Live top navigation keeps brand and sound toggle while removing nonessential height', () => {
-  const topbar = rule(liveCss, '.app-shell[data-active-route="live"].is-live-hero-turn .top-navigation');
-  const sound = rule(liveCss, '.app-shell[data-active-route="live"].is-live-hero-turn .sound-control');
-  assert.match(topbar, /min-height:\s*44px/);
-  assert.match(topbar, /margin-bottom:\s*4px/);
-  assert.match(sound, /min-height:\s*40px/);
-  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn \.sound-volume\s*\{[^}]*display:\s*none/);
-  assert.doesNotMatch(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-hero-turn \.sound-toggle\s*\{[^}]*display:\s*none/);
+test('active Live top navigation is a dedicated minimal game bar', () => {
+  assert.match(html, /id="liveBackControl"/);
+  assert.match(html, /id="liveMoreToggle"/);
+  assert.match(html, /class="chip top-stakes">\$1\/\$3/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active \.top-navigation\s*\{[\s\S]*?height:\s*48px/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active \.sound-volume\s*\{[^}]*display:\s*none/);
 });
 
-test('back control becomes compact only during an active mobile Hero decision', () => {
-  const back = rule(liveCss, '.app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back');
-  assert.match(back, /min-height:\s*32px/);
-  assert.match(back, /margin-bottom:\s*2px/);
-  assert.match(liveCss, /#screen-live > \.back::after\s*\{[^}]*inset:\s*-6px -4px/);
+test('back and More controls keep usable compact touch targets for the whole game', () => {
+  assert.match(liveCss, /\.live-v2-top-control\s*\{[\s\S]*?min-height:\s*42px/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active \.live-v2-top-control\s*\{[^}]*display:\s*grid/);
 });
 
-test('active-play header and back chrome fit an explicit 82px mobile budget', () => {
-  const topbar = rule(liveCss, '.app-shell[data-active-route="live"].is-live-hero-turn .top-navigation');
-  const back = rule(liveCss, '.app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back');
-  const px = (body, property) => Number(body.match(new RegExp(`${property}:\\s*(\\d+)px`))[1]);
-  const chromeBudget = px(topbar, 'height') + px(topbar, 'margin-bottom')
-    + px(back, 'min-height') + px(back, 'margin-bottom');
-  assert.equal(chromeBudget, 82);
+test('real Live HUD metrics and secondary controls remain available in More', () => {
+  assert.match(html, /id="liveMoreSheet"[\s\S]*?id="liveStack"[\s\S]*?id="liveProfit"[\s\S]*?id="liveHands"[\s\S]*?id="liveTilt"/);
+  assert.match(html, /id="liveMoreSheet"[\s\S]*?id="pauseLive"[\s\S]*?id="saveLiveHand"[\s\S]*?id="endSession"/);
 });
 
-test('real Live HUD metrics and controls remain available', () => {
-  assert.match(html, /id="liveStack"/);
-  assert.match(html, /id="liveProfit"/);
-  assert.match(html, /id="liveHands"/);
-  assert.match(html, /id="liveTilt"/);
-  assert.match(html, /id="pauseLive"/);
-  assert.match(html, /id="saveLiveHand"/);
-  assert.doesNotMatch(liveCss, /\.is-live-hero-turn[^}]*\.session-bar[^}]*display:\s*none/);
+test('table, Hero cards and action dimensions use the accepted V2 geometry', () => {
+  assert.match(liveCss, /#screen-live \.poker-table\.live-v2-poker-table\s*\{[\s\S]*?height:\s*var\(--live-table-camera-height\)/);
+  assert.match(liveCss, /#screen-live #heroCards\.live-v2-hero-cards \.playing-card\s*\{[\s\S]*?width:\s*56px/);
+  assert.match(liveCss, /#screen-live \.live-v2-action-dock #liveActions button\s*\{[\s\S]*?min-height:\s*48px/);
 });
 
-test('accepted table, hole-card and action dimensions are preserved', () => {
-  assert.match(liveCss, /height:\s*clamp\(220px,\s*27dvh,\s*232px\)/);
-  assert.match(liveCss, /#screen-live #liveGame\.is-hero-turn #heroCards \.playing-card\s*\{[\s\S]*?width:\s*54px;[\s\S]*?height:\s*76px/);
-  assert.match(liveCss, /#screen-live #liveActions button\s*\{[\s\S]*?min-height:\s*44px/);
-});
-
-test('decision ordering stays play-first and learning remains below actions', () => {
+test('decision ordering stays poker-first and learning remains in Coach', () => {
   assert.ok(html.indexOf('id="heroCards"') < html.indexOf('id="liveActions"'));
-  assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveLearningPanel"'));
+  assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveCoachSheet"'));
+  assert.match(html, /id="liveHint"[^>]*aria-controls="liveCoachSheet"/);
 });
 
-test('fixed navigation architecture and safe-area ownership remain unchanged', () => {
+test('fixed-navigation foundation remains unchanged outside active Live', () => {
   assert.match(layoutCss, /\.bottom-nav\s*\{[\s\S]*?bottom:\s*calc\(var\(--safe-area-bottom\) \+ var\(--bottom-navigation-offset\)\)/);
   assert.match(layoutCss, /\.app-shell\s*\{[\s\S]*?padding-block-end:\s*var\(--app-content-bottom-inset\)/);
-  assert.doesNotMatch(liveCss, /#liveActions[^}]*position:\s*(?:fixed|sticky)/);
+  assert.match(liveCss, /\.app-shell\[data-active-route="live"\]\.is-live-game-active #primaryNavigation\s*\{[^}]*display:\s*none/);
 });
 
-test('compact header state does not alter gameplay or trainer calculations', () => {
+test('new shell does not alter gameplay or trainer calculations', () => {
   assert.doesNotMatch(liveCss, /PokerCore|analyzerPreflop|analyzerPostflop|callEV/);
   assert.match(html, /function getCanonicalLiveHeroDecision/);
   assert.match(html, /flowCanHeroAct:\s*Boolean\(session && flowController\.canHeroAct\(\)\)/);

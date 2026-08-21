@@ -74,7 +74,8 @@ test('Trainer, Ranges, Hand Lab and Progress receive shared screen-level spacing
 });
 
 test('Live shell keeps Hero bottom-center and standardizes table presentation', () => {
-  assert.match(html, /const angle=\(90\+360\*i\/session\.n\)\*Math\.PI\/180/);
+  assert.match(html, /PokerPilotLiveSeatLayouts\.getLayout\(session\.n\)/);
+  assert.match(html, /const \{x,y\}=layout\.slots\[i\]/);
   assert.match(refresh, /#screen-live \.poker-table[\s\S]*--felt-base/);
   assert.match(refresh, /#screen-live \.seat\.hero[\s\S]*bottom/);
 });

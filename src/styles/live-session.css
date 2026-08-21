@@ -910,197 +910,6 @@
   margin-inline: 0;
 }
 
-@media (max-width: 430px) {
-  #screen-live #liveGame.is-hero-turn {
-    --live-mobile-nav-safety-gap: 20px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 4px;
-    padding: 6px 8px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .stats-grid.four {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 4px;
-    margin-top: 0;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat {
-    min-width: 0;
-    padding: 5px 2px;
-    border-radius: var(--radius-xs);
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat small {
-    overflow: hidden;
-    font-size: 8px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat strong {
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-  }
-
-  #screen-live #liveGame.is-hero-turn .live-hand-controls {
-    width: auto;
-    justify-content: flex-end;
-    gap: 4px;
-    margin-inline-start: 0;
-  }
-
-  #screen-live #liveGame.is-hero-turn .compact-hand-action {
-    min-height: 36px;
-    padding: 5px 9px;
-    font-size: 10px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .poker-table {
-    height: clamp(220px, 27dvh, 232px);
-    min-height: clamp(220px, 27dvh, 232px);
-    margin: 2px 0 8px;
-    border-width: 6px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .seat {
-    width: 52px;
-    height: 50px;
-    min-height: 50px;
-    padding: 4px;
-    border-radius: var(--radius-sm);
-  }
-
-  #screen-live #liveGame.is-hero-turn .table-center {
-    min-width: min(210px, 62vw);
-    gap: 5px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .board {
-    min-height: 48px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .decision-panel {
-    margin-top: 0;
-    padding: 10px;
-    padding-bottom: max(10px, calc(var(--safe-area-bottom) + 4px));
-  }
-
-  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head {
-    align-items: center;
-  }
-
-  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head h3 {
-    margin-top: 4px;
-    font-size: 17px;
-  }
-
-  #screen-live #liveGame.is-hero-turn #heroCards {
-    margin-block: 6px;
-  }
-
-  #screen-live #liveGame.is-hero-turn #heroCards .playing-card {
-    width: 54px;
-    height: 76px;
-    padding: 6px;
-    font-size: 20px;
-  }
-
-  #screen-live #liveActions {
-    min-width: 0;
-    gap: 6px;
-    margin-top: 6px;
-  }
-
-  #screen-live #liveActions button {
-    min-width: 0;
-    min-height: 44px;
-    padding: 10px 5px;
-  }
-
-  #screen-live .coach-tools {
-    margin-top: 8px;
-  }
-
-  #screen-live .live-result-summary,
-  #screen-live .live-learning-panel,
-  #screen-live .live-history-panel {
-    max-width: 100%;
-  }
-
-  #screen-live .live-learning-content {
-    padding-inline: 8px;
-  }
-}
-
-/* Stage 12.4.2 — Hero turn vertical compression. */
-@media (max-width: 430px) {
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation {
-    height: 44px;
-    min-height: 44px;
-    margin-bottom: 4px;
-    gap: 6px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .brand {
-    min-height: 40px;
-    gap: 7px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .logo {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .brand strong {
-    font-size: 16px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-header-actions,
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation-actions {
-    height: 40px;
-    gap: 4px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-control {
-    width: 40px;
-    height: 40px;
-    min-height: 40px;
-    gap: 0;
-    padding: 0;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-toggle {
-    width: 40px;
-    min-height: 40px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-volume {
-    display: none;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back {
-    position: relative;
-    min-height: 32px;
-    margin-bottom: 2px;
-    padding: 3px 8px 3px 1px;
-    font-size: 11px;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back::after {
-    content: "";
-    position: absolute;
-    inset: -6px -4px;
-  }
-
-}
-
 @media (prefers-reduced-motion: reduce) {
   .live-learning-panel,
   .live-learning-chevron,
@@ -1110,185 +919,885 @@
   }
 }
 
-/* Stage 12.5.2 — Canonical Hero-decision viewport compression. */
+/* Stage 12.5.3 — Live Mode V2 stable premium shell. */
+.live-v2-top-control {
+  display: none;
+  width: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(226, 205, 178, .16);
+  border-radius: var(--radius-pill);
+  background: rgba(24, 18, 14, .78);
+  color: var(--text-primary);
+  font-size: 23px;
+  box-shadow: inset 0 1px rgba(255,255,255,.035), 0 6px 16px rgba(0,0,0,.18);
+}
+
+.live-v2-more-control {
+  font-size: 16px;
+  letter-spacing: 0.08em;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active {
+  --live-v2-table-stage-height: clamp(360px, 44dvh, 380px);
+  --live-v2-felt-center: #15382c;
+  --live-v2-felt-edge: #09251d;
+  --live-v2-rail-leather: #1a1917;
+  --live-v2-walnut: #160f0b;
+  --live-v2-dock-surface: #17110e;
+  width: min(100%, 920px);
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  padding-block-start: max(4px, env(safe-area-inset-top));
+  padding-block-end: max(8px, env(safe-area-inset-bottom));
+  overflow-x: clip;
+  overflow-y: hidden;
+  background:
+    radial-gradient(circle at 50% 17%, rgba(142, 87, 45, .13), transparent 34%),
+    repeating-linear-gradient(104deg, rgba(132, 80, 44, .025) 0 2px, transparent 2px 14px),
+    linear-gradient(148deg, #1c130e 0%, var(--live-v2-walnut) 35%, #0b0908 73%, #080908 100%);
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .top-navigation {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky, 20);
+  display: flex;
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  margin: 0;
+  gap: 8px;
+  border-bottom: 0;
+  background: linear-gradient(180deg, rgba(15, 11, 9, .88), rgba(15, 11, 9, .42) 72%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .brand {
+  display: none;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .home-profile-entry {
+  display: none;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .live-v2-top-control {
+  display: grid;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .top-header-actions {
+  display: flex;
+  width: 100%;
+  height: 44px;
+  min-width: 0;
+  margin: 0;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .top-navigation-actions {
+  display: grid;
+  width: 100%;
+  height: 44px;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .top-stakes {
+  display: inline-flex;
+  min-height: 30px;
+  justify-self: center;
+  padding: 5px 12px;
+  border-color: rgba(226, 174, 109, .18);
+  background: rgba(28, 20, 15, .76);
+  color: #e6caa7;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .sound-control {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  padding: 0;
+  border-color: rgba(226, 205, 178, .16);
+  border-radius: var(--radius-pill);
+  background: rgba(24, 18, 14, .78);
+  box-shadow: inset 0 1px rgba(255,255,255,.035), 0 6px 16px rgba(0,0,0,.18);
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .sound-toggle {
+  width: 42px;
+  min-height: 42px;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .sound-volume {
+  display: none;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active #screen-live > .back,
+.app-shell[data-active-route="live"].is-live-game-active #primaryNavigation {
+  display: none;
+  pointer-events: none;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active main,
+.app-shell[data-active-route="live"].is-live-game-active #screen-live {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.live-v2-game,
+.live-v2-game-shell,
+.live-v2-table-stage,
+.live-v2-hero-zone,
+.live-v2-action-zone,
+.live-v2-action-dock {
+  min-width: 0;
+}
+
+.live-v2-game-shell {
+  display: grid;
+  width: 100%;
+  height: calc(100dvh - max(4px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)) - 48px);
+  min-height: 0;
+  grid-template-rows: var(--live-v2-table-stage-height) 108px 232px;
+  align-content: center;
+  gap: 6px;
+  overflow-x: clip;
+}
+
+.live-v2-table-stage {
+  position: relative;
+  display: block;
+  min-height: 0;
+  padding: 0;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+#screen-live .poker-table.live-v2-poker-table {
+  width: var(--live-table-camera-width);
+  max-width: none;
+  height: var(--live-table-camera-height);
+  min-height: var(--live-table-camera-height);
+  max-height: var(--live-table-camera-height);
+  margin: 0 0 0 50%;
+  transform: translateX(-50%) translateZ(0);
+  overflow: visible;
+  border: 11px solid var(--live-v2-rail-leather);
+  border-radius: 46% / 42%;
+  background:
+    radial-gradient(circle at 48% 34%, rgba(231, 218, 183, .035), transparent 33%),
+    repeating-radial-gradient(ellipse at center, rgba(241, 229, 200, .009) 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at center, var(--live-v2-felt-center) 0%, #0f3025 58%, var(--live-v2-felt-edge) 100%);
+  box-shadow:
+    inset 0 0 84px rgba(0, 0, 0, .54),
+    inset 0 0 0 2px rgba(230, 208, 177, .055),
+    0 0 0 2px rgba(117, 76, 46, .42),
+    0 0 0 8px rgba(7, 7, 6, .9),
+    0 3px 0 9px rgba(117, 75, 43, .18),
+    0 20px 42px rgba(0,0,0,.52);
+}
+
+#screen-live .poker-table[data-table-size="6"].live-v2-poker-table {
+  --live-table-camera-width: min(calc(100vw - 24px), 378px);
+  --live-table-camera-height: 334px;
+  border-radius: 46% / 42%;
+}
+
+#screen-live .poker-table[data-table-size="9"].live-v2-poker-table {
+  --live-table-camera-width: clamp(410px, 112vw, 440px);
+  --live-table-camera-height: 330px;
+  border-radius: 45% / 40%;
+}
+
+#screen-live .table-center.live-v2-board-pot {
+  min-width: min(260px, 72%);
+  gap: 6px;
+}
+
+#screen-live .live-v2-board-pot > small {
+  color: rgba(239, 245, 241, 0.58);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+#screen-live .live-v2-board-pot .pot-display {
+  min-width: 0;
+  padding: 4px 9px;
+  border: 1px solid rgba(226, 205, 178, .13);
+  border-radius: 10px;
+  background: rgba(7, 14, 11, .44);
+  color: #ead9bd;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 1px rgba(255,255,255,.025), 0 5px 14px rgba(0,0,0,.12);
+}
+
+#screen-live .seat.player-pod {
+  width: 92px;
+  height: 52px;
+  min-height: 52px;
+  padding: 5px 6px 5px 28px;
+  transform: translate(-50%, -50%) translateZ(0);
+  border: 1px solid rgba(226, 205, 178, .12);
+  border-radius: 18px;
+  background: linear-gradient(155deg, rgba(28, 24, 20, .95), rgba(12, 13, 12, .92));
+  box-shadow: inset 0 1px rgba(255,255,255,.025), 0 7px 17px rgba(0,0,0,.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#screen-live .poker-table[data-table-size="6"] .seat.player-pod:not(.hero) {
+  width: 104px;
+  padding-left: 30px;
+}
+
+#screen-live .poker-table[data-table-size="9"] .seat.player-pod:not(.hero) {
+  width: 86px;
+  height: 48px;
+  min-height: 48px;
+  padding-left: 24px;
+}
+
+#screen-live .seat.player-pod.hero {
+  top: 100% !important;
+  z-index: 8;
+  width: 108px;
+  height: 56px;
+  min-height: 56px;
+  padding-left: 32px;
+  border-color: rgba(214, 155, 75, .42);
+  background: linear-gradient(155deg, rgba(41, 30, 21, .97), rgba(18, 15, 12, .95));
+  box-shadow: 0 0 0 2px rgba(214, 155, 75, .12), 0 10px 22px rgba(0,0,0,.4);
+}
+
+.player-pod-avatar {
+  position: absolute;
+  top: 50%;
+  left: -11px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  margin: 0;
+  transform: translateY(-50%);
+  border: 1px solid rgba(226, 205, 178, .2);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #5a5147 0%, #302b26 38%, #111211 100%);
+  color: var(--text-primary);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .03em;
+  box-shadow: inset 0 1px rgba(255,255,255,.08), 0 5px 12px rgba(0,0,0,.32);
+}
+
+#screen-live .seat.player-pod.hero .player-pod-avatar {
+  width: 36px;
+  height: 36px;
+}
+
+#screen-live .seat.player-pod small {
+  overflow: hidden;
+  color: rgba(228, 237, 232, 0.68);
+  font-size: 9px;
+  font-weight: 760;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#screen-live .seat.player-pod strong {
+  color: var(--text-primary);
+  font-size: 15px;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+#screen-live .poker-table[data-table-size="9"] .seat.player-pod small {
+  font-size: 8.5px;
+}
+
+#screen-live .poker-table[data-table-size="9"] .seat.player-pod strong {
+  font-size: 13.5px;
+}
+
+#screen-live .seat.player-pod.hero small {
+  font-size: 9px;
+}
+
+#screen-live .seat.player-pod.hero strong {
+  font-size: 15px;
+}
+
+#screen-live .seat.player-pod.active-player {
+  border-color: rgba(222, 172, 93, .7);
+  box-shadow: 0 0 0 3px rgba(214,148,66,.1), 0 10px 22px rgba(0,0,0,.34);
+}
+
+#screen-live .seat.player-pod.folded {
+  opacity: .26;
+  filter: grayscale(.65) saturate(.32);
+}
+
+.live-v2-hero-zone {
+  position: relative;
+  display: grid;
+  height: 108px;
+  place-items: start center;
+  padding-top: 22px;
+  pointer-events: none;
+}
+
+#screen-live #heroCards.live-v2-hero-cards {
+  position: relative;
+  z-index: 7;
+  width: max-content;
+  margin: 0;
+  flex-wrap: nowrap;
+  gap: 6px;
+  pointer-events: none;
+}
+
+#screen-live #heroCards.live-v2-hero-cards .playing-card {
+  width: 56px;
+  height: 80px;
+  border: 1px solid rgba(255,255,255,.68);
+  border-radius: 11px;
+  background: linear-gradient(145deg, #fffdf6, #e7e1d6);
+  box-shadow: 0 8px 18px rgba(0,0,0,.34), inset 0 0 0 1px rgba(74,58,43,.08);
+}
+
+.live-v2-action-zone {
+  display: grid;
+  width: 100%;
+  min-height: 232px;
+  align-items: end;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active #screen-live .decision-panel.live-v2-action-dock {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 142px;
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  border-color: rgba(226, 205, 178, .14);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(165deg, rgba(35, 25, 19, .97), var(--live-v2-dock-surface) 58%, #100e0c 100%);
+  box-shadow: inset 0 1px rgba(255,255,255,.025), 0 -8px 30px rgba(0,0,0,.22), 0 12px 30px rgba(0,0,0,.18);
+}
+
+#screen-live .live-v2-action-dock.is-sizing {
+  min-height: 232px;
+}
+
+#screen-live .live-v2-action-dock.is-sizing #liveActions,
+#screen-live .live-v2-action-dock.is-sizing .live-v2-coach-trigger {
+  display: none;
+}
+
+.live-v2-dock-heading {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 88px;
+}
+
+.live-v2-dock-heading > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.live-v2-dock-heading h3 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.live-v2-dock-heading > #toCallChip {
+  display: none;
+}
+
+.live-v2-dock-heading .tag,
+.live-v2-dock-heading .chip {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  font-size: 9px;
+}
+
+.app-shell[data-active-route="live"].is-live-game-active .live-v2-dock-heading .tag {
+  border-color: rgba(210, 156, 85, .2);
+  background: rgba(128, 77, 34, .18);
+  color: #d6a261;
+}
+
+#screen-live .live-v2-action-dock #liveActions {
+  min-height: 52px;
+  grid-template-columns: repeat(auto-fit, minmax(74px, 1fr));
+  align-items: stretch;
+  gap: 7px;
+  margin-top: 5px;
+}
+
+#screen-live .live-v2-action-dock #liveActions button {
+  min-width: 0;
+  min-height: 48px;
+  padding: 9px 7px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+}
+
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="fold"] {
+  border-color: rgba(183, 72, 65, .5);
+  background: linear-gradient(180deg, #762b28, #4d211f);
+  color: #ffe8e5;
+}
+
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="call"],
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="check"] {
+  border-color: rgba(166, 109, 47, .46);
+  background: linear-gradient(180deg, #6f431f, #49301d);
+  color: #fff3db;
+}
+
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="raise"],
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="bet"],
+#screen-live .live-v2-action-dock #liveActions button[data-live-action="allin"] {
+  border-color: rgba(216, 145, 59, .6);
+  background: linear-gradient(180deg, #ad672b, #75421d);
+  color: #fff8eb;
+}
+
+.live-v2-action-dock[data-live-dock-state="waiting"] #liveActions::before,
+.live-v2-action-dock[data-live-dock-state="observing"] #liveActions::before,
+.live-v2-action-dock[data-live-dock-state="paused"] #liveActions::before,
+.live-v2-action-dock[data-live-dock-state="completed"] #liveActions::before {
+  content: "Стол продолжает раздачу";
+  display: grid;
+  grid-column: 1 / -1;
+  place-items: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.live-v2-action-dock[data-live-dock-state="observing"] #liveActions::before {
+  content: "Наблюдение за столом";
+}
+
+.live-v2-action-dock[data-live-dock-state="paused"] #liveActions::before {
+  content: "Сессия на паузе";
+}
+
+.live-v2-action-dock[data-live-dock-state="completed"] #liveActions::before {
+  content: "Следующая раздача скоро";
+}
+
+.live-v2-coach-trigger {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: auto;
+  min-height: 36px;
+  padding: 6px 9px;
+  border-color: rgba(218, 168, 99, .16);
+  background: rgba(22, 17, 13, .5);
+  color: #d1a366;
+  font-size: 11px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+#screen-live .live-v2-action-dock .live-observing-status {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  z-index: 8;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+#screen-live .live-v2-action-dock .bet-sizer {
+  position: static;
+  z-index: auto;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#screen-live .live-v2-action-dock .quick-sizes {
+  margin: 5px 0;
+}
+
+.live-v2-sizing-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 38px;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.live-v2-size-step {
+  width: 38px;
+  min-width: 38px;
+  min-height: 34px;
+  padding: 0;
+  border-color: rgba(218,168,99,.18);
+  background: rgba(32,23,17,.7);
+  color: #dfb777;
+}
+
+.live-v2-sizing-row input {
+  width: 100%;
+  accent-color: #bd7630;
+}
+
+.live-v2-sizing-actions {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 7px;
+}
+
+.live-v2-sizing-actions button {
+  min-height: 38px;
+  padding: 7px 9px;
+}
+
+.live-v2-sizing-actions button:last-child {
+  border-color: rgba(216,145,59,.58);
+  background: linear-gradient(180deg, #ad672b, #75421d);
+  color: #fff6e8;
+}
+
+.live-v2-sheet {
+  width: min(calc(100% - 20px), 680px);
+  max-width: 680px;
+  max-height: min(82dvh, 720px);
+  margin: auto auto max(8px, env(safe-area-inset-bottom));
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-lg) var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-elevated) 97%, transparent);
+  color: var(--text-primary);
+  box-shadow: 0 -16px 60px rgba(0,0,0,.46);
+}
+
+dialog.live-v2-sheet {
+  border-color: rgba(226, 205, 178, .14);
+  background: linear-gradient(165deg, rgba(35, 25, 19, .985), #17110e 58%, #100e0c 100%);
+  box-shadow: inset 0 1px rgba(255,255,255,.025), 0 -16px 60px rgba(0,0,0,.5);
+}
+
+.live-v2-sheet::backdrop {
+  background: rgba(0, 7, 5, .62);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.live-v2-sheet-header {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.live-v2-sheet .live-v2-sheet-header {
+  border-bottom-color: rgba(226, 205, 178, .1);
+}
+
+.live-v2-sheet .eyebrow {
+  color: #c89453;
+}
+
+.live-v2-sheet .live-history-panel,
+.live-v2-sheet .live-learning-panel,
+.live-v2-sheet .live-result-summary,
+.live-v2-sheet .live-v2-session-meta,
+.live-v2-sheet .live-v2-volume-setting {
+  border-color: rgba(226, 205, 178, .1);
+  background: rgba(10, 13, 11, .46);
+}
+
+.live-v2-sheet-header h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+}
+
+.live-v2-sheet-close {
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: var(--radius-pill);
+  font-size: 22px;
+}
+
+.live-v2-sheet-body {
+  display: grid;
+  gap: 10px;
+  max-height: calc(min(82dvh, 720px) - 64px);
+  padding: 12px 14px max(14px, env(safe-area-inset-bottom));
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.live-v2-sheet .live-result-summary,
+.live-v2-sheet .live-learning-panel,
+.live-v2-sheet .live-history-panel,
+.live-v2-sheet .coach-box,
+.live-v2-sheet .feedback,
+.live-v2-sheet .math-box {
+  margin: 0;
+}
+
+.live-v2-session-meta {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+}
+
+.live-v2-session-meta .stats-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+
+.live-v2-volume-setting {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.live-v2-volume-setting .sound-volume {
+  display: block;
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.live-v2-session-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.live-v2-session-actions button {
+  min-height: 46px;
+}
+
+.live-v2-end-session {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border-default));
+}
+
 @media (max-width: 480px) and (orientation: portrait) {
-  .app-shell[data-active-route="live"].is-live-hero-turn {
-    padding-block-end: max(8px, var(--safe-area-bottom));
+  .app-shell[data-active-route="live"].is-live-game-active {
+    padding-inline: 8px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation {
-    height: 40px;
-    min-height: 40px;
-    margin-bottom: 2px;
-    gap: 4px;
+  .live-v2-game-shell {
+    min-height: 0;
+    grid-template-rows: var(--live-v2-table-stage-height) 108px 232px;
+    gap: 6px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .brand {
-    min-height: 36px;
-    gap: 0;
+  #screen-live .poker-table.live-v2-poker-table {
+    border-width: 9px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .brand > span:last-child {
-    display: none;
+  #screen-live .seat.player-pod {
+    width: 86px;
+    height: 50px;
+    min-height: 50px;
+    padding: 4px 5px 4px 26px;
+    border-radius: 17px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .logo {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-xs);
+  #screen-live .poker-table[data-table-size="6"] .seat.player-pod:not(.hero) {
+    width: 104px;
+    padding-left: 29px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-header-actions,
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-navigation-actions {
-    height: 36px;
-    gap: 4px;
+  #screen-live .poker-table[data-table-size="9"] .seat.player-pod:not(.hero) {
+    width: 86px;
+    height: 48px;
+    min-height: 48px;
+    padding-left: 24px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .top-stakes {
-    display: inline-flex;
-    min-height: 28px;
-    padding: 4px 8px;
-    font-size: 10px;
+  #screen-live .seat.player-pod.hero {
+    width: 106px;
+    height: 54px;
+    min-height: 54px;
+    padding-left: 31px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-control {
-    width: 36px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0;
+  .player-pod-avatar {
+    width: 30px;
+    height: 30px;
+    margin-top: 0;
+    font-size: 8px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-toggle {
-    width: 36px;
-    min-height: 36px;
+  #screen-live .seat.player-pod.hero .player-pod-avatar {
+    width: 34px;
+    height: 34px;
   }
 
-  .app-shell[data-active-route="live"].is-live-hero-turn .sound-volume {
-    display: none;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn #screen-live > .back {
-    display: none;
-  }
-
-  .app-shell[data-active-route="live"].is-live-hero-turn #primaryNavigation {
-    display: none;
-    pointer-events: none;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar {
-    min-height: 42px;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 3px;
-    margin: 0 0 3px;
-    padding: 4px 6px;
-    border-radius: var(--radius-sm);
-  }
-
-  #screen-live #liveGame.is-hero-turn .stats-grid.four {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 2px;
-    margin: 0;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat {
-    min-width: 0;
-    padding: 2px 1px;
-    border: 0;
-    border-radius: var(--radius-xs);
-    background: transparent;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat small {
-    font-size: 7px;
-    line-height: 1;
-  }
-
-  #screen-live #liveGame.is-hero-turn .session-bar .stat strong {
-    font-size: 11px;
-    line-height: 1.15;
-    font-variant-numeric: tabular-nums;
-  }
-
-  #screen-live #liveGame.is-hero-turn .live-hand-controls {
-    width: auto;
-    gap: 2px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .compact-hand-action {
-    width: 36px;
-    min-width: 36px;
-    min-height: 36px;
-    padding: 0;
-    font-size: 0;
-  }
-
-  #screen-live #liveGame.is-hero-turn #pauseLive::before {
-    content: "Ⅱ";
-    color: var(--text-primary);
+  #screen-live .seat.player-pod strong {
     font-size: 14px;
   }
 
-  #screen-live #liveGame.is-hero-turn #saveLiveHand::before {
-    content: "☆";
-    color: var(--text-primary);
-    font-size: 17px;
+  #screen-live .poker-table[data-table-size="9"] .seat.player-pod strong {
+    font-size: 12.5px;
   }
 
-  #screen-live #liveGame.is-hero-turn .poker-table {
-    height: clamp(190px, 24dvh, 210px);
-    min-height: clamp(190px, 24dvh, 210px);
-    margin: 1px 0 4px;
-    border-width: 6px;
+  #screen-live #heroCards.live-v2-hero-cards .playing-card {
+    width: 56px;
+    height: 80px;
   }
 
-  #screen-live #liveGame.is-hero-turn .seat {
-    width: 50px;
-    height: 46px;
-    min-height: 46px;
-    padding: 3px;
+  #screen-live .board .playing-card.small-card {
+    width: clamp(38px, 10.6vw, 44px);
+    height: clamp(54px, 14.8vw, 62px);
+    font-size: 15px;
   }
 
-  #screen-live #liveGame.is-hero-turn .table-center {
-    min-width: min(204px, 60vw);
-    gap: 3px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .board {
-    min-height: 44px;
-  }
-
-  #screen-live #liveGame.is-hero-turn .decision-panel {
+  #screen-live .live-v2-action-dock {
+    min-height: 142px;
     padding: 8px;
-    padding-bottom: max(8px, calc(var(--safe-area-bottom) + 4px));
   }
 
-  #screen-live #liveGame.is-hero-turn .live-decision-core .panel-head h3 {
-    margin-top: 2px;
-    font-size: 16px;
+  #screen-live .live-v2-action-dock.is-sizing {
+    min-height: 232px;
   }
 
-  #screen-live #liveGame.is-hero-turn #heroCards {
-    margin-block: 4px;
+  .live-v2-dock-heading h3 {
+    font-size: 14px;
   }
 
-  #screen-live #liveGame.is-hero-turn #heroCards .playing-card {
-    width: 54px;
-    height: 76px;
+  .live-v2-coach-trigger {
+    width: auto;
+    font-size: 10px;
   }
 
-  #screen-live #liveActions {
-    margin-top: 4px;
+  #screen-live .live-v2-action-dock #liveActions {
+    grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+    gap: 5px;
   }
 
-  #screen-live #liveActions button {
-    min-height: 44px;
+  #screen-live .live-v2-action-dock #liveActions button {
+    min-height: 50px;
+    padding-inline: 4px;
+    font-size: 14px;
+  }
+
+  .live-v2-sheet {
+    width: calc(100% - 12px);
+    max-height: 86dvh;
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-md) var(--radius-md);
+  }
+
+  .live-v2-sheet-body {
+    max-height: calc(86dvh - 64px);
   }
 }
 
 @media (max-width: 480px) and (orientation: portrait) and (max-height: 720px) {
-  #screen-live #liveGame.is-hero-turn .poker-table {
-    height: clamp(180px, 25dvh, 190px);
-    min-height: clamp(180px, 25dvh, 190px);
+  .app-shell[data-active-route="live"].is-live-game-active {
+    --live-v2-table-stage-height: 328px;
+  }
+
+  .live-v2-game-shell {
+    grid-template-rows: var(--live-v2-table-stage-height) 88px 180px;
+  }
+
+  #screen-live .poker-table[data-table-size="6"].live-v2-poker-table {
+    --live-table-camera-height: 306px;
+  }
+
+  #screen-live .poker-table[data-table-size="9"].live-v2-poker-table {
+    --live-table-camera-height: 302px;
+  }
+
+  .live-v2-hero-zone {
+    height: 88px;
+    padding-top: 30px;
+  }
+
+  .live-v2-action-zone,
+  #screen-live .live-v2-action-dock.is-sizing {
+    min-height: 180px;
+  }
+
+  #screen-live .live-v2-action-dock {
+    min-height: 132px;
+  }
+
+  #screen-live #heroCards.live-v2-hero-cards .playing-card {
+    width: 54px;
+    height: 76px;
+  }
+}
+
+@media (min-width: 700px) {
+  .app-shell[data-active-route="live"].is-live-game-active {
+    --live-v2-table-stage-height: 430px;
+  }
+
+  .live-v2-game-shell {
+    grid-template-rows: var(--live-v2-table-stage-height) 108px 232px;
+  }
+
+  #screen-live .poker-table[data-table-size="6"].live-v2-poker-table {
+    --live-table-camera-width: min(620px, 72vw);
+    --live-table-camera-height: 400px;
+  }
+
+  #screen-live .poker-table[data-table-size="9"].live-v2-poker-table {
+    --live-table-camera-width: min(650px, 76vw);
+    --live-table-camera-height: 400px;
+  }
+
+  .live-v2-action-zone,
+  #screen-live .live-v2-action-dock {
+    width: min(100%, 620px);
+    justify-self: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-v2-game-shell,
+  .live-v2-poker-table,
+  .live-v2-action-dock,
+  .live-v2-sheet,
+  .player-pod,
+  .player-pod-avatar {
+    animation: none !important;
+    transition-duration: 1ms !important;
   }
 }

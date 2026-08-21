@@ -88,12 +88,13 @@ test('Live Session подключает lifecycle controller до приклад
   );
 });
 
-test('compact save, pause и auto-next не требуют крупной Next Hand кнопки', () => {
-  assert.match(html, /id="saveLiveHand"[^>]*compact-hand-action/);
+test('save, pause и auto-next остаются доступны в компактном More sheet', () => {
+  assert.match(html, /id="liveMoreToggle"[^>]*aria-controls="liveMoreSheet"/);
+  assert.match(html, /id="liveMoreSheet"[\s\S]*?id="saveLiveHand"/);
   assert.match(html, /id="pauseLive"/);
   assert.match(html, /scheduleAutomaticNextHand/);
-  assert.match(css, /\.live-hand-controls/);
-  assert.match(css, /\.compact-hand-action/);
+  assert.match(css, /\.live-v2-session-actions/);
+  assert.match(css, /\.live-v2-more-control/);
 });
 
 test('визуальный стол различает скрытые, showdown и winning hole cards', () => {

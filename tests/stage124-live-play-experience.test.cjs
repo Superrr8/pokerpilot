@@ -18,15 +18,15 @@ function between(source, start, end) {
   return source.slice(startIndex, endIndex);
 }
 
-test('Hero decision core groups cards, price and primary actions before secondary learning UI', () => {
-  const panel = between(liveHtml, '<div class="panel decision-panel">', '<button id="endSession"');
-  const core = between(panel, '<div id="liveDecisionCore"', '</div><!-- /live-decision-core -->');
+test('Hero cards stay on the table while price and actions remain in the persistent action dock', () => {
+  const game = between(liveHtml, '<div id="liveGame"', '</section>');
+  const core = between(game, '<div id="liveDecisionCore"', '</div><!-- /live-decision-core -->');
   assert.match(core, /id="heroPosition"/);
   assert.match(core, /id="toCallChip"/);
-  assert.match(core, /id="heroCards"/);
   assert.match(core, /id="liveActions"/);
-  assert.ok(panel.indexOf('id="liveActions"') < panel.indexOf('id="liveHistoryPanel"'));
-  assert.ok(panel.indexOf('id="liveActions"') < panel.indexOf('id="liveLearningPanel"'));
+  assert.match(game, /id="pokerTable"[\s\S]*?id="heroCards"[\s\S]*?id="liveDecisionCore"/);
+  assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveHistoryPanel"'));
+  assert.ok(html.indexOf('id="liveActions"') < html.indexOf('id="liveLearningPanel"'));
 });
 
 test('hand history stays secondary, collapsed and accessible', () => {
@@ -36,7 +36,7 @@ test('hand history stays secondary, collapsed and accessible', () => {
 });
 
 test('post-decision teaching is an on-demand disclosure with a concise result first', () => {
-  const panel = between(liveHtml, '<div class="panel decision-panel">', '<button id="endSession"');
+  const panel = between(html, '<dialog id="liveCoachSheet"', '</dialog>');
   assert.match(panel, /id="liveResultSummary"[^>]*class="live-result-summary hidden"[^>]*aria-live="polite"/);
   assert.match(panel, /<details id="liveLearningPanel"[^>]*class="live-learning-panel hidden"/);
   assert.doesNotMatch(panel, /<details id="liveLearningPanel"[^>]*\sopen(?:\s|>)/);
@@ -79,21 +79,23 @@ test('math can be prepared without forcing the learning disclosure open', () => 
   assert.match(html, /showLiveMath\(evaluation\.math\|\|null,\{openLearning:false\}\)/);
 });
 
-test('mobile Hero-turn layout compacts the table instead of hiding poker context', () => {
-  assert.match(css, /@media \(max-width:\s*430px\)[\s\S]*?#screen-live #liveGame\.is-hero-turn \.poker-table/);
-  assert.match(css, /#screen-live #liveGame\.is-hero-turn \.poker-table\s*\{[\s\S]*?min-height:\s*clamp\(/);
-  assert.doesNotMatch(css, /#screen-live #liveGame\.is-hero-turn \.poker-table\s*\{[^}]*display:\s*none/);
+test('mobile Live layout keeps poker context in one stable session-wide table', () => {
+  assert.match(css, /@media \(max-width:\s*480px\) and \(orientation:\s*portrait\)[\s\S]*?#screen-live \.poker-table\.live-v2-poker-table/);
+  assert.match(css, /#screen-live \.poker-table\.live-v2-poker-table\s*\{[\s\S]*?min-height:\s*0/);
+  assert.doesNotMatch(css, /\.live-v2-poker-table\s*\{[^}]*display:\s*none/);
+  assert.doesNotMatch(css, /#liveGame\.is-hero-turn \.poker-table\s*\{[^}]*height:/);
 });
 
-test('mobile session stats remain real but use a compact four-column strip', () => {
-  assert.match(css, /@media \(max-width:\s*430px\)[\s\S]*?#screen-live #liveGame\.is-hero-turn \.stats-grid\.four\s*\{[\s\S]*?grid-template-columns:\s*repeat\(4,/);
+test('real session stats remain available in the compact More sheet', () => {
+  assert.match(html, /id="liveMoreSheet"[\s\S]*?id="liveStack"[\s\S]*?id="liveProfit"[\s\S]*?id="liveHands"[\s\S]*?id="liveTilt"/);
+  assert.match(css, /\.live-v2-session-meta \.stats-grid\.four\s*\{[\s\S]*?grid-template-columns:\s*repeat\(4,/);
   assert.doesNotMatch(html, /data-fake-live-stat/);
 });
 
 test('mobile decision surfaces protect width, tap targets and fixed-nav clearance', () => {
   assert.match(css, /\.live-decision-core\s*\{[\s\S]*?min-width:\s*0/);
-  assert.match(css, /@media \(max-width:\s*430px\)[\s\S]*?#screen-live #liveActions button\s*\{[\s\S]*?min-height:\s*44px/);
-  assert.match(css, /#screen-live \.decision-panel\s*\{[\s\S]*?padding-bottom:\s*max\(/);
+  assert.match(css, /#screen-live \.live-v2-action-dock #liveActions button\s*\{[\s\S]*?min-height:\s*48px/);
+  assert.match(css, /\.app-shell\[data-active-route="live"\]\.is-live-game-active\s*\{[\s\S]*?padding-block-end:\s*max\(/);
   assert.doesNotMatch(css, /\.live-decision-core\s*\{[^}]*position:\s*fixed/);
 });
 
