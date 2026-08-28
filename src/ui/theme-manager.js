@@ -9,6 +9,7 @@
     'minimal',
     'cyber',
     'glass',
+    'obsidian',
     'warm-wood',
     'soft-pastel'
   ]);
@@ -20,6 +21,7 @@
     { id: 'minimal', name: 'Minimal Light', description: 'Светлый минимализм' },
     { id: 'cyber', name: 'Neon Cyber', description: 'Неон и энергия' },
     { id: 'glass', name: 'Glass', description: 'Стекло и глубина' },
+    { id: 'obsidian', name: 'Obsidian', description: 'Графит и шампанское' },
     { id: 'warm-wood', name: 'Warm Wood', description: 'Тёплый клубный' },
     { id: 'soft-pastel', name: 'Soft Pastel', description: 'Мягкий светлый' }
   ]);
@@ -82,7 +84,7 @@
       if (meta) {
         const colors = {
           emerald: '#07100d', amber: '#f3ede1', indigo: '#080b17', minimal: '#f5f3ee',
-          cyber: '#090711', glass: '#050b14', 'warm-wood': '#110b08', 'soft-pastel': '#faf4f1'
+          cyber: '#090711', glass: '#050b14', obsidian: '#0b0c0d', 'warm-wood': '#110b08', 'soft-pastel': '#faf4f1'
         };
         meta.setAttribute('content', colors[resolvedTheme]);
       }

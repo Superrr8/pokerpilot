@@ -57,7 +57,7 @@ function rootElement() {
 test('existing theme registry remains stable and exposes Glass through the shared selector', () => {
   const api = loadThemeManager();
   assert.deepEqual(api.THEME_IDS, [
-    'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'warm-wood', 'soft-pastel'
+    'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'obsidian', 'warm-wood', 'soft-pastel'
   ]);
   assert.equal(api.THEME_OPTIONS.find(option => option.id === 'glass')?.name, 'Glass');
   assert.match(indexHtml, /data-theme-choice="glass"/);

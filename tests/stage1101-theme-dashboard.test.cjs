@@ -46,17 +46,17 @@ function rootElement() {
   };
 }
 
-test('theme registry contains Auto and all eight published themes', () => {
+test('theme registry contains Auto and all nine published themes', () => {
   const api = loadThemeManager();
   assert.deepEqual(api.THEME_IDS, [
-    'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'warm-wood', 'soft-pastel'
+    'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'obsidian', 'warm-wood', 'soft-pastel'
   ]);
   assert.equal(api.THEME_OPTIONS.some(theme => theme.id === 'auto'), true);
-  assert.equal(api.THEME_OPTIONS.length, 9);
+  assert.equal(api.THEME_OPTIONS.length, 10);
 });
 
 test('each theme defines the complete shared semantic token contract', () => {
-  const ids = ['emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'warm-wood', 'soft-pastel'];
+  const ids = ['emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'obsidian', 'warm-wood', 'soft-pastel'];
   const tokens = [
     '--app-bg', '--surface-primary', '--surface-secondary', '--surface-elevated',
     '--text-primary', '--text-secondary', '--text-muted', '--accent', '--accent-hover',
@@ -114,10 +114,10 @@ test('theme manager loads before styles to prevent a wrong-theme flash', () => {
   assert.match(themeManagerSource, /data-theme|dataset\.theme/);
 });
 
-test('Profile includes an accessible visual picker for Auto and all eight themes', () => {
+test('Profile includes an accessible visual picker for Auto and all nine themes', () => {
   assert.match(index, /id="profileAppearance"/);
   assert.match(index, /aria-labelledby="profileAppearanceTitle"/);
-  ['auto', 'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'warm-wood', 'soft-pastel'].forEach(id => {
+  ['auto', 'emerald', 'amber', 'indigo', 'minimal', 'cyber', 'glass', 'obsidian', 'warm-wood', 'soft-pastel'].forEach(id => {
     assert.match(index, new RegExp(`data-theme-choice="${id}"`));
   });
   assert.match(index, /aria-pressed="(?:true|false)"/);
