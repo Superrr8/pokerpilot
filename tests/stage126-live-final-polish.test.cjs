@@ -20,12 +20,12 @@ test('Live dock exposes one composed context block with a truthful helper line',
   assert.match(html, /Выбери линию · (?:к коллу|можно Check)/);
 });
 
-test('waiting and observing states keep the accepted reserve while using a premium compact surface', () => {
+test('waiting and observing states use a premium compact surface with readable helper copy', () => {
   assert.match(css, /\.live-v2-action-zone\s*\{[^}]*min-height:\s*232px/s);
   assert.match(css, /\.live-v2-action-dock\[data-live-dock-state="waiting"\],[\s\S]*?\.live-v2-action-dock\[data-live-dock-state="observing"\]\s*\{[^}]*min-height:\s*54px/s);
   assert.match(css, /\.live-v2-dock-context\s*\{[^}]*display:\s*grid/s);
   assert.match(css, /\.live-v2-dock-copy\s*\{[^}]*min-width:\s*0/s);
-  assert.match(css, /\.live-v2-dock-helper\s*\{[^}]*text-overflow:\s*ellipsis/s);
+  assert.match(css, /\.live-v2-dock-helper\s*\{[^}]*text-overflow:\s*clip;[^}]*white-space:\s*normal/s);
   assert.match(css, /data-live-dock-state="waiting"[\s\S]*?background:\s*linear-gradient/s);
 });
 
@@ -51,4 +51,3 @@ test('approved 6-max and 9-max geometry remains frozen', () => {
   assert.match(css, /\[data-table-size="6"\]\.live-v2-poker-table\s*\{[^}]*--live-table-camera-height:\s*334px/s);
   assert.match(css, /\[data-table-size="9"\]\.live-v2-poker-table\s*\{[^}]*--live-table-camera-width:\s*clamp\(410px, 112vw, 440px\)/s);
 });
-

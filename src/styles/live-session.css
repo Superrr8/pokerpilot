@@ -1321,14 +1321,15 @@
 .live-v2-dock-helper {
   display: block;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   color: rgba(222, 209, 193, .58);
   font-size: 10px;
   font-weight: 620;
   line-height: 1.2;
   letter-spacing: .005em;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .live-v2-dock-heading > #toCallChip {
@@ -1614,13 +1615,25 @@ dialog.live-v2-sheet {
 
 @media (max-width: 480px) and (orientation: portrait) {
   .app-shell[data-active-route="live"].is-live-game-active {
+    --live-v2-hero-stage-height: clamp(94px, 11.5dvh, 100px);
+    --live-v2-action-stage-height: clamp(164px, 20.5dvh, 184px);
     padding-inline: 8px;
   }
 
   .live-v2-game-shell {
     min-height: 0;
-    grid-template-rows: var(--live-v2-table-stage-height) 108px 232px;
-    gap: 6px;
+    grid-template-rows: var(--live-v2-table-stage-height) var(--live-v2-hero-stage-height) var(--live-v2-action-stage-height);
+    gap: 4px;
+  }
+
+  .live-v2-hero-zone {
+    height: var(--live-v2-hero-stage-height);
+    padding-top: 14px;
+  }
+
+  .live-v2-action-zone {
+    min-height: var(--live-v2-action-stage-height);
+    align-items: start;
   }
 
   #screen-live .poker-table.live-v2-poker-table {
@@ -1672,6 +1685,24 @@ dialog.live-v2-sheet {
 
   #screen-live .poker-table[data-table-size="9"] .seat.player-pod strong {
     font-size: 12.5px;
+  }
+
+  .player-action-bubble {
+    bottom: calc(100% + 3px);
+    z-index: 3;
+    max-width: 78px;
+    padding: 3px 5px;
+    font-size: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .22);
+  }
+
+  .player-action-bubble::before {
+    width: 4px;
+    margin-right: 3px;
+  }
+
+  #screen-live .seat.seat-edge-top .player-action-bubble {
+    left: calc(100% + 2px);
   }
 
   #screen-live #heroCards.live-v2-hero-cards .playing-card {
@@ -1750,6 +1781,10 @@ dialog.live-v2-sheet {
   .live-v2-action-zone,
   #screen-live .live-v2-action-dock.is-sizing {
     min-height: 180px;
+  }
+
+  .live-v2-action-zone {
+    align-items: end;
   }
 
   #screen-live .live-v2-action-dock {
