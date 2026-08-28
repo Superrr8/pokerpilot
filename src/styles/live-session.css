@@ -1823,6 +1823,158 @@ dialog.live-v2-sheet {
   }
 }
 
+/* Stage 12.7 — short-height Live V2 landscape presentation. */
+@media (orientation: landscape) and (min-width: 700px) and (max-height: 500px) {
+  .app-shell[data-active-route="live"].is-live-game-active {
+    --live-v2-landscape-table-scale: .76;
+    width: 100%;
+    padding-block-start: max(2px, env(safe-area-inset-top));
+    padding-block-end: max(6px, env(safe-area-inset-bottom));
+    padding-inline-start: max(8px, env(safe-area-inset-left));
+    padding-inline-end: max(8px, env(safe-area-inset-right));
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active .top-navigation {
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    gap: 6px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active .top-header-actions,
+  .app-shell[data-active-route="live"].is-live-game-active .top-navigation-actions {
+    height: 40px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active .live-v2-top-control,
+  .app-shell[data-active-route="live"].is-live-game-active .sound-control,
+  .app-shell[data-active-route="live"].is-live-game-active .sound-toggle {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active .top-stakes {
+    min-height: 28px;
+    padding: 4px 10px;
+  }
+
+  .live-v2-game-shell {
+    height: calc(100dvh - max(2px, env(safe-area-inset-top)) - max(6px, env(safe-area-inset-bottom)) - 44px);
+    grid-template-columns: minmax(0, 1fr) clamp(292px, 38vw, 356px);
+    grid-template-rows: minmax(0, 1fr) 76px;
+    grid-template-areas:
+      "table action"
+      "hero action";
+    align-content: stretch;
+    gap: 4px 8px;
+    overflow: hidden;
+  }
+
+  .live-v2-table-stage {
+    grid-area: table;
+    overflow: visible;
+  }
+
+  #screen-live .poker-table[data-table-size="6"].live-v2-poker-table {
+    --live-table-camera-width: 378px;
+    --live-table-camera-height: 334px;
+  }
+
+  #screen-live .poker-table[data-table-size="9"].live-v2-poker-table {
+    --live-table-camera-width: 440px;
+    --live-table-camera-height: 330px;
+  }
+
+  #screen-live .poker-table.live-v2-poker-table {
+    transform: translateX(-50%) scale(var(--live-v2-landscape-table-scale));
+    transform-origin: 50% 0;
+  }
+
+  .live-v2-hero-zone {
+    grid-area: hero;
+    height: 76px;
+    place-items: end center;
+    padding-top: 0;
+    padding-bottom: 2px;
+  }
+
+  #screen-live #heroCards.live-v2-hero-cards .playing-card {
+    width: 46px;
+    height: 66px;
+    border-radius: 9px;
+  }
+
+  .live-v2-action-zone {
+    grid-area: action;
+    width: 100%;
+    min-height: 0;
+    align-items: center;
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active #screen-live .decision-panel.live-v2-action-dock {
+    width: 100%;
+    max-height: 100%;
+    padding: 8px;
+  }
+
+  .app-shell[data-active-route="live"].is-live-game-active #screen-live .live-v2-action-dock[data-live-dock-state="waiting"],
+  .app-shell[data-active-route="live"].is-live-game-active #screen-live .live-v2-action-dock[data-live-dock-state="observing"] {
+    min-height: 52px;
+    max-height: 58px;
+    padding-block: 6px;
+    align-self: center;
+  }
+
+  #screen-live .live-v2-action-dock.is-sizing {
+    max-height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .live-v2-dock-heading {
+    min-height: 36px;
+  }
+
+  .live-v2-coach-trigger {
+    top: 8px;
+    right: 8px;
+    min-height: 36px;
+  }
+
+  #screen-live .live-v2-action-dock #liveActions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 5px;
+  }
+
+  #screen-live .live-v2-action-dock #liveActions button {
+    min-height: 48px;
+    padding: 7px 5px;
+    font-size: 14px;
+  }
+
+  .live-v2-sheet {
+    width: min(680px, calc(100% - max(16px, env(safe-area-inset-left)) - max(16px, env(safe-area-inset-right))));
+    max-height: calc(100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)));
+    margin: auto;
+    border-radius: var(--radius-lg);
+  }
+
+  .live-v2-sheet-header {
+    min-height: 52px;
+    padding: 6px 12px;
+  }
+
+  .live-v2-sheet-body {
+    max-height: calc(100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)) - 52px);
+    padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .live-v2-game-shell,
   .live-v2-poker-table,
