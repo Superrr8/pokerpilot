@@ -803,3 +803,82 @@ body {
     word-break: normal;
   }
 }
+
+/* Stage 12.9.2 — Real iPhone truncation hotfix. */
+@media (max-width: 480px) {
+  #homeStatus {
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .dashboard-learning-copy,
+  #dashboardNextTitle,
+  #dashboardNextDescription {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #dashboardNextTitle,
+  #dashboardNextDescription {
+    display: block;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+    -webkit-line-clamp: unset;
+  }
+
+  .daily-challenge-card-copy,
+  .daily-hand-copy,
+  #dailyChallengeSummary,
+  #dailyChallengeHandLabel,
+  #dailyChallengeResult,
+  #dailyChallengeStreak,
+  #dailyChallengeAccuracy {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #dailyChallengeSummary,
+  #dailyChallengeHandLabel,
+  #dailyChallengeResult,
+  #dailyChallengeStreak,
+  #dailyChallengeAccuracy {
+    display: block;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+    -webkit-line-clamp: unset;
+  }
+
+  .home-dashboard-pro .daily-challenge-progress {
+    min-width: 0;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  #dailyChallengeStreak,
+  #dailyChallengeAccuracy {
+    flex: 1 1 145px;
+  }
+
+  .home-dashboard-pro .home-quick-action,
+  .home-dashboard-pro .home-quick-action strong {
+    min-width: 0;
+  }
+
+  .home-dashboard-pro .home-quick-action strong {
+    max-width: 100%;
+    overflow: visible;
+    overflow-wrap: normal;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: normal;
+    -webkit-line-clamp: unset;
+  }
+}
