@@ -993,3 +993,33 @@ body {
     min-width: 82px;
   }
 }
+
+/* Stage 12.9.4 — Continue CTA containment fix. */
+@media (max-width: 480px) {
+  .dashboard-learning-row {
+    grid-template-columns: 34px minmax(0, 1fr) 136px;
+  }
+
+  .dashboard-learning-row #dashboardContinue {
+    width: 136px;
+    min-width: 136px;
+    max-width: 136px;
+    min-height: 48px;
+    column-gap: 4px;
+    padding: 7px 8px;
+    overflow: hidden;
+    overflow-wrap: normal;
+    line-height: 1.15;
+    white-space: normal;
+    word-break: normal;
+  }
+
+  .dashboard-learning-row #dashboardContinue::after {
+    display: inline-block;
+    flex: 0 0 auto;
+    margin-left: 0;
+    color: var(--accent-contrast);
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+}

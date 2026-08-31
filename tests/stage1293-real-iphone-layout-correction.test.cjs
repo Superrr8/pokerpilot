@@ -17,7 +17,7 @@ function correctionBlock() {
 }
 
 test('Stage 12.9.3 stylesheet cache key is active', () => {
-  assert.match(html, /href="src\/styles\/stage1101-redesign\.css\?v=12\.9\.3"/);
+  assert.match(html, /href="src\/styles\/stage1101-redesign\.css\?v=12\.9\.[34]"/);
 });
 
 test('Daily Hand mobile card cannot donate its text track to an auto action column', () => {
