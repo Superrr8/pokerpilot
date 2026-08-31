@@ -1,0 +1,11 @@
+{
+  "name": "PokerElevate",
+  "short_name": "PokerElevate",
+  "description": "Тренировка и разбор покерных решений",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07110d",
+  "theme_color": "#07110d"
+}

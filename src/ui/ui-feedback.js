@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachFeedback(root) {
+  const Brand = root.ProductBrand
+    || (typeof require === 'function' ? require('../config/product-brand.js') : { productName: 'PokerElevate' });
   function showToast(message, tone = 'info', duration = 2200) {
     const toast = root.document?.querySelector('#appToast');
     if (!toast) return false;
@@ -17,7 +19,7 @@
     if (!dialog) return false;
     const titleNode = dialog.querySelector('[data-dialog-title]');
     const messageNode = dialog.querySelector('[data-dialog-message]');
-    if (titleNode) titleNode.textContent = String(title || 'PokerPilot');
+    if (titleNode) titleNode.textContent = String(title || Brand.productName);
     if (messageNode) messageNode.textContent = String(message || '');
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
@@ -53,4 +55,3 @@
   root.UIFeedback = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
-

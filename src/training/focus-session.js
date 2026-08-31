@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachFocusSession(root) {
+  const Brand = root.ProductBrand
+    || (typeof require === 'function' ? require('../config/product-brand.js') : { productName: 'PokerElevate' });
   const TOTAL_DECISIONS = 5;
   const MIN_COMPARISON_ATTEMPTS = 10;
   let generatedIdentity = 0;
@@ -66,7 +68,7 @@
     if (!reliable) {
       return {
         id: 'INSUFFICIENT_DATA',
-        text: 'Продолжай тренировку — PokerPilot накопит больше данных для сравнения.'
+        text: `Продолжай тренировку — ${Brand.productName} накопит больше данных для сравнения.`
       };
     }
     const delta = averageDecisionQuality - baselineScore;

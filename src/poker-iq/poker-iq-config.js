@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachPokerIqConfig(root) {
+  const Brand = root.ProductBrand
+    || (typeof require === 'function' ? require('../config/product-brand.js') : { productName: 'PokerElevate', shortName: 'PokerElevate' });
   const config = Object.freeze({
     schemaVersion: 1,
     modelVersion: 'poker-iq-v1.1',
@@ -67,7 +69,7 @@
       Object.freeze({ id: 'GRANDMASTER', label: 'Гроссмейстер', shortLabel: 'Grandmaster', minScore: 2200, maxScore: 2399 }),
       Object.freeze({ id: 'ELITE', label: 'Элита', shortLabel: 'Elite', minScore: 2400, maxScore: 2599 }),
       Object.freeze({ id: 'LEGEND', label: 'Легенда', shortLabel: 'Legend', minScore: 2600, maxScore: 2799 }),
-      Object.freeze({ id: 'POKERPILOT', label: 'PokerPilot', shortLabel: 'PokerPilot', minScore: 2800, maxScore: 3000 })
+      Object.freeze({ id: 'POKERPILOT', label: Brand.productName, shortLabel: Brand.shortName, minScore: 2800, maxScore: 3000 })
     ])
   });
 

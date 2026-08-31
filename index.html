@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07110d">
-  <title>PokerPilot v2.0</title>
+  <meta name="application-name" content="PokerElevate">
+  <meta name="apple-mobile-web-app-title" content="PokerElevate">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>PokerElevate</title>
+  <script src="src/config/product-brand.js"></script>
   <script src="src/ui/theme-manager.js"></script>
   <link rel="stylesheet" href="src/styles/design-tokens.css">
   <link rel="stylesheet" href="src/styles/themes.css">
@@ -60,8 +64,8 @@
   <header class="topbar top-navigation">
     <button id="liveBackControl" class="live-v2-top-control live-v2-back-control" type="button" data-route="training" aria-label="Выйти из Live Cash">‹</button>
     <button class="brand" data-route="home" aria-label="Главная">
-      <span class="logo">PP</span>
-      <span><strong>PokerPilot</strong><small>Тренировка и разбор решений</small></span>
+      <span class="logo" data-brand="monogram">PE</span>
+      <span class="brand-copy"><strong data-brand="wordmark">PokerElevate</strong><small data-brand="tagline">Тренировка и разбор решений</small></span>
     </button>
     <div class="top-header-actions">
       <button id="homeProfileEntry" class="home-profile-entry home-header-profile" type="button" data-route="profile" aria-label="Открыть профиль">
@@ -427,7 +431,7 @@
         </div>
 
         <label class="field">Диапазон соперника — необязательно<input id="anRange" type="text" placeholder="Например: 99+,AQs+,AJo+,KQs"></label>
-        <p class="field-help">Оставь пустым — PokerPilot подберёт учебную live-модель по типу соперника и его действию.</p>
+        <p class="field-help">Оставь пустым — PokerElevate подберёт учебную live-модель по типу соперника и его действию.</p>
         <label class="field">Что происходило до решения — необязательно<textarea id="anNotes" rows="3" placeholder="Например: HJ открыл $15, я 3-бет $55, он call; флоп чек-чек..."></textarea></label>
         <button id="analyzeHand" class="primary wide analyze-button">Проанализировать раздачу</button>
         <div id="analyzerError" class="feedback bad hidden"></div>
@@ -546,7 +550,7 @@
             <div>
               <span class="tag">Интерфейс</span>
               <h2 id="profileAppearanceTitle">Оформление</h2>
-              <p>Одна структура — девять характеров PokerPilot.</p>
+              <p>Одна структура — девять характеров PokerElevate.</p>
             </div>
             <span class="theme-current" data-theme-current>Emerald</span>
           </header>
@@ -885,7 +889,7 @@
   <nav id="primaryNavigation" class="bottom-nav primary-navigation" aria-label="Основная навигация"></nav>
 </div>
 <dialog id="liveCoachSheet" class="live-v2-sheet live-v2-coach-sheet" aria-labelledby="liveCoachTitle">
-  <div class="live-v2-sheet-header"><div><span class="eyebrow">PokerPilot intelligence</span><h2 id="liveCoachTitle">Тренер</h2></div><button id="liveCoachClose" class="ghost live-v2-sheet-close" type="button" aria-label="Закрыть Тренер">×</button></div>
+  <div class="live-v2-sheet-header"><div><span class="eyebrow">PokerElevate intelligence</span><h2 id="liveCoachTitle">Тренер</h2></div><button id="liveCoachClose" class="ghost live-v2-sheet-close" type="button" aria-label="Закрыть Тренер">×</button></div>
   <div class="live-v2-sheet-body">
     <div id="liveHintBox" class="coach-box hidden"></div>
     <div id="liveResultSummary" class="live-result-summary hidden" aria-live="polite"><strong data-live-result-grade>Результат</strong><span data-live-result-copy></span></div>
@@ -925,7 +929,7 @@
 </dialog>
 <dialog id="appDialog" class="ui-dialog" aria-labelledby="appDialogTitle">
   <div class="ui-dialog-content">
-    <h2 id="appDialogTitle" data-dialog-title>PokerPilot</h2>
+    <h2 id="appDialogTitle" data-dialog-title data-brand="wordmark">PokerElevate</h2>
     <p data-dialog-message></p>
     <button class="ui-button-primary wide" type="button" data-dialog-close>Закрыть</button>
   </div>
@@ -1023,6 +1027,8 @@
 <script>
 'use strict';
 
+const BRAND = window.ProductBrand;
+BRAND.apply(document);
 const C = window.PokerCore;
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
@@ -1502,7 +1508,8 @@ $$('input[name="assistMode"]').forEach(r => r.addEventListener('change', () => {
   if ($('#screen-study').classList.contains('active')) renderStudy();
 }));
 $('#resetProgress').addEventListener('click', () => {
-  if (confirm('Сбросить всю статистику PokerPilot на этом устройстве?')) {
+  const productName = globalThis.ProductBrand?.productName || 'PokerElevate';
+  if (confirm(`Сбросить всю статистику ${productName} на этом устройстве?`)) {
     progress = defaultProgress();
     if (typeof learningMode !== 'undefined') {
       if (learningMode) learningMode.destroy();

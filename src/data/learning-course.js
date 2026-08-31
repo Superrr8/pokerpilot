@@ -1,6 +1,9 @@
 'use strict';
 
 (function attachLearningCourse(root) {
+  const Brand = root.ProductBrand
+    || (typeof require === 'function' ? require('../config/product-brand.js') : { productName: 'PokerElevate' });
+  const productInterface = `интерфейс ${Brand.productName}`;
   const choice = (id, label) => ({ id, label });
   const question = (id, topic, prompt, choices, correctChoiceId, explanation) => ({
     id, topic, prompt, choices, correctChoiceId, explanation
@@ -16,7 +19,7 @@
         description: 'Правила раздачи, улицы, позиции, блайнды и действия за столом.',
         topics: [
           'цель игры', 'карманные и общие карты', 'улицы', 'позиции и дилер',
-          'блайнды', 'действия', 'уникальность карт', 'интерфейс PokerPilot'
+          'блайнды', 'действия', 'уникальность карт', productInterface
         ],
         lessons: [
           {
@@ -54,8 +57,8 @@
           },
           {
             id: 'foundations-pokerpilot-ui',
-            topic: 'интерфейс PokerPilot',
-            title: 'Как читать PokerPilot',
+            topic: productInterface,
+            title: `Как читать ${Brand.productName}`,
             sections: [
               'Hand Lab принимает карманные карты, доску, позиции, банк, ставку, effective stack, число и тип соперников.',
               'Учебные ситуации проверяют решение до показа ответа, а «Позиции и диапазоны» тренируют префлоп.',
@@ -131,7 +134,7 @@
               'increase', 'Raise повышает уже сделанную ставку.'),
             question('foundations-exam-duplicate', 'уникальность карт', 'Можно ли указать A♠ одновременно у героя и на доске?',
               [choice('yes', 'Да'), choice('no', 'Нет')], 'no', 'В колоде только одна A♠, поэтому повтор физической карты невозможен.'),
-            question('foundations-exam-interface', 'интерфейс PokerPilot', 'Где вручную разобрать известную раздачу?',
+            question('foundations-exam-interface', productInterface, 'Где вручную разобрать известную раздачу?',
               [choice('hand-lab', 'В Hand Lab'), choice('live-only', 'Только в Live Poker'), choice('progress', 'В отчёте прогресса')],
               'hand-lab', 'Hand Lab предназначен для ручного ввода и анализа раздачи.')
           ]

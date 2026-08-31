@@ -7,7 +7,7 @@ const { loadLearningCourse } = require('./learning-course-loader.cjs');
 const requiredTopics = {
   'holdem-foundations': [
     'цель игры', 'карманные и общие карты', 'улицы', 'позиции и дилер',
-    'блайнды', 'действия', 'уникальность карт', 'интерфейс PokerPilot'
+    'блайнды', 'действия', 'уникальность карт', 'интерфейс PokerElevate'
   ],
   'hand-rankings': [
     'high card', 'one pair', 'two pair', 'three of a kind', 'straight',

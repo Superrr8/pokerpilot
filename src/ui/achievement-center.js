@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachAchievementCenter(root) {
+  const Brand = root.ProductBrand
+    || (typeof require === 'function' ? require('../config/product-brand.js') : { productName: 'PokerElevate' });
   const Config = root.PokerPilotAchievementConfig
     || (typeof require === 'function' ? require('../progress/achievement-config.js') : null);
 
@@ -25,7 +27,7 @@
     GRANDMASTER: 'Гроссмейстер',
     ELITE: 'Элита',
     LEGEND: 'Легенда',
-    POKERPILOT: 'PokerPilot'
+    POKERPILOT: Brand.productName
   });
 
   function object(value) {
