@@ -39,7 +39,7 @@ test('real-iPhone breakpoint covers widths above the former 430px boundary', () 
 });
 
 test('Dashboard hotfix stylesheet URL is versioned past stale iPhone caches', () => {
-  assert.match(html, /href="src\/styles\/stage1101-redesign\.css\?v=12\.9\.2"/);
+  assert.match(html, /href="src\/styles\/stage1101-redesign\.css\?v=12\.9\.[23]"/);
 });
 
 test('actual top summary and Continue children override every truncation primitive', () => {
