@@ -1014,6 +1014,7 @@
 <script src="src/audio/sound-manager.js"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
+<script src="src/ui/motion-system.js"></script>
 <script src="src/ui/dashboard.js"></script>
 <script src="src/ui/poker-card.js"></script>
 <script src="src/ui/daily-challenge.js"></script>
@@ -1032,6 +1033,7 @@ BRAND.apply(document);
 const C = window.PokerCore;
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+const appMotion = PokerPilotMotion.createMotionSystem({ documentRef: document });
 const money = n => `${n < 0 ? '-$' : '$'}${Math.abs(Math.round(Number(n) || 0))}`;
 const signedMoney = n => `${n >= 0 ? '+' : ''}${money(n)}`;
 const pct = n => `${Math.round((Number(n) || 0) * 100)}%`;
@@ -1248,6 +1250,11 @@ function renderProgress() {
   });
   PokerPilotDashboard.render(document, dashboardModel);
   dailyChallengeUi.renderDashboard();
+  appMotion.trackValue($('#homePokerIqValue'), dashboardModel.progress.pokerIQ.value, PokerPilotMotion.EVENTS.PROGRESS);
+  appMotion.trackValue($('#homeLevelValue'), dashboardModel.progress.level.value, PokerPilotMotion.EVENTS.PROGRESS);
+  appMotion.trackValue($('#homeXpDetail'), dashboardModel.progress.level.detail, PokerPilotMotion.EVENTS.PROGRESS);
+  const dailyDashboardCard = $('#dailyChallengeCard');
+  appMotion.trackValue(dailyDashboardCard, dailyDashboardCard?.dataset.state, PokerPilotMotion.EVENTS.DAILY_STATE);
   profileUi.render();
   const today = new Date();
   const todayKey = [
@@ -1462,6 +1469,8 @@ function route(name, options = {}) {
     renderCoachReport();
   }
   if (name === 'analyzer') renderSavedHands();
+  appMotion.enterView(screen, PokerPilotMotion.EVENTS.NAVIGATION);
+  appMotion.emphasize($('#primaryNavigation button.active'), PokerPilotMotion.EVENTS.NAVIGATION);
   window.scrollTo({ top: 0, behavior: 'auto' });
   return true;
 }
@@ -1798,6 +1807,7 @@ function answerStudy(choice) {
     if (a === preferred) b.classList.add('reveal-best');
     else if (s.grades[a] === 'good') b.classList.add('good-choice');
   });
+  appMotion.emphasize(f, GRADE[grade].points >= 2 ? PokerPilotMotion.EVENTS.CORRECT : PokerPilotMotion.EVENTS.INCORRECT);
   $('#studyCoach').classList.remove('hidden');
   $('#studyCoachAnswer').innerHTML = `<strong>Что произошло:</strong> ${s.missed}`;
   if (focusDecision?.state?.status === 'completed') {
@@ -2013,6 +2023,7 @@ function answerRange(choice) {
     if (a === choice) b.classList.add(GRADE[grade].points >= 2 ? 'selected-correct' : 'selected-wrong');
     if (a === preferred) b.classList.add('reveal-best');
   });
+  appMotion.emphasize(f, GRADE[grade].points >= 2 ? PokerPilotMotion.EVENTS.CORRECT : PokerPilotMotion.EVENTS.INCORRECT);
   if (focusDecision?.state?.status === 'completed') {
     $('#rangeNext').textContent = 'Посмотреть результат';
   }
@@ -3429,16 +3440,6 @@ function installMotion() {
     if (!target.dataset.route && target.id !== 'soundToggle' && !target.closest('#screen-learning')) {
       appSound.handleUserGesture().then(() => appSound.play('uiClick'));
     }
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    target.classList.add('ripple-host');
-    const rect = target.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'tap-ripple';
-    ripple.style.left = `${e.clientX - rect.left}px`;
-    ripple.style.top = `${e.clientY - rect.top}px`;
-    ripple.style.width = ripple.style.height = `${Math.max(rect.width, rect.height) / 2}px`;
-    target.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 600);
   }, { passive: true });
 }
 
@@ -3847,6 +3848,10 @@ renderProgress();
 route('home');
 requestAnimationFrame(updateBrowserSmokeState);
 window.addEventListener('resize', updateBrowserSmokeState, { passive: true });
+window.addEventListener('pagehide', () => appMotion.settleAll(), { passive: true });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) appMotion.settleAll();
+});
 
 </script>
 </body>

@@ -134,6 +134,10 @@
   --motion-duration-slow: 460ms;
   --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
   --motion-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-duration-tactile: var(--motion-duration-instant);
+  --motion-duration-standard: var(--motion-duration-fast);
+  --motion-duration-emphasized: var(--motion-duration-medium);
+  --motion-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-live-fast: 160ms;
   --motion-live-normal: 260ms;
   --motion-live-slow: 1000ms;

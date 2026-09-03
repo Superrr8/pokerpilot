@@ -70,7 +70,7 @@
   to { transform: rotate(1turn); }
 }
 
-#screen-home.active .dashboard-shell {
+#screen-home.is-motion-entering .dashboard-shell {
   animation: dashboardReveal var(--motion-duration-slow) var(--motion-ease-emphasized) both;
 }
 
@@ -80,7 +80,7 @@
   animation-delay: calc(var(--reveal-order, 0) * 45ms);
 }
 
-.screen.active:not(#screen-home) {
+.screen.is-motion-entering:not(#screen-home) {
   animation: modeTransition var(--motion-duration-medium) var(--motion-ease-standard) both;
 }
 
@@ -143,5 +143,133 @@
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Stage 13.1 — Premium Motion System. */
+@keyframes premiumEmphasis {
+  0% { opacity: 0.82; transform: translate3d(0, 2px, 0) scale(0.985); }
+  58% { opacity: 1; transform: translate3d(0, -1px, 0) scale(1.012); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes premiumResultReveal {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* The inline legacy route animation and always-on flourishes are superseded. */
+.screen.active,
+.logo,
+.analyze-button {
+  animation: none;
+}
+
+.screen.is-motion-entering:not(#screen-home) {
+  animation: modeTransition var(--motion-duration-emphasized) var(--motion-ease-premium) both;
+}
+
+#screen-home.is-motion-entering .dashboard-shell {
+  animation: dashboardReveal var(--motion-duration-emphasized) var(--motion-ease-premium) both;
+}
+
+.is-motion-emphasis {
+  animation: premiumEmphasis var(--motion-duration-emphasized) var(--motion-ease-premium) both;
+  will-change: transform, opacity;
+}
+
+.trainer-explanation:not(.hidden),
+.feedback:not(.hidden) {
+  animation: premiumResultReveal var(--motion-duration-emphasized) var(--motion-ease-premium) both;
+}
+
+#dashboardContinue,
+.home-quick-action,
+.daily-challenge-card-actions button,
+.actions button,
+.back,
+.primary,
+.ghost,
+.ui-button-primary,
+.ui-button-secondary,
+.ui-button-ghost,
+.primary-navigation button,
+#screen-live #liveActions button {
+  transition-property: transform, opacity, color, background-color, border-color, box-shadow;
+  transition-duration: var(--motion-duration-tactile);
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+#dashboardContinue:active:not(:disabled),
+.home-quick-action:active:not(:disabled),
+.daily-challenge-card-actions button:active:not(:disabled),
+.actions button:active:not(:disabled),
+.back:active:not(:disabled),
+.primary:active:not(:disabled),
+.ghost:active:not(:disabled),
+.ui-button-primary:active:not(:disabled),
+.ui-button-secondary:active:not(:disabled),
+.ui-button-ghost:active:not(:disabled),
+.primary-navigation button:active:not(:disabled),
+#screen-live #liveActions button:active:not(:disabled) {
+  transform: translate3d(0, 1px, 0) scale(0.985);
+}
+
+.primary-navigation button .primary-nav-icon,
+.primary-navigation button .primary-nav-label {
+  opacity: 0.82;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity var(--motion-duration-standard) var(--motion-ease-standard),
+    transform var(--motion-duration-standard) var(--motion-ease-premium);
+}
+
+.primary-navigation button.active .primary-nav-icon {
+  opacity: 1;
+  transform: translate3d(0, -1px, 0) scale(1.06);
+}
+
+.primary-navigation button.active .primary-nav-label {
+  opacity: 1;
+  transform: translate3d(0, -1px, 0);
+}
+
+.selected-correct {
+  animation: answerCorrect var(--motion-duration-emphasized) var(--motion-ease-premium);
+}
+
+.selected-wrong {
+  animation: answerIncorrect var(--motion-duration-standard) var(--motion-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.is-motion-entering,
+  #screen-home.is-motion-entering .dashboard-shell,
+  .is-motion-emphasis,
+  .trainer-explanation:not(.hidden),
+  .feedback:not(.hidden),
+  .selected-correct,
+  .selected-wrong {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  #dashboardContinue,
+  .home-quick-action,
+  .daily-challenge-card-actions button,
+  .actions button,
+  .back,
+  .primary,
+  .ghost,
+  .ui-button-primary,
+  .ui-button-secondary,
+  .ui-button-ghost,
+  .primary-navigation button,
+  .primary-navigation button .primary-nav-icon,
+  .primary-navigation button .primary-nav-label,
+  #screen-live #liveActions button {
+    transition: none !important;
   }
 }
