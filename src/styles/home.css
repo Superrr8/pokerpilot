@@ -170,11 +170,12 @@
   min-height: 52px;
   margin: 0;
   padding: 0 var(--space-6);
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-border);
   border-radius: 15px;
-  background: linear-gradient(180deg, #84ddb5, #6dd1a4);
+  background: var(--accent);
+  color: var(--accent-foreground);
   box-shadow:
-    0 12px 28px rgba(49, 183, 125, 0.2),
+    var(--glow-accent),
     inset 0 1px rgba(255, 255, 255, 0.28);
   font-size: 0.9375rem;
   font-weight: 820;
@@ -186,18 +187,23 @@
 }
 
 .home-primary-card .ui-button-primary:hover {
-  background: linear-gradient(180deg, #91e4be, #76d8ab);
+  background: var(--accent-hover);
   box-shadow:
-    0 14px 32px rgba(49, 183, 125, 0.24),
+    var(--glow-accent),
     inset 0 1px rgba(255, 255, 255, 0.32);
   transform: translateY(-1px);
 }
 
 .home-primary-card .ui-button-primary:active {
+  background: var(--accent-active);
   box-shadow:
-    0 7px 18px rgba(49, 183, 125, 0.17),
+    var(--glow-accent),
     inset 0 1px rgba(255, 255, 255, 0.2);
   transform: translateY(1px) scale(0.99);
+}
+
+.home-primary-card .ui-button-primary:focus-visible {
+  box-shadow: var(--focus-ring);
 }
 
 .home-progress-strip {
