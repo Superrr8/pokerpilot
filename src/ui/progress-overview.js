@@ -57,6 +57,7 @@
     EPIC: 'Эпическое',
     LEGENDARY: 'Легендарное'
   });
+  const ACHIEVEMENT_PREVIEW_LIMIT = 3;
 
   function object(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
@@ -231,6 +232,20 @@
       });
   }
 
+  function selectAchievementPreview(value, limit = ACHIEVEMENT_PREVIEW_LIMIT) {
+    if (!Array.isArray(value)) return [];
+    const source = value.filter(item => item && typeof item === 'object');
+    const count = Math.max(0, Math.floor(finite(limit, ACHIEVEMENT_PREVIEW_LIMIT)));
+    const preview = source.slice(0, count);
+    if (!preview.length || !source.some(item => item.unlocked === true)) return preview;
+    const firstLocked = source.find(item => item.unlocked !== true);
+    const hasUnlocked = preview.some(item => item.unlocked === true);
+    const hasLocked = preview.some(item => item.unlocked !== true);
+    if (!hasUnlocked) preview[0] = source.find(item => item.unlocked === true);
+    if (!hasLocked && firstLocked) preview[preview.length - 1] = firstLocked;
+    return preview;
+  }
+
   function achievementsModel(value) {
     const raw = object(value);
     const source = Array.isArray(raw.items) ? raw.items : [];
@@ -276,6 +291,7 @@
       totalCount,
       countLabel: `${unlockedCount} / ${totalCount}`,
       items,
+      previewItems: selectAchievementPreview(items),
       emptyMessage: 'Пока нет данных о достижениях.'
     };
   }
@@ -488,7 +504,7 @@
 
     setText(documentRef, '#progressAchievementsCount', model.achievements.countLabel);
     const achievementList = find(documentRef, '#progressAchievementsList');
-    if (achievementList) achievementList.replaceChildren(...model.achievements.items.map(item =>
+    if (achievementList) achievementList.replaceChildren(...model.achievements.previewItems.map(item =>
       createAchievementCard(documentRef, item)
     ));
     setText(documentRef, '#progressAchievementsEmpty', model.achievements.emptyMessage);
@@ -509,6 +525,8 @@
 
   const api = Object.freeze({
     SKILL_IDS,
+    ACHIEVEMENT_PREVIEW_LIMIT,
+    selectAchievementPreview,
     createViewModel,
     render
   });

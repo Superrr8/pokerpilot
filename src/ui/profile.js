@@ -14,10 +14,24 @@
     return Number.isFinite(numeric) && numeric >= 0 ? numeric : 0;
   }
 
+  function object(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  }
+
   function optionalNumber(value) {
     if (value === null || value === undefined || value === '') return null;
     const numeric = Number(value);
     return Number.isFinite(numeric) ? numeric : null;
+  }
+
+  function dayWord(value) {
+    const count = Math.max(0, Math.floor(number(value)));
+    const lastTwo = count % 100;
+    const last = count % 10;
+    if (lastTwo >= 11 && lastTwo <= 14) return 'дней';
+    if (last === 1) return 'день';
+    if (last >= 2 && last <= 4) return 'дня';
+    return 'дней';
   }
 
   function createPokerIqViewModel(value = {}) {
@@ -76,13 +90,60 @@
     };
   }
 
-  function createViewModel({ profile = {}, statistics = {}, pokerIQ = null } = {}) {
-    const progression = profile.progression || {};
-    const ratings = profile.ratings || {};
-    const pokerIqModel = createPokerIqViewModel(pokerIQ || {});
-    const xpIntoLevel = number(progression.xpIntoLevel);
-    const xpToNextLevel = Math.max(1, number(progression.xpToNextLevel) || 500);
+  function createViewModel({
+    profile = {},
+    statistics = {},
+    pokerIQ = null,
+    progressSnapshot = null
+  } = {}) {
+    const hasProgressSnapshot = Boolean(progressSnapshot && typeof progressSnapshot === 'object');
+    const snapshot = object(progressSnapshot);
+    const progression = hasProgressSnapshot ? object(snapshot.level) : object(profile.progression);
+    const ratings = object(profile.ratings);
+    const snapshotPokerIq = object(snapshot.pokerIq);
+    const snapshotRank = object(snapshot.rank);
+    const pokerIqInput = hasProgressSnapshot
+      ? {
+          ...snapshotPokerIq,
+          rank: Object.keys(object(snapshotPokerIq.rank)).length
+            ? object(snapshotPokerIq.rank)
+            : snapshotRank
+        }
+      : object(pokerIQ);
+    const pokerIqModel = createPokerIqViewModel(pokerIqInput);
+    const xpToNextLevel = Math.max(
+      1,
+      number(progression.xpToNextLevel) || (hasProgressSnapshot ? 1 : 500)
+    );
+    const xpIntoLevel = Math.min(xpToNextLevel, number(progression.xpIntoLevel));
+    const totalXp = hasProgressSnapshot
+      ? number(progression.totalXp ?? snapshot.lifetimeXp)
+      : number(progression.totalXp);
     const rank = ratings.rank && ratings.rank !== 'Unranked' ? String(ratings.rank) : 'Без ранга';
+    const playerTitle = pokerIqModel.isRated
+      ? String(snapshotRank.label || pokerIqModel.rank.label || 'Без ранга')
+      : 'Без ранга';
+    const streakSnapshot = object(snapshot.streak);
+    const currentStreak = hasProgressSnapshot ? Math.floor(number(streakSnapshot.current)) : 0;
+    const bestStreak = hasProgressSnapshot
+      ? Math.max(currentStreak, Math.floor(number(streakSnapshot.best)))
+      : 0;
+    const decisionQualitySnapshot = object(snapshot.decisionQuality);
+    const decisionQualityScore = optionalNumber(decisionQualitySnapshot.score);
+    const decisionQualityRated = hasProgressSnapshot
+      && decisionQualitySnapshot.isRated === true
+      && decisionQualityScore !== null
+      && decisionQualityScore >= 0
+      && decisionQualityScore <= 100;
+    const decisionQualityCount = Math.floor(number(decisionQualitySnapshot.ratedDecisions));
+    const achievementSnapshot = object(snapshot.achievements);
+    const achievementTotal = hasProgressSnapshot
+      ? Math.floor(number(achievementSnapshot.totalCount))
+      : 0;
+    const achievementUnlocked = Math.min(
+      achievementTotal,
+      hasProgressSnapshot ? Math.floor(number(achievementSnapshot.unlockedCount)) : 0
+    );
     const avatar = profile.avatar || { type: 'initials', value: 'PL' };
     return {
       displayName: String(profile.displayName || 'Player'),
@@ -95,22 +156,44 @@
           : String(avatar.value || 'PL'),
         preset: avatar.type === 'preset' ? avatar.value : null
       },
+      playerTitle,
       level: Math.max(1, Math.floor(number(progression.level) || 1)),
-      totalXp: number(progression.totalXp),
+      totalXp,
       xpIntoLevel,
       xpToNextLevel,
       progressPercent: Math.max(0, Math.min(100, Math.round(xpIntoLevel / xpToNextLevel * 100))),
       progressLabel: `${xpIntoLevel} / ${xpToNextLevel} XP`,
       pokerIQ: pokerIqModel,
+      streak: {
+        current: currentStreak,
+        best: bestStreak
+      },
+      decisionQuality: {
+        isRated: decisionQualityRated,
+        value: decisionQualityRated ? Math.round(decisionQualityScore) : null,
+        displayValue: decisionQualityRated
+          ? String(Math.round(decisionQualityScore))
+          : translate('profile.notCalculatedFeminine', 'Не рассчитана'),
+        ratedDecisions: decisionQualityCount
+      },
+      achievements: {
+        unlockedCount: achievementUnlocked,
+        totalCount: achievementTotal,
+        countLabel: `${achievementUnlocked} / ${achievementTotal}`
+      },
       ratings: {
         pokerIQ: pokerIqModel.isRated
           ? pokerIqModel.displayScore
           : ratings.pokerIQ === null || ratings.pokerIQ === undefined
             ? translate('profile.notCalculated', 'Не рассчитан')
             : String(ratings.pokerIQ),
-        decisionQuality: ratings.decisionQuality === null || ratings.decisionQuality === undefined
-          ? translate('profile.notCalculatedFeminine', 'Не рассчитана')
-          : String(ratings.decisionQuality),
+        decisionQuality: hasProgressSnapshot
+          ? decisionQualityRated
+            ? String(Math.round(decisionQualityScore))
+            : translate('profile.notCalculatedFeminine', 'Не рассчитана')
+          : ratings.decisionQuality === null || ratings.decisionQuality === undefined
+            ? translate('profile.notCalculatedFeminine', 'Не рассчитана')
+            : String(ratings.decisionQuality),
         rating: ratings.elo === null || ratings.elo === undefined
           ? translate('profile.unrated', 'Без рейтинга')
           : String(ratings.elo),
@@ -172,8 +255,28 @@
     setText(document, '#profileName', model.displayName);
     setText(document, '#profileGame', model.preferredGame);
     setText(document, '#profileBioText', model.bio || 'Bio пока не заполнено');
+    setText(document, '#profilePlayerTitle', model.playerTitle);
     setText(document, '#profileLevel', `Level ${model.level}`);
     setText(document, '#profileXpLabel', model.progressLabel);
+    setText(document, '#profileLifetimeXp', `${model.totalXp} XP всего`);
+    setText(document, '#profileHeroPokerIq', model.pokerIQ.displayScore);
+    setText(
+      document,
+      '#profileHeroPokerIqMeta',
+      model.pokerIQ.ratedDecisions ? `${model.pokerIQ.ratedDecisions} решений` : 'Оценка формируется'
+    );
+    setText(document, '#profileHeroStreak', `${model.streak.current} ${dayWord(model.streak.current)}`);
+    setText(document, '#profileHeroStreakMeta', `Лучшая: ${model.streak.best}`);
+    setText(document, '#profileHeroDecisionQuality', model.decisionQuality.displayValue);
+    setText(
+      document,
+      '#profileHeroDecisionQualityMeta',
+      model.decisionQuality.ratedDecisions
+        ? `${model.decisionQuality.ratedDecisions} решений`
+        : 'Оценка формируется'
+    );
+    setText(document, '#profileHeroAchievements', model.achievements.countLabel);
+    setText(document, '#profileHeroAchievementsMeta', 'Открыто');
     const progress = document?.querySelector('#profileXpProgress');
     if (progress) {
       progress.style.setProperty('--profile-progress', `${model.progressPercent}%`);
@@ -263,6 +366,7 @@
     store,
     getStatistics = () => ({}),
     getPokerIQ = () => null,
+    getProgressSnapshot = () => null,
     feedback = root.UIFeedback,
     document = root.document
   } = {}) {
@@ -278,7 +382,8 @@
       return createViewModel({
         profile: store.getProfile(),
         statistics: getStatistics(),
-        pokerIQ: getPokerIQ()
+        pokerIQ: getPokerIQ(),
+        progressSnapshot: getProgressSnapshot()
       });
     }
 

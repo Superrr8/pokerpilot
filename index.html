@@ -527,44 +527,34 @@
     <section id="screen-profile" class="screen">
       <button class="back" data-route="home">‹ Назад</button>
       <div class="profile-screen-shell">
-        <section id="profileHeader" class="panel profile-hero-card" aria-labelledby="profileName">
-          <div id="profileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</div>
+        <section id="profileHeader" class="panel profile-hero-card" aria-labelledby="profileName" data-profile-identity>
+          <div class="profile-avatar-frame">
+            <div id="profileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</div>
+            <span class="profile-avatar-mark" aria-hidden="true">✦</span>
+          </div>
           <div class="profile-identity">
-            <span class="tag">Локальный профиль</span>
+            <span class="tag">Профиль игрока</span>
             <h1 id="profileName">Player</h1>
-            <p id="profileGame" class="muted">$1/$3 Cash</p>
+            <div class="profile-identity-line">
+              <strong id="profilePlayerTitle" class="profile-player-title">Без ранга</strong>
+              <span aria-hidden="true">·</span>
+              <span id="profileGame">$1/$3 Cash</span>
+            </div>
             <p id="profileBioText" class="muted">Bio пока не заполнено</p>
           </div>
           <button id="profileEdit" class="ghost profile-edit-button" type="button" aria-label="Редактировать профиль">Изменить</button>
-          <div class="profile-progression" hidden aria-hidden="true">
+          <div class="profile-progression" aria-label="Прогресс текущего уровня">
             <div class="profile-progression-label">
-              <strong id="profileLevel">Level 1</strong>
+              <span><strong id="profileLevel">Level 1</strong><small id="profileLifetimeXp">0 XP всего</small></span>
               <span id="profileXpLabel">0 / 500 XP</span>
             </div>
             <div id="profileXpProgress" class="profile-xp-progress" role="progressbar" aria-label="Прогресс Level 1: 0 / 500 XP" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
           </div>
-        </section>
-
-        <section id="profileAppearance" class="profile-appearance" aria-labelledby="profileAppearanceTitle">
-          <header class="profile-appearance-header">
-            <div>
-              <span class="tag">Интерфейс</span>
-              <h2 id="profileAppearanceTitle">Оформление</h2>
-              <p>Одна структура — девять характеров PokerElevate.</p>
-            </div>
-            <span class="theme-current" data-theme-current>Emerald</span>
-          </header>
-          <div class="theme-picker" role="group" aria-label="Выбор темы">
-            <button class="theme-option" type="button" data-theme-choice="auto" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>System / Auto</strong><small>Тема устройства</small></span></button>
-            <button class="theme-option is-selected" type="button" data-theme-choice="emerald" aria-pressed="true"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Emerald</strong><small>Глубокий зелёный</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="amber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Amber</strong><small>Тёплый янтарный</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="indigo" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Indigo</strong><small>Прохладный индиго</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="minimal" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Minimal Light</strong><small>Светлый минимализм</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="cyber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Neon Cyber</strong><small>Неон и энергия</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="glass" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Glass</strong><small>Стекло и глубина</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="obsidian" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Obsidian</strong><small>Графит и шампанское</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="warm-wood" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Warm Wood</strong><small>Тёплый клубный</small></span></button>
-            <button class="theme-option" type="button" data-theme-choice="soft-pastel" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Soft Pastel</strong><small>Мягкий светлый</small></span></button>
+          <div id="profileIdentityStats" class="profile-identity-stats" role="list" aria-label="Краткая сводка игрока">
+            <article class="profile-identity-stat" role="listitem"><small>Poker IQ</small><strong id="profileHeroPokerIq">Не рассчитан</strong><span id="profileHeroPokerIqMeta">Оценка формируется</span></article>
+            <article class="profile-identity-stat" role="listitem"><small>Серия</small><strong id="profileHeroStreak">0 дней</strong><span id="profileHeroStreakMeta">Лучшая: 0</span></article>
+            <article class="profile-identity-stat" role="listitem"><small>Decision Quality</small><strong id="profileHeroDecisionQuality">Не рассчитана</strong><span id="profileHeroDecisionQualityMeta">Оценка формируется</span></article>
+            <article class="profile-identity-stat" role="listitem"><small>Достижения</small><strong id="profileHeroAchievements">0 / 10</strong><span id="profileHeroAchievementsMeta">Открыто</span></article>
           </div>
         </section>
 
@@ -657,6 +647,29 @@
               <ol id="progressRecentList" class="progress-event-list" hidden></ol>
               <p id="progressRecentEmpty" class="progress-empty">Пока нет значимых событий прогресса.</p>
             </section>
+          </div>
+        </section>
+
+        <section id="profileAppearance" class="profile-appearance" aria-labelledby="profileAppearanceTitle">
+          <header class="profile-appearance-header">
+            <div>
+              <span class="tag">Интерфейс</span>
+              <h2 id="profileAppearanceTitle">Оформление</h2>
+              <p>Одна структура — девять характеров PokerElevate.</p>
+            </div>
+            <span class="theme-current" data-theme-current>Emerald</span>
+          </header>
+          <div class="theme-picker" role="group" aria-label="Выбор темы">
+            <button class="theme-option" type="button" data-theme-choice="auto" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>System / Auto</strong><small>Тема устройства</small></span></button>
+            <button class="theme-option is-selected" type="button" data-theme-choice="emerald" aria-pressed="true"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Emerald</strong><small>Глубокий зелёный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="amber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Amber</strong><small>Тёплый янтарный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="indigo" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Indigo</strong><small>Прохладный индиго</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="minimal" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Minimal Light</strong><small>Светлый минимализм</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="cyber" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Neon Cyber</strong><small>Неон и энергия</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="glass" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Glass</strong><small>Стекло и глубина</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="obsidian" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Obsidian</strong><small>Графит и шампанское</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="warm-wood" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Warm Wood</strong><small>Тёплый клубный</small></span></button>
+            <button class="theme-option" type="button" data-theme-choice="soft-pastel" aria-pressed="false"><span class="theme-preview" aria-hidden="true"></span><span class="theme-option-copy"><strong>Soft Pastel</strong><small>Мягкий светлый</small></span></button>
           </div>
         </section>
 
@@ -1117,6 +1130,7 @@ let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,
   getStatistics: () => ProfileStatistics.fromProgress(progress),
   getPokerIQ: () => PokerIQStats.getSummary(progress.history),
+  getProgressSnapshot: () => ProgressSystem.getSnapshot(),
   feedback: UIFeedback
 });
 const progressFeedback = PokerPilotProgressFeedback.create({
