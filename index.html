@@ -40,7 +40,7 @@
 
   </style>
   <link rel="stylesheet" href="src/styles/app-shell.css">
-  <link rel="stylesheet" href="src/styles/profile.css">
+  <link rel="stylesheet" href="src/styles/profile.css?v=13.2.1">
   <link rel="stylesheet" href="src/styles/motion.css">
   <link rel="stylesheet" href="src/styles/live-session.css">
   <link rel="stylesheet" href="src/styles/decision-quality.css">
@@ -49,7 +49,7 @@
   <link rel="stylesheet" href="src/styles/focus-session.css">
   <link rel="stylesheet" href="src/styles/daily-challenge.css">
   <link rel="stylesheet" href="src/styles/learning-mode.css">
-  <link rel="stylesheet" href="src/styles/progress-overview.css">
+  <link rel="stylesheet" href="src/styles/progress-overview.css?v=13.2.1">
   <link rel="stylesheet" href="src/styles/achievement-center.css">
   <link rel="stylesheet" href="src/styles/progress-analytics-view.css">
   <link rel="stylesheet" href="src/styles/progress-feedback.css">
@@ -528,41 +528,46 @@
       <button class="back" data-route="home">‹ Назад</button>
       <div class="profile-screen-shell">
         <section id="profileHeader" class="panel profile-hero-card" aria-labelledby="profileName" data-profile-identity>
-          <div class="profile-avatar-frame">
-            <div id="profileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</div>
-            <span class="profile-avatar-mark" aria-hidden="true">✦</span>
+          <div class="profile-hero-toolbar">
+            <span class="profile-hero-kicker">Player profile</span>
+            <button id="profileEdit" class="ghost profile-edit-button" type="button" aria-label="Редактировать профиль">Изменить</button>
           </div>
-          <div class="profile-identity">
-            <span class="tag">Профиль игрока</span>
-            <h1 id="profileName">Player</h1>
-            <div class="profile-identity-line">
-              <strong id="profilePlayerTitle" class="profile-player-title">Без ранга</strong>
-              <span aria-hidden="true">·</span>
-              <span id="profileGame">$1/$3 Cash</span>
+          <div class="profile-identity-core">
+            <div class="profile-avatar-frame">
+              <div id="profileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</div>
+              <span class="profile-avatar-mark" aria-hidden="true">✦</span>
             </div>
-            <p id="profileBioText" class="muted">Bio пока не заполнено</p>
+            <div class="profile-identity">
+              <h1 id="profileName">Player</h1>
+              <div class="profile-identity-line">
+                <strong id="profilePlayerTitle" class="profile-player-title">Без ранга</strong>
+                <span aria-hidden="true">·</span>
+                <span id="profileGame">$1/$3 Cash</span>
+              </div>
+              <p id="profileBioText" class="muted" hidden></p>
+            </div>
           </div>
-          <button id="profileEdit" class="ghost profile-edit-button" type="button" aria-label="Редактировать профиль">Изменить</button>
           <div class="profile-progression" aria-label="Прогресс текущего уровня">
             <div class="profile-progression-label">
-              <span><strong id="profileLevel">Level 1</strong><small id="profileLifetimeXp">0 XP всего</small></span>
-              <span id="profileXpLabel">0 / 500 XP</span>
+              <span><small>Текущий уровень</small><strong id="profileLevel">Level 1</strong></span>
+              <span><small id="profileLifetimeXp">0 XP всего</small><strong id="profileXpLabel">0 / 500 XP</strong></span>
             </div>
             <div id="profileXpProgress" class="profile-xp-progress" role="progressbar" aria-label="Прогресс Level 1: 0 / 500 XP" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
           </div>
           <div id="profileIdentityStats" class="profile-identity-stats" role="list" aria-label="Краткая сводка игрока">
             <article class="profile-identity-stat" role="listitem"><small>Poker IQ</small><strong id="profileHeroPokerIq">Не рассчитан</strong><span id="profileHeroPokerIqMeta">Оценка формируется</span></article>
-            <article class="profile-identity-stat" role="listitem"><small>Серия</small><strong id="profileHeroStreak">0 дней</strong><span id="profileHeroStreakMeta">Лучшая: 0</span></article>
             <article class="profile-identity-stat" role="listitem"><small>Decision Quality</small><strong id="profileHeroDecisionQuality">Не рассчитана</strong><span id="profileHeroDecisionQualityMeta">Оценка формируется</span></article>
+            <article class="profile-identity-stat" role="listitem"><small>Серия</small><strong id="profileHeroStreak">0 дней</strong><span id="profileHeroStreakMeta">Лучшая: 0</span></article>
             <article class="profile-identity-stat" role="listitem"><small>Достижения</small><strong id="profileHeroAchievements">0 / 10</strong><span id="profileHeroAchievementsMeta">Открыто</span></article>
           </div>
         </section>
 
-        <section id="progressOverview" class="panel progress-overview-card progress-overview" aria-label="Прогресс игрока">
+        <section id="progressOverview" class="panel progress-overview-card progress-overview" aria-labelledby="progressOverviewTitle">
           <header class="progress-overview-hero">
-            <div>
-              <span class="progress-overview-kicker">Прогресс игрока</span>
-              <p id="progressPlayerName" class="progress-overview-player">Player</p>
+            <div class="progress-overview-summary">
+              <span class="progress-overview-kicker">Подробный прогресс</span>
+              <h2 id="progressOverviewTitle">Развитие игрока</h2>
+              <span class="progress-iq-label">Poker IQ</span>
               <div class="progress-iq-line">
                 <strong id="progressPokerIq" class="progress-iq-value">Не рассчитан</strong>
                 <span id="progressRank" class="progress-rank">Без ранга</span>
@@ -571,15 +576,8 @@
                 <span id="progressIqSample">Недостаточно решений</span>
                 <span id="progressIqChange" class="progress-iq-change" hidden></span>
               </div>
-              <button id="progressAnalyticsOpen" class="ghost progress-overview-analytics-action" type="button">Аналитика</button>
             </div>
-            <div class="progress-level-block">
-              <div class="progress-level-heading">
-                <strong id="progressLevel">Level 1</strong>
-                <span id="progressXpLabel">0 / 500 XP</span>
-              </div>
-              <progress id="progressXpBar" class="progress-meter" max="500" value="0" aria-label="Level 1: 0 / 500 XP"></progress>
-            </div>
+            <button id="progressAnalyticsOpen" class="ghost progress-overview-analytics-action" type="button">Аналитика</button>
           </header>
 
           <section class="progress-overview-section" aria-labelledby="progressDecisionQualityTitle">
@@ -1015,7 +1013,7 @@
 <script src="src/progress/progress-feedback.js"></script>
 <script src="src/progress/progress-integration.js"></script>
 <script src="src/daily/daily-challenge-progress.js"></script>
-<script src="src/ui/progress-overview.js"></script>
+<script src="src/ui/progress-overview.js?v=13.2.1"></script>
 <script src="src/ui/achievement-center.js"></script>
 <script src="src/ui/progress-analytics-view.js"></script>
 <script src="src/live/saved-hands.js"></script>
@@ -1036,7 +1034,7 @@
 <script src="src/ui/ui-feedback.js"></script>
 <script src="src/ui/decision-quality.js"></script>
 <script src="src/ui/trainer-explanation.js"></script>
-<script src="src/ui/profile.js"></script>
+<script src="src/ui/profile.js?v=13.2.1"></script>
 <script src="src/ui/learning-mode.js"></script>
 <script>
 'use strict';

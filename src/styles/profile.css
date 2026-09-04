@@ -88,23 +88,23 @@
   padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
 }
 
-.profile-hero-card {
+#screen-profile .profile-hero-card {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    "avatar identity action"
-    "progress progress progress"
-    "stats stats stats";
-  align-items: center;
-  gap: var(--space-4);
+    "toolbar"
+    "identity"
+    "progress"
+    "stats";
+  gap: var(--space-5);
   overflow: hidden;
   padding: clamp(var(--space-5), 5vw, var(--space-7));
   border-color: var(--accent-border);
   background:
-    radial-gradient(circle at 92% 0%, var(--accent-soft), transparent 38%),
-    linear-gradient(155deg, var(--surface-raised), var(--surface-elevated));
-  box-shadow: var(--shadow-md);
+    radial-gradient(circle at 100% 0%, var(--accent-soft), transparent 44%),
+    linear-gradient(145deg, var(--surface-elevated), var(--surface-raised));
+  box-shadow: var(--shadow-lg);
 }
 
 .profile-hero-card::before {
@@ -116,20 +116,45 @@
   pointer-events: none;
 }
 
+.profile-hero-toolbar {
+  grid-area: toolbar;
+  display: flex;
+  min-width: 0;
+  justify-content: space-between;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.profile-hero-kicker {
+  color: var(--accent);
+  font-size: var(--font-size-xs);
+  font-weight: 850;
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
+}
+
+.profile-identity-core {
+  grid-area: identity;
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: center;
+}
+
 .profile-avatar-frame {
   position: relative;
-  grid-area: avatar;
 }
 
 .profile-hero-card .profile-avatar {
-  width: clamp(68px, 12vw, 88px);
+  width: clamp(82px, 15vw, 104px);
   border-width: 1px;
   background:
     radial-gradient(circle at 34% 24%, var(--accent-soft), transparent 34%),
     linear-gradient(145deg, var(--surface-elevated), var(--surface-raised));
-  font-size: var(--font-size-2xl);
+  font-size: clamp(var(--font-size-2xl), 5vw, 2.35rem);
   box-shadow:
-    0 0 0 5px color-mix(in srgb, var(--accent-soft) 68%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--accent-soft) 72%, transparent),
     var(--shadow-md);
 }
 
@@ -150,28 +175,20 @@
 }
 
 .profile-identity {
-  grid-area: identity;
   min-width: 0;
 }
 
 .profile-identity h1 {
-  margin: var(--space-1) 0 0;
+  margin: 0;
+  max-width: 18ch;
   overflow-wrap: normal;
-  font-size: clamp(1.55rem, 5vw, 2.15rem);
+  font-size: clamp(1.85rem, 6vw, 2.55rem);
   line-height: var(--line-height-tight);
   text-wrap: balance;
 }
 
 .profile-identity p {
   margin: var(--space-1) 0 0;
-}
-
-.profile-identity .tag {
-  padding: 0;
-  background: transparent;
-  color: var(--text-tertiary);
-  letter-spacing: var(--letter-spacing-label);
-  text-transform: uppercase;
 }
 
 .profile-identity-line {
@@ -193,20 +210,21 @@
 #profileBioText {
   max-width: 58ch;
   color: var(--text-tertiary);
+  line-height: 1.45;
 }
 
-.profile-edit-button {
-  grid-area: action;
+#screen-profile .profile-edit-button {
   min-width: 44px;
   min-height: 44px;
-  padding: var(--space-2);
-  align-self: start;
+  padding: var(--space-2) var(--space-3);
+  border-color: var(--border-default);
+  background: color-mix(in srgb, var(--surface-interactive) 76%, transparent);
 }
 
 .profile-progression {
   grid-area: progress;
   min-width: 0;
-  padding-top: var(--space-4);
+  padding-top: var(--space-5);
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -215,30 +233,35 @@
   min-width: 0;
   justify-content: space-between;
   gap: var(--space-3);
-  align-items: end;
+  align-items: flex-end;
   margin-bottom: var(--space-2);
 }
 
-.profile-progression-label > span:first-child {
+.profile-progression-label > span {
   display: flex;
   min-width: 0;
   flex-direction: column;
   gap: 2px;
 }
 
-.profile-progression-label strong,
 .profile-progression-label > span:last-child {
-  font-size: var(--font-size-sm);
+  align-items: flex-end;
+  text-align: right;
+}
+
+.profile-progression-label strong {
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
   font-variant-numeric: tabular-nums;
 }
 
-.profile-progression-label small,
-.profile-progression-label > span:last-child {
+.profile-progression-label small {
   color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
 }
 
 .profile-xp-progress {
-  height: 10px;
+  height: 8px;
   background: var(--surface-interactive);
 }
 
@@ -246,15 +269,19 @@
   grid-area: stats;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-2);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-interactive);
 }
 
 .profile-identity-stat {
   min-width: 0;
-  padding: var(--space-3);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--surface-interactive) 82%, transparent);
+  padding: var(--space-4) var(--space-3);
+}
+
+.profile-identity-stat + .profile-identity-stat {
+  border-left: 1px solid var(--border-subtle);
 }
 
 .profile-identity-stat small,
@@ -272,9 +299,9 @@
 }
 
 .profile-identity-stat strong {
-  margin: var(--space-1) 0;
+  margin: var(--space-2) 0 var(--space-1);
   color: var(--text-primary);
-  font-size: clamp(var(--font-size-md), 3.4vw, var(--font-size-xl));
+  font-size: clamp(var(--font-size-lg), 3.8vw, var(--font-size-xl));
   font-variant-numeric: tabular-nums;
   line-height: var(--line-height-tight);
   overflow-wrap: normal;
@@ -422,25 +449,36 @@
 
 @media (max-width: 440px) {
   .profile-hero-card {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-      "avatar identity"
-      "action action"
-      "progress progress"
-      "stats stats";
+    gap: var(--space-4);
     padding: var(--space-5);
   }
 
   .profile-hero-card .profile-avatar {
-    width: clamp(64px, 18vw, 76px);
+    width: clamp(80px, 22vw, 92px);
   }
 
-  .profile-edit-button {
-    width: 100%;
+  .profile-identity-core {
+    gap: var(--space-4);
+  }
+
+  .profile-identity h1 {
+    font-size: clamp(1.72rem, 7.5vw, 2.1rem);
   }
 
   .profile-identity-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-identity-stat + .profile-identity-stat {
+    border-left: 0;
+  }
+
+  .profile-identity-stat:nth-child(even) {
+    border-left: 1px solid var(--border-subtle);
+  }
+
+  .profile-identity-stat:nth-child(n + 3) {
+    border-top: 1px solid var(--border-subtle);
   }
 }
 

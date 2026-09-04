@@ -21,8 +21,31 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-4);
-  align-items: end;
+  align-items: start;
   padding: var(--space-6);
+}
+
+.progress-overview-summary {
+  min-width: 0;
+}
+
+.progress-overview-summary h2 {
+  margin: var(--space-1) 0 var(--space-5);
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-tight);
+}
+
+.progress-iq-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+  font-weight: 750;
+}
+
+.progress-overview-analytics-action {
+  min-height: 44px;
 }
 
 .progress-overview-kicker,
@@ -57,6 +80,12 @@
   font-weight: 850;
   letter-spacing: -0.055em;
   line-height: 0.9;
+}
+
+.progress-iq-value[data-state="empty"] {
+  font-size: var(--font-size-xl);
+  letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
 }
 
 .progress-rank {

@@ -455,6 +455,8 @@
 
     setText(documentRef, '#progressPlayerName', model.playerName);
     setText(documentRef, '#progressPokerIq', model.pokerIq.value);
+    const pokerIqValue = find(documentRef, '#progressPokerIq');
+    if (pokerIqValue) pokerIqValue.dataset.state = model.pokerIq.available ? 'rated' : 'empty';
     setText(documentRef, '#progressRank', model.pokerIq.rank);
     setText(documentRef, '#progressIqSample', model.pokerIq.sampleLabel);
     setText(documentRef, '#progressIqChange', model.pokerIq.change);

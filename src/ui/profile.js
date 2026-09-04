@@ -254,7 +254,11 @@
     setAvatar(document, '#profileAvatar', model);
     setText(document, '#profileName', model.displayName);
     setText(document, '#profileGame', model.preferredGame);
-    setText(document, '#profileBioText', model.bio || 'Bio пока не заполнено');
+    const bio = document?.querySelector('#profileBioText');
+    if (bio) {
+      bio.textContent = model.bio;
+      bio.hidden = !model.bio;
+    }
     setText(document, '#profilePlayerTitle', model.playerTitle);
     setText(document, '#profileLevel', `Level ${model.level}`);
     setText(document, '#profileXpLabel', model.progressLabel);
