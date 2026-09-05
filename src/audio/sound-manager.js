@@ -1,6 +1,7 @@
 'use strict';
 
 (function attachSoundManager(root) {
+  const SOUNDS = ['tap', 'primary', 'success', 'error', 'complete', 'achievement'];
   const EVENTS = [
     'uiClick',
     'navigation',
@@ -13,21 +14,69 @@
     'achievement'
   ];
   const LEGACY_EVENT_ALIASES = {
-    click: 'uiClick',
-    moduleComplete: 'achievement'
+    click: 'tap',
+    uiClick: 'tap',
+    navigation: 'tap',
+    cardDeal: 'tap',
+    chipBet: 'primary',
+    potCollect: 'complete',
+    correct: 'success',
+    incorrect: 'error',
+    unlock: 'complete',
+    moduleComplete: 'achievement',
+    achievement: 'achievement'
   };
-  const TONES = {
-    uiClick: { frequency: 330, duration: 0.045, type: 'sine' },
-    navigation: { frequency: 390, duration: 0.055, type: 'sine' },
-    cardDeal: { frequency: 210, duration: 0.07, type: 'triangle' },
-    chipBet: { frequency: 260, duration: 0.06, type: 'square' },
-    potCollect: { frequency: 460, duration: 0.1, type: 'triangle' },
-    correct: { frequency: 660, duration: 0.12, type: 'sine' },
-    incorrect: { frequency: 155, duration: 0.14, type: 'triangle' },
-    unlock: { frequency: 740, duration: 0.16, type: 'sine' },
-    achievement: { frequency: 880, duration: 0.22, type: 'sine' }
+
+  // Stage 13.3.1 sound language: compact consonant intervals, soft 4–12 ms
+  // attacks, short releases and a deliberately conservative master level.
+  const MASTER_GAIN = 0.12;
+  const SOUND_DEFINITIONS = {
+    tap: {
+      cooldownMs: 45,
+      voices: [
+        { frequency: 240, type: 'triangle', offset: 0, attack: 0.004, duration: 0.055, level: 0.42, filter: 1200 }
+      ]
+    },
+    primary: {
+      cooldownMs: 70,
+      voices: [
+        { frequency: 220, type: 'sine', offset: 0, attack: 0.006, duration: 0.085, level: 0.48, filter: 1300 },
+        { frequency: 330, type: 'triangle', offset: 0.012, attack: 0.006, duration: 0.072, level: 0.2, filter: 1500 }
+      ]
+    },
+    success: {
+      cooldownMs: 120,
+      voices: [
+        { frequency: 392, type: 'sine', offset: 0, attack: 0.008, duration: 0.13, level: 0.42, filter: 1600 },
+        { frequency: 523.25, type: 'sine', offset: 0.052, attack: 0.009, duration: 0.14, level: 0.34, filter: 1800 }
+      ]
+    },
+    error: {
+      cooldownMs: 150,
+      voices: [
+        { frequency: 174.61, type: 'triangle', offset: 0, attack: 0.01, duration: 0.14, level: 0.36, filter: 850 },
+        { frequency: 146.83, type: 'sine', offset: 0.045, attack: 0.012, duration: 0.13, level: 0.24, filter: 720 }
+      ]
+    },
+    complete: {
+      cooldownMs: 220,
+      voices: [
+        { frequency: 329.63, type: 'sine', offset: 0, attack: 0.008, duration: 0.17, level: 0.32, filter: 1500 },
+        { frequency: 493.88, type: 'sine', offset: 0.052, attack: 0.009, duration: 0.17, level: 0.3, filter: 1750 },
+        { frequency: 659.25, type: 'triangle', offset: 0.104, attack: 0.01, duration: 0.16, level: 0.18, filter: 1900 }
+      ]
+    },
+    achievement: {
+      cooldownMs: 350,
+      voices: [
+        { frequency: 392, type: 'sine', offset: 0, attack: 0.01, duration: 0.24, level: 0.32, filter: 1600 },
+        { frequency: 523.25, type: 'sine', offset: 0.065, attack: 0.011, duration: 0.25, level: 0.29, filter: 1800 },
+        { frequency: 659.25, type: 'triangle', offset: 0.13, attack: 0.012, duration: 0.28, level: 0.18, filter: 2000 }
+      ]
+    }
   };
   const DEFAULT_SETTINGS = { enabled: true, volume: 0.35 };
+  let singleton = null;
 
   function normalizeSettings(value) {
     const raw = value && typeof value === 'object' ? value : {};
@@ -43,8 +92,8 @@
   }
 
   function normalizeEvent(eventName) {
-    const normalized = LEGACY_EVENT_ALIASES[eventName] || eventName;
-    return EVENTS.includes(normalized) ? normalized : null;
+    if (SOUNDS.includes(eventName)) return eventName;
+    return LEGACY_EVENT_ALIASES[eventName] || null;
   }
 
   function create(options = {}) {
@@ -54,9 +103,11 @@
     const onSettingsChange = typeof options.onSettingsChange === 'function'
       ? options.onSettingsChange
       : () => {};
+    const now = typeof options.now === 'function' ? options.now : () => Date.now();
     let settings = normalizeSettings(options.initialSettings);
     let context = null;
     let userActivated = false;
+    const lastPlayedAt = new Map();
 
     function notify() {
       onSettingsChange({ ...settings });
@@ -66,33 +117,64 @@
       userActivated = true;
       if (!Context) return false;
       try {
-        if (!context) context = new Context();
-        if (typeof context.resume === 'function') await context.resume();
-        return true;
+        if (!context || context.state === 'closed') context = new Context();
+        if (typeof context.resume === 'function' && context.state !== 'running') {
+          await context.resume();
+        }
+        return !context.state || context.state === 'running';
       } catch (_) {
         context = null;
         return false;
       }
     }
 
-    function play(eventName) {
-      const normalizedEvent = normalizeEvent(eventName);
-      if (!userActivated || !settings.enabled || !normalizedEvent || !context) {
-        return false;
-      }
-      try {
-        const tone = TONES[normalizedEvent];
-        const oscillator = context.createOscillator();
-        const gain = context.createGain();
-        const start = Number(context.currentTime) || 0;
-        oscillator.type = tone.type;
-        oscillator.frequency.setValueAtTime(tone.frequency, start);
-        gain.gain.setValueAtTime(Math.max(0.0001, settings.volume * 0.08), start);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + tone.duration);
+    function connectVoice(oscillator, gain, voice, start) {
+      if (typeof context.createBiquadFilter !== 'function') {
         oscillator.connect(gain);
-        gain.connect(context.destination);
-        oscillator.start(start);
-        oscillator.stop(start + tone.duration);
+        return;
+      }
+      const filter = context.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency?.setValueAtTime?.(voice.filter, start);
+      filter.Q?.setValueAtTime?.(0.55, start);
+      oscillator.connect(filter);
+      filter.connect(gain);
+    }
+
+    function scheduleVoice(voice, baseTime) {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const start = baseTime + voice.offset;
+      const peak = Math.max(0.0001, settings.volume * MASTER_GAIN * voice.level);
+      oscillator.type = voice.type;
+      oscillator.frequency.setValueAtTime(voice.frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      if (typeof gain.gain.linearRampToValueAtTime === 'function') {
+        gain.gain.linearRampToValueAtTime(peak, start + voice.attack);
+      } else {
+        gain.gain.setValueAtTime(peak, start + voice.attack);
+      }
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + voice.duration);
+      connectVoice(oscillator, gain, voice, start);
+      gain.connect(context.destination);
+      oscillator.start(start);
+      oscillator.stop(start + voice.duration + 0.005);
+    }
+
+    function play(eventName) {
+      const sound = normalizeEvent(eventName);
+      if (!userActivated || !settings.enabled || !sound || !context) return false;
+      if (context.state && context.state !== 'running') return false;
+      const definition = SOUND_DEFINITIONS[sound];
+      const timestamp = Number(now());
+      const lastTimestamp = lastPlayedAt.get(sound);
+      if (Number.isFinite(timestamp)
+        && Number.isFinite(lastTimestamp)
+        && timestamp - lastTimestamp < definition.cooldownMs) return false;
+      try {
+        const start = Number(context.currentTime) || 0;
+        definition.voices.forEach(voice => scheduleVoice(voice, start));
+        if (Number.isFinite(timestamp)) lastPlayedAt.set(sound, timestamp);
         return true;
       } catch (_) {
         return false;
@@ -128,17 +210,27 @@
       toggle,
       setVolume,
       getSettings: () => ({ ...settings }),
-      hasUserGesture: () => userActivated
+      hasUserGesture: () => userActivated,
+      getContext: () => context
     };
   }
 
+  function getInstance(options = {}) {
+    if (!singleton) singleton = create(options);
+    return singleton;
+  }
+
   const api = {
+    SOUNDS,
     EVENTS,
     LEGACY_EVENT_ALIASES,
+    SOUND_DEFINITIONS,
+    MASTER_GAIN,
     DEFAULT_SETTINGS,
     normalizeSettings,
     normalizeEvent,
-    create
+    create,
+    getInstance
   };
   root.SoundManager = api;
   if (typeof module === 'object' && module.exports) module.exports = api;

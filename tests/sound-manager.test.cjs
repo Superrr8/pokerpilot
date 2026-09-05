@@ -65,7 +65,7 @@ test('после user gesture разрешён известный звук с у
   });
   await sound.handleUserGesture();
   assert.equal(sound.play('correct'), true);
-  assert.equal(fake.starts.length, 1);
+  assert.equal(fake.starts.length, manager.SOUND_DEFINITIONS.success.voices.length);
   assert.equal(sound.getSettings().volume, 0.35);
 });
 

@@ -1023,7 +1023,9 @@
 <script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
-<script src="src/audio/sound-manager.js"></script>
+<script src="src/audio/sound-manager.js?v=13.3.1"></script>
+<script src="src/audio/haptic-manager.js?v=13.3.1"></script>
+<script src="src/audio/feedback-manager.js?v=13.3.1"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/motion-system.js"></script>
@@ -1117,13 +1119,15 @@ const historyPanel = PokerPilotLiveUX.createHistoryPanel({
 const actionFeed = PokerPilotLiveUX.createActionFeed();
 const motionLedger = PokerPilotLiveMotion.createMotionLedger();
 let learningMode = null;
-let appSound = SoundManager.create({
+let appSound = SoundManager.getInstance({
   initialSettings: progress.learning.preferences.sound,
   onSettingsChange: soundSettings => {
     progress.learning = CourseProgress.setSoundPreferences(progress.learning, soundSettings);
     saveProgress();
   }
 });
+let appHaptics = HapticManager.getInstance();
+let appFeedback = FeedbackManager.getInstance({ sound: appSound, haptics: appHaptics });
 let learningSound = appSound;
 let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,

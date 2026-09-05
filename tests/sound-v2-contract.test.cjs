@@ -18,7 +18,10 @@ test('sound manager объявляет полный набор событий v2
 
 test('legacy sound events безопасно нормализуются в новые события', () => {
   const manager = loadSoundManager();
-  assert.equal(manager.normalizeEvent('click'), 'uiClick');
+  assert.equal(manager.normalizeEvent('click'), 'tap');
+  assert.equal(manager.normalizeEvent('uiClick'), 'tap');
+  assert.equal(manager.normalizeEvent('correct'), 'success');
+  assert.equal(manager.normalizeEvent('incorrect'), 'error');
   assert.equal(manager.normalizeEvent('moduleComplete'), 'achievement');
   assert.equal(manager.normalizeEvent('unknown'), null);
 });
@@ -47,4 +50,3 @@ test('sound manager does not create AudioContext before a user gesture', () => {
   sound.play('navigation');
   assert.equal(constructions, 0);
 });
-
