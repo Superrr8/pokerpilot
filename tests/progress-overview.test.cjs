@@ -341,7 +341,7 @@ test('Progress Overview подключён после ProgressSystem и чита
   const html = read(htmlPath);
   const source = read(uiPath);
   const progressScript = '<script src="src/progress/progress-system.js"></script>';
-  const overviewScript = '<script src="src/ui/progress-overview.js?v=13.2.1"></script>';
+  const overviewScript = '<script src="src/ui/progress-overview.js?v=13.2.2"></script>';
   assert.ok(fs.existsSync(uiPath), 'Нет src/ui/progress-overview.js');
   assert.ok(fs.existsSync(cssPath), 'Нет src/styles/progress-overview.css');
   assert.match(html, /src\/styles\/progress-overview\.css/);

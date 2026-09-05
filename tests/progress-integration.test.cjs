@@ -221,7 +221,7 @@ test('browser wiring подключает integration после ProgressSystem 
 
 test('Progress Overview знает новый meaningful scenario event', () => {
   const source = fs.readFileSync(path.join(root, 'src', 'ui', 'progress-overview.js'), 'utf8');
-  assert.match(source, /TRAINING_SCENARIO_COMPLETED:\s*'Сценарий тренировки завершён'/);
+  assert.match(source, /TRAINING_SCENARIO_COMPLETED:\s*'Сценарий завершён'/);
 });
 
 test('integration передаёт structured result feedback только для accepted события', () => {

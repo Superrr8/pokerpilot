@@ -37,7 +37,7 @@ test('профильные classic-script модули подключены в �
   }
   const storeScript = '<script src="src/profile/profile-store.js"></script>';
   const statsScript = '<script src="src/profile/profile-statistics.js"></script>';
-  const uiScript = '<script src="src/ui/profile.js?v=13.2.1"></script>';
+  const uiScript = '<script src="src/ui/profile.js?v=13.2.2"></script>';
   assert.match(html, /src\/styles\/profile\.css/);
   assert.ok(html.indexOf(storeScript) < html.indexOf(statsScript));
   assert.ok(html.indexOf(statsScript) < html.indexOf(uiScript));

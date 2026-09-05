@@ -3,10 +3,10 @@
 (function attachProfileUi(root) {
   const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
   const AVATAR_SYMBOLS = Object.freeze({
-    'spade-green': '♠',
-    'diamond-blue': '♦',
-    'club-gold': '♣',
-    'heart-red': '♥'
+    'spade-green': 'A♠',
+    'diamond-blue': 'K♦',
+    'club-gold': 'Q♣',
+    'heart-red': 'J♥'
   });
 
   function number(value) {
@@ -434,13 +434,19 @@
       if (target && typeof target.focus === 'function') target.focus();
     }
 
-    function openDialog(trigger) {
+    function openDialog(trigger, focusAvatar = false) {
       if (!dialog) return;
       lastFocused = trigger || document?.activeElement || null;
       populateForm();
       if (typeof dialog.showModal === 'function') dialog.showModal();
       else dialog.setAttribute('open', '');
-      document?.querySelector('#profileDisplayName')?.focus();
+      if (focusAvatar) {
+        const avatarTarget = avatarButtons.find(button => button.getAttribute('aria-pressed') === 'true')
+          || avatarButtons[0];
+        avatarTarget?.focus();
+      } else {
+        document?.querySelector('#profileDisplayName')?.focus();
+      }
     }
 
     function save(event) {
@@ -495,6 +501,7 @@
     }
 
     document?.querySelector('#profileEdit')?.addEventListener('click', event => openDialog(event.currentTarget));
+    document?.querySelector('#profileAvatarEdit')?.addEventListener('click', event => openDialog(event.currentTarget, true));
     document?.querySelector('#profileCancel')?.addEventListener('click', closeDialog);
     form?.addEventListener('submit', save);
     dialog?.addEventListener('keydown', trapDialogFocus);
