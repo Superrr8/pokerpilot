@@ -32,9 +32,11 @@ test('Recent Progress uses concise labels, two-line wrapping and aligned XP', ()
   );
 });
 
-test('Profile owns an iOS safe-area guard without altering shared navigation geometry', () => {
-  assert.match(profileCss, /\.app-shell\[data-active-route="profile"\]::before\s*\{[^}]*position:\s*fixed[^}]*height:\s*var\(--safe-area-top\)[^}]*background:\s*var\(--app-bg\)/s);
-  assert.match(profileCss, /pointer-events:\s*none/);
+test('Profile uses an independent viewport layer to mask iOS safe-area scrolling', () => {
+  assert.match(html, /<div class="profile-ios-safe-area-guard" aria-hidden="true"><\/div>\s*<dialog id="liveCoachSheet"/);
+  assert.match(profileCss, /\.app-shell\[data-active-route="profile"\]\s*~\s*\.profile-ios-safe-area-guard\s*\{[^}]*position:\s*fixed[^}]*height:\s*var\(--safe-area-top\)[^}]*background:\s*var\(--app-bg\)/s);
+  assert.match(profileCss, /\.profile-ios-safe-area-guard\s*\{[^}]*display:\s*none[^}]*pointer-events:\s*none/s);
+  assert.doesNotMatch(profileCss, /\.app-shell\[data-active-route="profile"\]::before/);
 });
 
 test('avatar picker is a semantic premium surface rather than a raw fieldset', () => {
@@ -53,7 +55,7 @@ test('hero avatar edit control is real, opens the dialog and focuses avatar sele
 test('local avatar presets have upgraded poker identities and versioned delivery', () => {
   for (const mark of ['A♠', 'K♦', 'Q♣', 'J♥']) assert.match(`${html}\n${profileSource}`, new RegExp(mark));
   assert.match(profileCss, /\.profile-avatar\[data-avatar-preset="diamond-blue"\]\s*\{[^}]*color:\s*var\(--status-danger\)/s);
-  assert.match(html, /src\/styles\/profile\.css\?v=13\.2\.2/);
+  assert.match(html, /src\/styles\/profile\.css\?v=13\.2\.3/);
   assert.match(html, /src\/styles\/progress-overview\.css\?v=13\.2\.2/);
   assert.match(html, /src\/ui\/profile\.js\?v=13\.2\.2/);
   assert.match(html, /src\/ui\/progress-overview\.js\?v=13\.2\.2/);

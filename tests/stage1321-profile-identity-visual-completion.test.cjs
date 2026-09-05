@@ -74,7 +74,7 @@ test('detailed Progress Overview does not immediately repeat identity or Level/X
 });
 
 test('Profile stylesheet is cache-versioned for physical-device delivery', () => {
-  assert.match(html, /src\/styles\/profile\.css\?v=13\.2\.2/);
+  assert.match(html, /src\/styles\/profile\.css\?v=13\.2\.3/);
   assert.match(html, /src\/styles\/progress-overview\.css\?v=13\.2\.2/);
   assert.match(html, /src\/ui\/profile\.js\?v=13\.2\.2/);
   assert.match(html, /src\/ui\/progress-overview\.js\?v=13\.2\.2/);

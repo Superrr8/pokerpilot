@@ -93,7 +93,13 @@
   padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
 }
 
-.app-shell[data-active-route="profile"]::before {
+.profile-ios-safe-area-guard {
+  display: none;
+  pointer-events: none;
+}
+
+.app-shell[data-active-route="profile"] ~ .profile-ios-safe-area-guard {
+  display: block;
   position: fixed;
   z-index: calc(var(--z-navigation) + 1);
   top: 0;
@@ -101,8 +107,6 @@
   left: 0;
   height: var(--safe-area-top);
   background: var(--app-bg);
-  content: "";
-  pointer-events: none;
 }
 
 #screen-profile .profile-hero-card {
