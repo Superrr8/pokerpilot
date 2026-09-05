@@ -10,12 +10,25 @@ function fakeAudioContext() {
     constructor() {
       this.currentTime = 0;
       this.destination = {};
+      this.sampleRate = 44100;
     }
     resume() { return Promise.resolve(); }
     createOscillator() {
       return {
         type: '',
         frequency: { setValueAtTime() {} },
+        connect() {},
+        start: time => starts.push(time),
+        stop() {}
+      };
+    }
+    createBuffer(_channels, length) {
+      const samples = new Float32Array(length);
+      return { getChannelData: () => samples };
+    }
+    createBufferSource() {
+      return {
+        buffer: null,
         connect() {},
         start: time => starts.push(time),
         stop() {}
@@ -65,7 +78,7 @@ test('после user gesture разрешён известный звук с у
   });
   await sound.handleUserGesture();
   assert.equal(sound.play('correct'), true);
-  assert.equal(fake.starts.length, manager.SOUND_DEFINITIONS.success.voices.length);
+  assert.equal(fake.starts.length, manager.SOUND_DEFINITIONS.success.layers.length);
   assert.equal(sound.getSettings().volume, 0.35);
 });
 

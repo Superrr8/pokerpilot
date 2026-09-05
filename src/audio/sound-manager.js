@@ -27,51 +27,51 @@
     achievement: 'achievement'
   };
 
-  // Stage 13.3.1 sound language: compact consonant intervals, soft 4–12 ms
-  // attacks, short releases and a deliberately conservative master level.
+  // Stage 13.3.1.1 sound language: every event begins with the same short,
+  // band-limited noise transient. Quiet body/accent layers add meaning without
+  // turning repeated interaction feedback into pitched beeps or notifications.
   const MASTER_GAIN = 0.12;
   const SOUND_DEFINITIONS = {
     tap: {
       cooldownMs: 45,
-      voices: [
-        { frequency: 240, type: 'triangle', offset: 0, attack: 0.004, duration: 0.055, level: 0.42, filter: 1200 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.0025, duration: 0.032, level: 0.62, highpass: 520, lowpass: 3600, seed: 11 }
       ]
     },
     primary: {
       cooldownMs: 70,
-      voices: [
-        { frequency: 220, type: 'sine', offset: 0, attack: 0.006, duration: 0.085, level: 0.48, filter: 1300 },
-        { frequency: 330, type: 'triangle', offset: 0.012, attack: 0.006, duration: 0.072, level: 0.2, filter: 1500 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.048, level: 0.62, highpass: 320, lowpass: 3000, seed: 23 },
+        { kind: 'tone', frequency: 170, type: 'sine', offset: 0.004, attack: 0.004, duration: 0.05, level: 0.1, lowpass: 900 }
       ]
     },
     success: {
       cooldownMs: 120,
-      voices: [
-        { frequency: 392, type: 'sine', offset: 0, attack: 0.008, duration: 0.13, level: 0.42, filter: 1600 },
-        { frequency: 523.25, type: 'sine', offset: 0.052, attack: 0.009, duration: 0.14, level: 0.34, filter: 1800 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.0025, duration: 0.036, level: 0.58, highpass: 480, lowpass: 3800, seed: 37 },
+        { kind: 'tone', frequency: 620, type: 'triangle', offset: 0.016, attack: 0.006, duration: 0.055, level: 0.08, lowpass: 1800 }
       ]
     },
     error: {
       cooldownMs: 150,
-      voices: [
-        { frequency: 174.61, type: 'triangle', offset: 0, attack: 0.01, duration: 0.14, level: 0.36, filter: 850 },
-        { frequency: 146.83, type: 'sine', offset: 0.045, attack: 0.012, duration: 0.13, level: 0.24, filter: 720 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.0035, duration: 0.048, level: 0.58, highpass: 140, lowpass: 1600, seed: 41 },
+        { kind: 'tone', frequency: 135, type: 'sine', offset: 0, attack: 0.004, duration: 0.052, level: 0.07, lowpass: 700 }
       ]
     },
     complete: {
       cooldownMs: 220,
-      voices: [
-        { frequency: 329.63, type: 'sine', offset: 0, attack: 0.008, duration: 0.17, level: 0.32, filter: 1500 },
-        { frequency: 493.88, type: 'sine', offset: 0.052, attack: 0.009, duration: 0.17, level: 0.3, filter: 1750 },
-        { frequency: 659.25, type: 'triangle', offset: 0.104, attack: 0.01, duration: 0.16, level: 0.18, filter: 1900 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.04, level: 0.6, highpass: 350, lowpass: 3000, seed: 53 },
+        { kind: 'noise', offset: 0.035, attack: 0.003, duration: 0.028, level: 0.24, highpass: 500, lowpass: 3300, seed: 59 }
       ]
     },
     achievement: {
       cooldownMs: 350,
-      voices: [
-        { frequency: 392, type: 'sine', offset: 0, attack: 0.01, duration: 0.24, level: 0.32, filter: 1600 },
-        { frequency: 523.25, type: 'sine', offset: 0.065, attack: 0.011, duration: 0.25, level: 0.29, filter: 1800 },
-        { frequency: 659.25, type: 'triangle', offset: 0.13, attack: 0.012, duration: 0.28, level: 0.18, filter: 2000 }
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.042, level: 0.58, highpass: 380, lowpass: 3200, seed: 67 },
+        { kind: 'noise', offset: 0.045, attack: 0.006, duration: 0.05, level: 0.15, highpass: 1200, lowpass: 5000, seed: 71 },
+        { kind: 'tone', frequency: 520, type: 'triangle', offset: 0.05, attack: 0.008, duration: 0.068, level: 0.08, lowpass: 1900 }
       ]
     }
   };
@@ -128,37 +128,70 @@
       }
     }
 
-    function connectVoice(oscillator, gain, voice, start) {
+    function connectLayer(source, gain, layer, start) {
       if (typeof context.createBiquadFilter !== 'function') {
-        oscillator.connect(gain);
+        source.connect(gain);
         return;
       }
-      const filter = context.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency?.setValueAtTime?.(voice.filter, start);
-      filter.Q?.setValueAtTime?.(0.55, start);
-      oscillator.connect(filter);
-      filter.connect(gain);
+      let tail = source;
+      if (layer.highpass) {
+        const highpass = context.createBiquadFilter();
+        highpass.type = 'highpass';
+        highpass.frequency?.setValueAtTime?.(layer.highpass, start);
+        highpass.Q?.setValueAtTime?.(0.6, start);
+        tail.connect(highpass);
+        tail = highpass;
+      }
+      if (layer.lowpass) {
+        const lowpass = context.createBiquadFilter();
+        lowpass.type = 'lowpass';
+        lowpass.frequency?.setValueAtTime?.(layer.lowpass, start);
+        lowpass.Q?.setValueAtTime?.(0.55, start);
+        tail.connect(lowpass);
+        tail = lowpass;
+      }
+      tail.connect(gain);
     }
 
-    function scheduleVoice(voice, baseTime) {
+    function createNoiseSource(layer) {
+      const sampleRate = Number(context.sampleRate) || 44100;
+      const frameCount = Math.max(1, Math.ceil((layer.duration + 0.005) * sampleRate));
+      const buffer = context.createBuffer(1, frameCount, sampleRate);
+      const samples = buffer.getChannelData(0);
+      let state = layer.seed >>> 0;
+      for (let index = 0; index < samples.length; index += 1) {
+        state = (state * 1664525 + 1013904223) >>> 0;
+        samples[index] = (state / 4294967296) * 2 - 1;
+      }
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      return source;
+    }
+
+    function createLayerSource(layer, start) {
+      if (layer.kind === 'noise') return createNoiseSource(layer);
       const oscillator = context.createOscillator();
+      oscillator.type = layer.type;
+      oscillator.frequency.setValueAtTime(layer.frequency, start);
+      return oscillator;
+    }
+
+    function scheduleLayer(layer, baseTime) {
       const gain = context.createGain();
-      const start = baseTime + voice.offset;
-      const peak = Math.max(0.0001, settings.volume * MASTER_GAIN * voice.level);
-      oscillator.type = voice.type;
-      oscillator.frequency.setValueAtTime(voice.frequency, start);
+      const start = baseTime + layer.offset;
+      const source = createLayerSource(layer, start);
+      const peak = Math.max(0.0001, settings.volume * MASTER_GAIN * layer.level);
       gain.gain.setValueAtTime(0.0001, start);
       if (typeof gain.gain.linearRampToValueAtTime === 'function') {
-        gain.gain.linearRampToValueAtTime(peak, start + voice.attack);
+        gain.gain.linearRampToValueAtTime(peak, start + layer.attack);
       } else {
-        gain.gain.setValueAtTime(peak, start + voice.attack);
+        gain.gain.setValueAtTime(peak, start + layer.attack);
       }
-      gain.gain.exponentialRampToValueAtTime(0.0001, start + voice.duration);
-      connectVoice(oscillator, gain, voice, start);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + layer.duration);
+      connectLayer(source, gain, layer, start);
       gain.connect(context.destination);
-      oscillator.start(start);
-      oscillator.stop(start + voice.duration + 0.005);
+      source.start(start);
+      source.stop(start + layer.duration + 0.005);
     }
 
     function play(eventName) {
@@ -173,7 +206,7 @@
         && timestamp - lastTimestamp < definition.cooldownMs) return false;
       try {
         const start = Number(context.currentTime) || 0;
-        definition.voices.forEach(voice => scheduleVoice(voice, start));
+        definition.layers.forEach(layer => scheduleLayer(layer, start));
         if (Number.isFinite(timestamp)) lastPlayedAt.set(sound, timestamp);
         return true;
       } catch (_) {

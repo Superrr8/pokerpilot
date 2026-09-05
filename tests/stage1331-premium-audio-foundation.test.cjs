@@ -24,6 +24,7 @@ function fakeAudioContext({ state = 'running' } = {}) {
       this.currentTime = 1;
       this.destination = {};
       this.state = state;
+      this.sampleRate = 44100;
     }
     resume() {
       resumes += 1;
@@ -34,6 +35,18 @@ function fakeAudioContext({ state = 'running' } = {}) {
       return {
         type: '',
         frequency: { setValueAtTime() {} },
+        connect() {},
+        start: time => starts.push(time),
+        stop() {}
+      };
+    }
+    createBuffer(_channels, length) {
+      const samples = new Float32Array(length);
+      return { getChannelData: () => samples };
+    }
+    createBufferSource() {
+      return {
+        buffer: null,
         connect() {},
         start: time => starts.push(time),
         stop() {}
@@ -61,7 +74,7 @@ function fakeAudioContext({ state = 'running' } = {}) {
   return { Context, starts, get resumes() { return resumes; } };
 }
 
-test('premium audio language exposes exactly six semantic reusable sounds', () => {
+test('premium audio language exposes exactly six transient-first reusable sounds', () => {
   const manager = loadSoundManager();
   assert.deepEqual(
     JSON.parse(JSON.stringify(manager.SOUNDS)),
@@ -71,11 +84,31 @@ test('premium audio language exposes exactly six semantic reusable sounds', () =
   for (const sound of manager.SOUNDS) {
     const definition = manager.SOUND_DEFINITIONS[sound];
     assert.ok(definition.cooldownMs >= 40);
-    assert.ok(definition.voices.length >= 1 && definition.voices.length <= 3);
-    for (const voice of definition.voices) {
-      assert.ok(voice.attack > 0);
-      assert.ok(voice.duration <= 0.32);
-      assert.ok(voice.level > 0 && voice.level <= 1);
+    assert.ok(definition.layers.length >= 1 && definition.layers.length <= 3);
+    assert.equal(definition.layers[0].kind, 'noise');
+    for (const layer of definition.layers) {
+      assert.ok(layer.attack > 0);
+      assert.ok(layer.duration <= 0.12);
+      assert.ok(layer.level > 0 && layer.level <= 1);
+      if (layer.kind === 'noise') {
+        assert.ok(layer.highpass >= 100);
+        assert.ok(layer.lowpass <= 5200);
+      }
+    }
+  }
+
+  const tap = manager.SOUND_DEFINITIONS.tap.layers;
+  assert.equal(tap.length, 1);
+  assert.ok(tap[0].duration >= 0.02 && tap[0].duration <= 0.045);
+  assert.equal(tap.some(layer => layer.kind === 'tone'), false);
+
+  const primary = manager.SOUND_DEFINITIONS.primary.layers;
+  assert.ok(primary[0].duration >= 0.03 && primary[0].duration <= 0.06);
+  assert.ok(primary[0].duration > tap[0].duration);
+  for (const definition of Object.values(manager.SOUND_DEFINITIONS)) {
+    const transientLevel = definition.layers[0].level;
+    for (const layer of definition.layers.slice(1).filter(item => item.kind === 'tone')) {
+      assert.ok(layer.level <= transientLevel * 0.3);
     }
   }
 });
@@ -148,7 +181,7 @@ test('semantic feedback coordinates matching sound and haptic categories', () =>
 });
 
 test('foundation is loaded centrally and reuses the existing sound preference', () => {
-  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.1/);
+  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.1\.1/);
   assert.match(html, /src\/audio\/haptic-manager\.js\?v=13\.3\.1/);
   assert.match(html, /src\/audio\/feedback-manager\.js\?v=13\.3\.1/);
   assert.match(html, /SoundManager\.getInstance/);
