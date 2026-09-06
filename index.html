@@ -1023,9 +1023,10 @@
 <script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
-<script src="src/audio/sound-manager.js?v=13.3.1.1"></script>
-<script src="src/audio/haptic-manager.js?v=13.3.1"></script>
-<script src="src/audio/feedback-manager.js?v=13.3.1"></script>
+<script src="src/audio/sound-manager.js?v=13.3.2"></script>
+<script src="src/audio/haptic-manager.js?v=13.3.2"></script>
+<script src="src/audio/feedback-manager.js?v=13.3.2"></script>
+<script src="src/audio/live-feedback.js?v=13.3.2"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/motion-system.js"></script>
@@ -1128,6 +1129,7 @@ let appSound = SoundManager.getInstance({
 });
 let appHaptics = HapticManager.getInstance();
 let appFeedback = FeedbackManager.getInstance({ sound: appSound, haptics: appHaptics });
+let appLiveFeedback = LiveFeedback.create({ feedback: appFeedback });
 let learningSound = appSound;
 let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,
@@ -2294,6 +2296,7 @@ function recordLiveAction(player,type,{amount=0,toAmount=null,text='',legacyActi
   }
   if(text)log(text);else renderLog();
   if(session&&$('#seats'))renderSeats();
+  if(LIVE_TABLE_ACTION_TYPES.has(type))appLiveFeedback.action(action);
   return action;
 }
 function renderLog(){
@@ -2331,6 +2334,7 @@ function dealLiveHand(){
   historyPanel.startHand();
   actionFeed.startHand();
   motionLedger.startHand(session.handToken);
+  appLiveFeedback.startHand(session.handToken);
   session.hands++;
   session.button=(session.button+1)%session.n;
   session.deck=C.shuffle(C.fullDeck());
@@ -2380,12 +2384,12 @@ function dealLiveHand(){
     token:session.handToken,
     cardCount:session.n*2,
     onStart:()=>{session.presentationPhase='deal-cards';},
+    onCard:index=>appLiveFeedback.cardDeal(index),
     onComplete:()=>runLiveAiSequence(order.slice(0,heroAt),aiPreflopBeforeHero,()=>{
       session.toCall=Math.max(0,session.currentBet-session.players[0].streetContrib);
       session.awaiting='hero-preflop';
       recordLiveAction(null,'INFO',{text:`Твой ход: ${positionsFor(session.n,session.button)[0]} • ${C.handClass(session.players[0].cards)}`});
       renderLive();
-      appSound.play('cardDeal');
       showHeroActions();
     })
   });
@@ -2449,6 +2453,11 @@ function finishBetCollection(){
   $('#potLabel').classList.remove('is-collecting');
   renderLive();
 }
+function startLiveBetCollection(street=session?.street){
+  session.collectingBets=true;
+  appLiveFeedback.potCollect(street);
+  animateBetsToPot();
+}
 function transitionToStreet(street,cardCount,onReady){
   if(!session)return false;
   const token=session.handToken;
@@ -2457,7 +2466,7 @@ function transitionToStreet(street,cardCount,onReady){
     token,
     street,
     cardCount,
-    onCollect:()=>{session.collectingBets=true;animateBetsToPot();},
+    onCollect:()=>startLiveBetCollection(street),
     onCollected:()=>{
       if(!session||session.handToken!==token)return;
       finishBetCollection();
@@ -2469,7 +2478,7 @@ function transitionToStreet(street,cardCount,onReady){
       if(!session||session.handToken!==token)return;
       session.board.push(cards[index]);
       session.boardRevealIndex=session.board.length-1;
-      appSound.play('cardDeal');
+      appLiveFeedback.boardReveal(street,index);
       renderLive();
     },
     onComplete:()=>{
@@ -2591,7 +2600,7 @@ function observerShowdown(){
   presentationQueue.playShowdown({
     token:session.handToken,
     playerIds:evaluated.map(entry=>entry.player.id),
-    onCollect:()=>{session.collectingBets=true;animateBetsToPot();},
+    onCollect:()=>startLiveBetCollection('showdown'),
     onCollected:()=>{finishBetCollection();session.street='showdown';renderLive();},
     onReveal:playerId=>{
       const entry=byId.get(playerId);
@@ -2600,6 +2609,7 @@ function observerShowdown(){
       entry.player.showCards=PokerPilotLiveFlow.canRevealHoleCards({folded:entry.player.folded,reachedShowdown:true});
       entry.player.showdownLabel=C.handName(entry.evaluation);
       recordLiveAction(entry.player,'SHOWDOWN',{text:`${entry.player.name} показывает ${entry.player.showdownLabel}.`,street:'showdown'});
+      appLiveFeedback.showdown(entry.player.id);
       renderLive();
     },
     onWinner:()=>{
@@ -2609,7 +2619,7 @@ function observerShowdown(){
       });
       recordLiveAction(winnerId==null?null:winners[0],'RESULT',{amount:potSize,text:summary,street:'showdown'});
       createCompletedHand(winnerId,summary,potSize);
-      appSound.play('potCollect');
+      appLiveFeedback.potAward(winnerId);
       animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
@@ -3151,7 +3161,7 @@ function handleHeroAction(action,amount=0){
   }
   if(action==='call'){
     presentHeroAction(
-      ()=>{const paid=commitTo(hero,hero.streetContrib+session.toCall);if(paid)appSound.play('chipBet');session.toCall=0;return recordLiveAction(hero,'CALL',{amount:paid,text:`YOU call ${money(paid)}`,legacyAction:`call ${money(paid)}`});},
+      ()=>{const paid=commitTo(hero,hero.streetContrib+session.toCall);session.toCall=0;return recordLiveAction(hero,'CALL',{amount:paid,text:`YOU call ${money(paid)}`,legacyAction:`call ${money(paid)}`});},
       ()=>{session.awaiting=null;if(session.street==='preflop')processAfterHeroPreflop();else advanceStreet();}
     );
     return;
@@ -3165,7 +3175,6 @@ function handleHeroAction(action,amount=0){
       ()=>{
         const allIn=requestedAction==='allin'||finalAmount>=hero.stack+hero.streetContrib;
         const paid=commitTo(hero,finalAmount);
-        appSound.play('chipBet');
         session.currentBet=Math.max(session.currentBet,hero.streetContrib);
         return recordLiveAction(hero,allIn?'ALL_IN':finalAction.toUpperCase(),{amount:paid,toAmount:finalAction==='raise'?finalAmount:null,text:allIn?`YOU all-in ${money(finalAmount)}`:`YOU ${finalAction} до ${money(finalAmount)}`,legacyAction:allIn?'all-in':`${finalAction} ${money(finalAmount)}`});
       },
@@ -3250,13 +3259,13 @@ function awardPot(winnerId,message){
     token:session.handToken,
     playerIds:[],
     wonWithoutShowdown:true,
-    onCollect:()=>{session.collectingBets=true;animateBetsToPot();},
+    onCollect:()=>startLiveBetCollection(session.street),
     onCollected:finishBetCollection,
     onWinner:()=>{
       if(winner){winner.stack+=potSize;winner.winner=true;}
       recordLiveAction(winner,'RESULT',{amount:potSize,text:summary,street:session.street});
       createCompletedHand(winnerId,summary,potSize);
-      appSound.play('potCollect');
+      appLiveFeedback.potAward(winnerId);
       animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
@@ -3275,7 +3284,7 @@ function showdown(){
   presentationQueue.playShowdown({
     token:session.handToken,
     playerIds:[0,v.id],
-    onCollect:()=>{session.collectingBets=true;animateBetsToPot();},
+    onCollect:()=>startLiveBetCollection('showdown'),
     onCollected:()=>{finishBetCollection();session.street='showdown';renderLive();},
     onReveal:playerId=>{
       const player=session.players[playerId],evaluation=evaluations.get(playerId);
@@ -3283,6 +3292,7 @@ function showdown(){
       player.showCards=playerId!==0&&PokerPilotLiveFlow.canRevealHoleCards({folded:player.folded,reachedShowdown:true});
       player.showdownLabel=C.handName(evaluation);
       recordLiveAction(player,'SHOWDOWN',{text:`${player.name} показывает ${player.showdownLabel}.`,street:'showdown'});
+      appLiveFeedback.showdown(player.id);
       renderLive();
     },
     onWinner:()=>{
@@ -3291,7 +3301,7 @@ function showdown(){
       else{const half=Math.floor(potSize/2);hero.stack+=half;v.stack+=potSize-half;hero.winner=true;v.winner=true;}
       recordLiveAction(winnerId==null?null:session.players[winnerId],'RESULT',{amount:potSize,text:summary,street:'showdown'});
       createCompletedHand(winnerId,summary,potSize);
-      appSound.play('potCollect');
+      appLiveFeedback.potAward(winnerId);
       animatePotToWinner(winnerId);
       session.pot=0;
       session.presentedPot=0;
@@ -3311,6 +3321,7 @@ function endHand(){
   scheduleAutomaticNextHand(session.currentCompletedHand);
   renderLive();
   $('#actionTitle').textContent='Раздача завершена · следующая скоро';
+  appLiveFeedback.handComplete();
 }
 function renderSavedHands(){
   const list=$('#savedHandsList'),count=$('#savedHandsCount');
@@ -3454,7 +3465,8 @@ function installMotion() {
   document.addEventListener('pointerdown', e => {
     const target = e.target.closest('button,.mode-card');
     if (!target) return;
-    if (!target.dataset.route && target.id !== 'soundToggle' && !target.closest('#screen-learning')) {
+    const isLiveCommitControl=target.closest('#liveActions')||target.id==='confirmBet';
+    if (!target.dataset.route && target.id !== 'soundToggle' && !target.closest('#screen-learning') && !isLiveCommitControl) {
       appSound.handleUserGesture().then(() => appSound.play('uiClick'));
     }
   }, { passive: true });

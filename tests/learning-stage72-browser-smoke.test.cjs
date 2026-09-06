@@ -16,7 +16,7 @@ test('design tokens и learning CSS подключены без изменени
 });
 
 test('sound manager загружается до Learning Mode и прикладного скрипта', () => {
-  const sound = '<script src="src/audio/sound-manager.js"></script>';
+  const sound = 'src/audio/sound-manager.js';
   const learning = '<script src="src/ui/learning-mode.js"></script>';
   const app = 'const C = window.PokerCore;';
   assert.ok(html.includes(sound));

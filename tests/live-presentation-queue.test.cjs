@@ -81,6 +81,24 @@ test('deal presentation ждёт последовательную раздачу
   assert.equal(events.includes('deal-complete:'), true);
 });
 
+test('deal contact callback совпадает с визуальным интервалом каждой карты', () => {
+  const { queue, clock } = harness();
+  const contacts = [];
+  queue.playDeal({
+    token: 1,
+    cardCount: 4,
+    onCard: index => contacts.push([index, clock.now()])
+  });
+
+  assert.deepEqual(contacts, [[0, 0]]);
+  clock.tick(54);
+  assert.deepEqual(contacts, [[0, 0]]);
+  clock.tick(1);
+  clock.tick(55);
+  clock.tick(55);
+  assert.deepEqual(contacts, [[0, 0], [1, 55], [2, 110], [3, 165]]);
+});
+
 test('AI actions воспроизводятся строго последовательно', () => {
   const { queue, clock, events } = harness();
   queue.playAction({ token: 1, playerId: 1, perform: () => ({ type: 'CHECK' }) });

@@ -2,6 +2,22 @@
 
 (function attachSoundManager(root) {
   const SOUNDS = ['tap', 'primary', 'success', 'error', 'complete', 'achievement'];
+  const LIVE_SOUNDS = [
+    'live.card.deal',
+    'live.board.flop',
+    'live.board.turn',
+    'live.board.river',
+    'live.action.check',
+    'live.action.fold',
+    'live.action.call',
+    'live.action.bet',
+    'live.action.raise',
+    'live.action.allIn',
+    'live.pot.collect',
+    'live.pot.award',
+    'live.showdown',
+    'live.hand.complete'
+  ];
   const EVENTS = [
     'uiClick',
     'navigation',
@@ -73,6 +89,105 @@
         { kind: 'noise', offset: 0.045, attack: 0.006, duration: 0.05, level: 0.15, highpass: 1200, lowpass: 5000, seed: 71 },
         { kind: 'tone', frequency: 520, type: 'triangle', offset: 0.05, attack: 0.008, duration: 0.068, level: 0.08, lowpass: 1900 }
       ]
+    },
+    'live.card.deal': {
+      cooldownMs: 32,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.002, duration: 0.028, level: 0.46, highpass: 650, lowpass: 3200, seed: 83 },
+        { kind: 'noise', offset: 0.009, attack: 0.004, duration: 0.03, level: 0.14, highpass: 180, lowpass: 1200, seed: 89 }
+      ]
+    },
+    'live.board.flop': {
+      cooldownMs: 45,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.0025, duration: 0.038, level: 0.5, highpass: 480, lowpass: 3400, seed: 97 },
+        { kind: 'noise', offset: 0.012, attack: 0.004, duration: 0.036, level: 0.14, highpass: 220, lowpass: 1400, seed: 101 }
+      ]
+    },
+    'live.board.turn': {
+      cooldownMs: 80,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.0025, duration: 0.043, level: 0.52, highpass: 420, lowpass: 3200, seed: 103 },
+        { kind: 'noise', offset: 0.014, attack: 0.004, duration: 0.032, level: 0.13, highpass: 180, lowpass: 1250, seed: 107 }
+      ]
+    },
+    'live.board.river': {
+      cooldownMs: 100,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.05, level: 0.54, highpass: 360, lowpass: 3000, seed: 109 },
+        { kind: 'tone', frequency: 145, type: 'sine', offset: 0.006, attack: 0.006, duration: 0.055, level: 0.07, lowpass: 700 }
+      ]
+    },
+    'live.action.check': {
+      cooldownMs: 90,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.024, level: 0.3, highpass: 180, lowpass: 1300, seed: 113 }
+      ]
+    },
+    'live.action.fold': {
+      cooldownMs: 100,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.04, level: 0.4, highpass: 250, lowpass: 1700, seed: 127 },
+        { kind: 'noise', offset: 0.018, attack: 0.005, duration: 0.04, level: 0.12, highpass: 700, lowpass: 2500, seed: 131 }
+      ]
+    },
+    'live.action.call': {
+      cooldownMs: 100,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.038, level: 0.48, highpass: 280, lowpass: 2200, seed: 137 },
+        { kind: 'tone', frequency: 160, type: 'sine', offset: 0.003, attack: 0.005, duration: 0.04, level: 0.07, lowpass: 760 }
+      ]
+    },
+    'live.action.bet': {
+      cooldownMs: 120,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.046, level: 0.54, highpass: 250, lowpass: 2400, seed: 139 },
+        { kind: 'noise', offset: 0.01, attack: 0.005, duration: 0.04, level: 0.15, highpass: 100, lowpass: 900, seed: 149 }
+      ]
+    },
+    'live.action.raise': {
+      cooldownMs: 150,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.05, level: 0.56, highpass: 220, lowpass: 2300, seed: 151 },
+        { kind: 'noise', offset: 0.025, attack: 0.004, duration: 0.04, level: 0.2, highpass: 420, lowpass: 2800, seed: 157 }
+      ]
+    },
+    'live.action.allIn': {
+      cooldownMs: 250,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.004, duration: 0.055, level: 0.58, highpass: 160, lowpass: 1900, seed: 163 },
+        { kind: 'tone', frequency: 105, type: 'sine', offset: 0.004, attack: 0.007, duration: 0.07, level: 0.12, lowpass: 520 },
+        { kind: 'noise', offset: 0.045, attack: 0.006, duration: 0.04, level: 0.16, highpass: 500, lowpass: 2600, seed: 167 }
+      ]
+    },
+    'live.pot.collect': {
+      cooldownMs: 180,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.004, duration: 0.055, level: 0.44, highpass: 250, lowpass: 1800, seed: 173 },
+        { kind: 'noise', offset: 0.025, attack: 0.006, duration: 0.04, level: 0.18, highpass: 400, lowpass: 2200, seed: 179 }
+      ]
+    },
+    'live.pot.award': {
+      cooldownMs: 350,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.05, level: 0.55, highpass: 220, lowpass: 2300, seed: 181 },
+        { kind: 'noise', offset: 0.035, attack: 0.005, duration: 0.04, level: 0.22, highpass: 480, lowpass: 3000, seed: 191 },
+        { kind: 'tone', frequency: 210, type: 'triangle', offset: 0.035, attack: 0.008, duration: 0.055, level: 0.07, lowpass: 900 }
+      ]
+    },
+    'live.showdown': {
+      cooldownMs: 250,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.04, level: 0.44, highpass: 450, lowpass: 3000, seed: 193 },
+        { kind: 'noise', offset: 0.025, attack: 0.005, duration: 0.035, level: 0.13, highpass: 800, lowpass: 4200, seed: 197 }
+      ]
+    },
+    'live.hand.complete': {
+      cooldownMs: 400,
+      layers: [
+        { kind: 'noise', offset: 0, attack: 0.003, duration: 0.04, level: 0.5, highpass: 300, lowpass: 2400, seed: 199 },
+        { kind: 'noise', offset: 0.04, attack: 0.005, duration: 0.03, level: 0.17, highpass: 520, lowpass: 3000, seed: 211 }
+      ]
     }
   };
   const DEFAULT_SETTINGS = { enabled: true, volume: 0.35 };
@@ -92,7 +207,7 @@
   }
 
   function normalizeEvent(eventName) {
-    if (SOUNDS.includes(eventName)) return eventName;
+    if (SOUNDS.includes(eventName) || LIVE_SOUNDS.includes(eventName)) return eventName;
     return LEGACY_EVENT_ALIASES[eventName] || null;
   }
 
@@ -255,6 +370,7 @@
 
   const api = {
     SOUNDS,
+    LIVE_SOUNDS,
     EVENTS,
     LEGACY_EVENT_ALIASES,
     SOUND_DEFINITIONS,

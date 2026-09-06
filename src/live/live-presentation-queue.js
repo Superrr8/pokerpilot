@@ -268,18 +268,23 @@
       token = state.handToken,
       cardCount = 0,
       onStart = () => {},
+      onCard = () => {},
       onComplete = () => {}
     } = {}) {
       const count = Math.max(0, Math.floor(Number(cardCount) || 0));
-      const duration = count
-        ? config.dealCardMs + Math.max(0, count - 1) * config.dealGapMs
-        : 0;
-      return enqueue([
-        {
+      const dealSteps = count
+        ? Array.from({ length: count }, (_, index) => ({
           phase: 'deal-cards',
-          run: onStart,
-          duration
-        },
+          index,
+          run: () => {
+            if (index === 0) onStart();
+            onCard(index);
+          },
+          duration: index === count - 1 ? config.dealCardMs : config.dealGapMs
+        }))
+        : [{ phase: 'deal-cards', run: onStart, duration: 0 }];
+      return enqueue([
+        ...dealSteps,
         {
           phase: 'deal-complete',
           run: onComplete,
