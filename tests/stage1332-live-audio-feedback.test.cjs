@@ -47,29 +47,20 @@ function fresh(relativePath) {
   return require(modulePath);
 }
 
-test('Live palette exposes the complete semantic sound family without changing the base palette', () => {
+test('Live palette preserves the complete semantic family on local micro-assets', () => {
   const manager = loadSoundManager();
+  const assets = fresh('src/audio/micro-audio-assets.js');
   assert.deepEqual(JSON.parse(JSON.stringify(manager.LIVE_SOUNDS)), LIVE_SOUND_KEYS);
   assert.deepEqual(
     JSON.parse(JSON.stringify(manager.SOUNDS)),
     ['tap', 'primary', 'success', 'error', 'complete', 'achievement']
   );
-  assert.deepEqual(JSON.parse(JSON.stringify(manager.SOUND_DEFINITIONS.tap.layers)), [
-    { kind: 'noise', offset: 0, attack: 0.0025, duration: 0.032, level: 0.62, highpass: 520, lowpass: 3600, seed: 11 }
-  ]);
-
   for (const key of manager.LIVE_SOUNDS) {
     const definition = manager.SOUND_DEFINITIONS[key];
     assert.ok(definition);
-    assert.equal(definition.layers[0].kind, 'noise');
-    assert.ok(definition.layers.length <= 3);
-    assert.ok(Math.max(...definition.layers.map(layer => layer.offset + layer.duration)) <= 0.14);
-    for (const layer of definition.layers) {
-      assert.ok(layer.duration <= 0.1);
-      if (layer.kind === 'tone') {
-        assert.ok(layer.level <= definition.layers[0].level * 0.3);
-      }
-    }
+    assert.ok(assets.ASSETS[definition.asset]);
+    assert.ok(definition.level > 0 && definition.level <= 0.5);
+    assert.equal(Object.hasOwn(definition, 'layers'), false);
   }
 });
 
@@ -158,7 +149,7 @@ test('LiveFeedback maps twelve domain events and deduplicates each hand event', 
 });
 
 test('Live integration is centralized on presentation callbacks without legacy duplicate sounds', () => {
-  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2/);
+  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2\.1/);
   assert.match(html, /LiveFeedback\.create\(\{\s*feedback:\s*appFeedback\s*\}\)/);
   assert.match(html, /appLiveFeedback\.startHand\(session\.handToken\)/);
   assert.match(html, /onCard:index=>appLiveFeedback\.cardDeal\(index\)/);

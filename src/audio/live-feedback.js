@@ -60,7 +60,11 @@
     }
 
     function cardDeal(index) {
-      return emit(`deal:${Number(index) || 0}`, 'live.card.deal', { haptic: false });
+      const cardIndex = Number(index) || 0;
+      return emit(`deal:${cardIndex}`, 'live.card.deal', {
+        sound: cardIndex % 2 === 0,
+        haptic: false
+      });
     }
 
     function boardReveal(street, index) {
@@ -79,7 +83,8 @@
         ? `action:${sequence}`
         : `action:${type}:${value.playerId ?? 'table'}`;
       const haptic = value.playerId === 0 || type === 'ALL_IN';
-      return emit(eventId, ACTION_SOUNDS[type], { haptic });
+      const sound = value.playerId === 0 || !['CHECK', 'FOLD'].includes(type);
+      return emit(eventId, ACTION_SOUNDS[type], { sound, haptic });
     }
 
     function potCollect(street) {
@@ -95,7 +100,7 @@
     }
 
     function handComplete() {
-      return emit('hand-complete', 'live.hand.complete', { haptic: false });
+      return emit('hand-complete', 'live.hand.complete', { sound: false, haptic: false });
     }
 
     return Object.freeze({

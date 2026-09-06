@@ -74,43 +74,23 @@ function fakeAudioContext({ state = 'running' } = {}) {
   return { Context, starts, get resumes() { return resumes; } };
 }
 
-test('premium audio language exposes exactly six transient-first reusable sounds', () => {
+test('premium audio language preserves exactly six reusable semantic sounds', () => {
   const manager = loadSoundManager();
   assert.deepEqual(
     JSON.parse(JSON.stringify(manager.SOUNDS)),
     ['tap', 'primary', 'success', 'error', 'complete', 'achievement']
   );
-  assert.ok(manager.MASTER_GAIN <= 0.15);
+  assert.equal(manager.AUDIO_SOURCE, 'pre-rendered-pcm');
+  assert.ok(manager.MASTER_GAIN <= 0.08);
   for (const sound of manager.SOUNDS) {
     const definition = manager.SOUND_DEFINITIONS[sound];
-    assert.ok(definition.cooldownMs >= 40);
-    assert.ok(definition.layers.length >= 1 && definition.layers.length <= 3);
-    assert.equal(definition.layers[0].kind, 'noise');
-    for (const layer of definition.layers) {
-      assert.ok(layer.attack > 0);
-      assert.ok(layer.duration <= 0.12);
-      assert.ok(layer.level > 0 && layer.level <= 1);
-      if (layer.kind === 'noise') {
-        assert.ok(layer.highpass >= 100);
-        assert.ok(layer.lowpass <= 5200);
-      }
-    }
+    assert.ok(definition.cooldownMs >= 90);
+    assert.equal(typeof definition.asset, 'string');
+    assert.ok(definition.level > 0 && definition.level <= 0.5);
+    assert.equal(Object.hasOwn(definition, 'layers'), false);
   }
-
-  const tap = manager.SOUND_DEFINITIONS.tap.layers;
-  assert.equal(tap.length, 1);
-  assert.ok(tap[0].duration >= 0.02 && tap[0].duration <= 0.045);
-  assert.equal(tap.some(layer => layer.kind === 'tone'), false);
-
-  const primary = manager.SOUND_DEFINITIONS.primary.layers;
-  assert.ok(primary[0].duration >= 0.03 && primary[0].duration <= 0.06);
-  assert.ok(primary[0].duration > tap[0].duration);
-  for (const definition of Object.values(manager.SOUND_DEFINITIONS)) {
-    const transientLevel = definition.layers[0].level;
-    for (const layer of definition.layers.slice(1).filter(item => item.kind === 'tone')) {
-      assert.ok(layer.level <= transientLevel * 0.3);
-    }
-  }
+  assert.ok(manager.SOUND_DEFINITIONS.tap.level < manager.SOUND_DEFINITIONS.primary.level);
+  assert.ok(manager.SOUND_DEFINITIONS.primary.level < manager.SOUND_DEFINITIONS.achievement.level);
 });
 
 test('canonical SoundManager instance is lazy and resumes safely after a gesture', async () => {
@@ -181,7 +161,8 @@ test('semantic feedback coordinates matching sound and haptic categories', () =>
 });
 
 test('foundation is loaded centrally and reuses the existing sound preference', () => {
-  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.2/);
+  assert.match(html, /src\/audio\/micro-audio-assets\.js\?v=13\.3\.2\.1/);
+  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.2\.1/);
   assert.match(html, /src\/audio\/haptic-manager\.js\?v=13\.3\.2/);
   assert.match(html, /src\/audio\/feedback-manager\.js\?v=13\.3\.2/);
   assert.match(html, /SoundManager\.getInstance/);
