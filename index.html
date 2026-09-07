@@ -1023,11 +1023,11 @@
 <script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
-<script src="src/audio/micro-audio-assets.js?v=13.3.2.1"></script>
-<script src="src/audio/sound-manager.js?v=13.3.2.1"></script>
+<script src="src/audio/sonic-identity-assets.js?v=13.3.2.2"></script>
+<script src="src/audio/sound-manager.js?v=13.3.2.2"></script>
 <script src="src/audio/haptic-manager.js?v=13.3.2"></script>
 <script src="src/audio/feedback-manager.js?v=13.3.2"></script>
-<script src="src/audio/live-feedback.js?v=13.3.2.1"></script>
+<script src="src/audio/live-feedback.js?v=13.3.2.2"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/motion-system.js"></script>
@@ -1495,8 +1495,13 @@ function route(name, options = {}) {
   return true;
 }
 
+function interactionSoundFor(target) {
+  if (!target) return 'tap';
+  return target.classList.contains('primary') ? 'primary' : 'tap';
+}
+
 $$('[data-route]').forEach(b => b.addEventListener('click', () => {
-  appSound.handleUserGesture().then(() => appSound.play('navigation'));
+  appSound.handleUserGesture().then(() => appSound.play(interactionSoundFor(b)));
   if (b.id === 'homeFocusAction') {
     const target = PokerPilotWeaknessModel.trainingTargetFor(b.dataset.focusSkill);
     if (target.skillId) startFocusSession(target);
@@ -3464,11 +3469,15 @@ $('#endSession').addEventListener('click',()=>{if(session&&confirm('Законч
 // ----- v1.6 animations -----
 function installMotion() {
   document.addEventListener('pointerdown', e => {
-    const target = e.target.closest('button,.mode-card');
+    const candidate = e.target.closest('button,.mode-card,[role="button"],label');
+    const target = candidate?.matches('label')
+      && !candidate.querySelector('input[type="radio"],input[type="checkbox"]')
+      ? null
+      : candidate;
     if (!target) return;
     const isLiveCommitControl=target.closest('#liveActions')||target.id==='confirmBet';
     if (!target.dataset.route && target.id !== 'soundToggle' && !target.closest('#screen-learning') && !isLiveCommitControl) {
-      appSound.handleUserGesture().then(() => appSound.play('uiClick'));
+      appSound.handleUserGesture().then(() => appSound.play(interactionSoundFor(target)));
     }
   }, { passive: true });
 }

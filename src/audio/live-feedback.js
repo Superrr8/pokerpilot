@@ -62,7 +62,7 @@
     function cardDeal(index) {
       const cardIndex = Number(index) || 0;
       return emit(`deal:${cardIndex}`, 'live.card.deal', {
-        sound: cardIndex % 2 === 0,
+        sound: false,
         haptic: false
       });
     }
@@ -72,7 +72,10 @@
       return emit(
         `board:${normalizedStreet}:${Number(index) || 0}`,
         BOARD_SOUNDS[normalizedStreet],
-        { haptic: Number(index) === 0 }
+        {
+          sound: Number(index) === 0,
+          haptic: Number(index) === 0
+        }
       );
     }
 
@@ -82,21 +85,27 @@
       const eventId = Number.isFinite(sequence)
         ? `action:${sequence}`
         : `action:${type}:${value.playerId ?? 'table'}`;
-      const haptic = value.playerId === 0 || type === 'ALL_IN';
-      const sound = value.playerId === 0 || !['CHECK', 'FOLD'].includes(type);
+      const haptic = value.playerId === 0;
+      const sound = value.playerId === 0;
       return emit(eventId, ACTION_SOUNDS[type], { sound, haptic });
     }
 
     function potCollect(street) {
-      return emit(`pot-collect:${String(street || 'table')}`, 'live.pot.collect', { haptic: false });
+      return emit(`pot-collect:${String(street || 'table')}`, 'live.pot.collect', {
+        sound: false,
+        haptic: false
+      });
     }
 
     function potAward(winnerId) {
-      return emit(`pot-award:${winnerId ?? 'split'}`, 'live.pot.award', { haptic: true });
+      return emit(`pot-award:${winnerId ?? 'split'}`, 'live.pot.award', {
+        sound: true,
+        haptic: true
+      });
     }
 
     function showdown() {
-      return emit('showdown', 'live.showdown', { haptic: false });
+      return emit('showdown', 'live.showdown', { sound: false, haptic: false });
     }
 
     function handComplete() {

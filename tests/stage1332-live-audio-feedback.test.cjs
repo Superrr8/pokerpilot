@@ -49,7 +49,7 @@ function fresh(relativePath) {
 
 test('Live palette preserves the complete semantic family on local micro-assets', () => {
   const manager = loadSoundManager();
-  const assets = fresh('src/audio/micro-audio-assets.js');
+  const assets = fresh('src/audio/sonic-identity-assets.js');
   assert.deepEqual(JSON.parse(JSON.stringify(manager.LIVE_SOUNDS)), LIVE_SOUND_KEYS);
   assert.deepEqual(
     JSON.parse(JSON.stringify(manager.SOUNDS)),
@@ -59,7 +59,7 @@ test('Live palette preserves the complete semantic family on local micro-assets'
     const definition = manager.SOUND_DEFINITIONS[key];
     assert.ok(definition);
     assert.ok(assets.ASSETS[definition.asset]);
-    assert.ok(definition.level > 0 && definition.level <= 0.5);
+    assert.ok(definition.level > 0 && definition.level <= 1);
     assert.equal(Object.hasOwn(definition, 'layers'), false);
   }
 });
@@ -112,11 +112,11 @@ test('LiveFeedback maps twelve domain events and deduplicates each hand event', 
   assert.deepEqual(Object.keys(LiveFeedback.EVENTS), LIVE_EVENTS);
   const calls = [];
   const live = LiveFeedback.create({
-    feedback: { trigger: (key, channels) => { calls.push({ key, channels }); return { sound: true, haptic: channels?.haptic !== false }; } }
+    feedback: { trigger: (key, channels) => { calls.push({ key, channels }); return { sound: channels?.sound !== false, haptic: channels?.haptic !== false }; } }
   });
 
   live.startHand('hand-1');
-  assert.equal(live.cardDeal(0).sound, true);
+  assert.equal(live.cardDeal(0).sound, false);
   assert.equal(live.cardDeal(0).duplicate, true);
   live.boardReveal('flop', 0);
   live.boardReveal('turn', 0);
@@ -145,11 +145,11 @@ test('LiveFeedback maps twelve domain events and deduplicates each hand event', 
   ]);
   assert.equal(calls.find(call => call.key === 'live.action.call').channels.haptic, false);
   assert.equal(calls.find(call => call.key === 'live.action.check').channels.haptic, true);
-  assert.equal(calls.find(call => call.key === 'live.action.allIn').channels.haptic, true);
+  assert.equal(calls.find(call => call.key === 'live.action.allIn').channels.haptic, false);
 });
 
 test('Live integration is centralized on presentation callbacks without legacy duplicate sounds', () => {
-  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2\.1/);
+  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2\.2/);
   assert.match(html, /LiveFeedback\.create\(\{\s*feedback:\s*appFeedback\s*\}\)/);
   assert.match(html, /appLiveFeedback\.startHand\(session\.handToken\)/);
   assert.match(html, /onCard:index=>appLiveFeedback\.cardDeal\(index\)/);

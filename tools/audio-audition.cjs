@@ -6,108 +6,142 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
-const SAMPLE_RATE = 16000;
-const ASSET_PATH = path.join(ROOT, 'src', 'audio', 'micro-audio-assets.js');
+const SAMPLE_RATE = 24000;
+const CHANNELS = 1;
+const MATERIAL = 'tactile-contact';
+const ASSET_PATH = path.join(ROOT, 'src', 'audio', 'sonic-identity-assets.js');
 
+// Each recipe is assembled from short, zero-centred analytic contact pulses.
+// There is no random source, sustained tone or noise bed in this palette.
 const RECIPES = Object.freeze([
-  { name: 'soft-tap', durationMs: 28, softLimitHz: 760, seed: 101, peak: 0.52, contacts: [[0, 5, 13, 240, 0.05, 1]] },
-  { name: 'soft-press', durationMs: 42, softLimitHz: 720, seed: 103, peak: 0.58, contacts: [[0, 6, 22, 185, 0.09, 1]] },
-  { name: 'soft-success', durationMs: 62, softLimitHz: 1050, seed: 107, peak: 0.56, contacts: [[0, 6, 28, 310, 0.06, 1], [28, 7, 20, 390, 0.05, 0.45]] },
-  { name: 'soft-error', durationMs: 50, softLimitHz: 580, seed: 109, peak: 0.58, contacts: [[0, 7, 30, 155, 0.11, 1]] },
-  { name: 'soft-complete', durationMs: 72, softLimitHz: 900, seed: 113, peak: 0.58, contacts: [[0, 7, 30, 230, 0.07, 1], [34, 8, 25, 285, 0.05, 0.48]] },
-  { name: 'soft-achievement', durationMs: 96, softLimitHz: 1250, seed: 127, peak: 0.6, contacts: [[0, 7, 32, 280, 0.06, 1], [38, 8, 27, 350, 0.05, 0.5], [67, 8, 20, 420, 0.04, 0.28]] },
-  { name: 'card-contact', durationMs: 32, softLimitHz: 980, seed: 131, peak: 0.5, contacts: [[0, 7, 20, 0, 0, 1]] },
-  { name: 'card-flop', durationMs: 70, softLimitHz: 1050, seed: 137, peak: 0.54, contacts: [[0, 7, 22, 0, 0, 0.72], [18, 7, 22, 0, 0, 0.58], [36, 7, 24, 0, 0, 0.48]] },
-  { name: 'card-release', durationMs: 48, softLimitHz: 820, seed: 139, peak: 0.5, contacts: [[0, 9, 34, 0, 0, 1]] },
-  { name: 'chip-call', durationMs: 40, softLimitHz: 620, seed: 149, peak: 0.56, contacts: [[0, 7, 24, 255, 0.06, 1]] },
-  { name: 'chip-bet', durationMs: 52, softLimitHz: 650, seed: 151, peak: 0.58, contacts: [[0, 7, 30, 205, 0.1, 1], [22, 7, 20, 275, 0.04, 0.26]] },
-  { name: 'chip-raise', durationMs: 76, softLimitHz: 700, seed: 157, peak: 0.6, contacts: [[0, 8, 34, 190, 0.11, 1], [32, 8, 30, 245, 0.07, 0.48]] },
-  { name: 'all-in', durationMs: 98, softLimitHz: 560, seed: 163, peak: 0.62, contacts: [[0, 9, 45, 150, 0.14, 1], [50, 9, 35, 215, 0.06, 0.42]] },
-  { name: 'pot-move', durationMs: 64, softLimitHz: 620, seed: 167, peak: 0.54, contacts: [[0, 9, 28, 0, 0, 0.7], [20, 9, 25, 0, 0, 0.46], [39, 9, 20, 0, 0, 0.3]] },
-  { name: 'pot-award', durationMs: 84, softLimitHz: 760, seed: 173, peak: 0.6, contacts: [[0, 8, 38, 210, 0.1, 1], [42, 9, 30, 285, 0.05, 0.42]] }
+  {
+    name: 'tactile-tap', durationMs: 18, peak: 0.72,
+    contacts: [[3, 0.34, 1, 'snap'], [5.2, 1.15, 0.28, 'body']]
+  },
+  {
+    name: 'tactile-primary', durationMs: 30, peak: 0.76,
+    contacts: [[3.2, 0.38, 1, 'snap'], [6.1, 1.35, 0.42, 'body'], [11.8, 1.9, 0.1, 'body']]
+  },
+  {
+    name: 'tactile-success', durationMs: 58, peak: 0.74,
+    contacts: [[3.2, 0.38, 0.9, 'snap'], [6, 1.3, 0.3, 'body'], [34, 0.4, 0.62, 'snap'], [37, 1.25, 0.2, 'body']]
+  },
+  {
+    name: 'tactile-error', durationMs: 38, peak: 0.7,
+    contacts: [[3.6, 0.52, 0.72, 'snap'], [7.2, 1.65, -0.46, 'body'], [15, 2.1, -0.11, 'body']]
+  },
+  {
+    name: 'tactile-complete', durationMs: 64, peak: 0.76,
+    contacts: [[3.2, 0.4, 0.82, 'snap'], [6.2, 1.45, 0.32, 'body'], [37, 0.38, 0.68, 'snap'], [40, 1.3, 0.22, 'body']]
+  },
+  {
+    name: 'tactile-achievement', durationMs: 84, peak: 0.78,
+    contacts: [[3.2, 0.4, 0.78, 'snap'], [6, 1.35, 0.3, 'body'], [31, 0.38, 0.62, 'snap'], [34, 1.25, 0.2, 'body'], [59, 0.36, 0.48, 'snap'], [62, 1.2, 0.16, 'body']]
+  },
+  {
+    name: 'live-street', durationMs: 42, peak: 0.7,
+    contacts: [[3.5, 0.48, 0.72, 'snap'], [7, 1.5, 0.28, 'body'], [19, 0.55, 0.26, 'snap']]
+  },
+  {
+    name: 'live-commit', durationMs: 30, peak: 0.76,
+    contacts: [[3.2, 0.4, 0.9, 'snap'], [6.4, 1.55, 0.44, 'body'], [12.5, 2, 0.12, 'body']]
+  },
+  {
+    name: 'live-result', durationMs: 66, peak: 0.78,
+    contacts: [[3.2, 0.42, 0.78, 'snap'], [6.5, 1.6, 0.36, 'body'], [38, 0.4, 0.65, 'snap'], [41.2, 1.45, 0.24, 'body']]
+  }
 ]);
+
 const AUDITION_ALIASES = Object.freeze({
-  tap: 'soft-tap',
-  primary: 'soft-press',
-  success: 'soft-success',
-  error: 'soft-error',
-  complete: 'soft-complete',
-  achievement: 'soft-achievement',
-  deal: 'card-contact',
-  flop: 'card-flop',
-  turn: 'card-contact',
-  river: 'card-contact',
-  check: 'soft-tap',
-  fold: 'card-release',
-  call: 'chip-call',
-  bet: 'chip-bet',
-  raise: 'chip-raise',
-  'all-in': 'all-in',
-  'pot-collect': 'pot-move',
-  'pot-award': 'pot-award',
-  showdown: 'card-release',
-  'hand-complete': 'soft-complete'
+  tap: 'tactile-tap',
+  primary: 'tactile-primary',
+  success: 'tactile-success',
+  error: 'tactile-error',
+  complete: 'tactile-complete',
+  achievement: 'tactile-achievement',
+  deal: 'tactile-tap',
+  flop: 'live-street',
+  turn: 'live-street',
+  river: 'live-street',
+  check: 'live-commit',
+  fold: 'live-commit',
+  call: 'live-commit',
+  bet: 'live-commit',
+  raise: 'live-commit',
+  'all-in': 'live-commit',
+  'pot-collect': 'tactile-tap',
+  'pot-award': 'live-result',
+  showdown: 'live-street',
+  'hand-complete': 'live-result'
 });
 
-function randomGenerator(seed) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state * 1664525 + 1013904223) >>> 0;
-    return state / 4294967296 * 2 - 1;
-  };
+function contactPulse(elapsedMs, widthMs, shape) {
+  const x = elapsedMs / widthMs;
+  if (Math.abs(x) >= 4) return 0;
+  const envelope = Math.exp(-0.5 * x * x);
+  return shape === 'body' ? (1 - x * x) * envelope : -x * envelope;
 }
 
 function renderRecipe(recipe) {
   const frameCount = Math.round(recipe.durationMs * SAMPLE_RATE / 1000);
   const output = new Float64Array(frameCount);
-  recipe.contacts.forEach((contact, contactIndex) => {
-    const [atMs, attackMs, decayMs, bodyHz, bodyLevel, level] = contact;
-    const random = randomGenerator(recipe.seed + contactIndex * 997);
-    const alpha = 1 - Math.exp(-2 * Math.PI * recipe.softLimitHz / SAMPLE_RATE);
-    let smoothA = 0;
-    let smoothB = 0;
-    for (let index = 0; index < frameCount; index += 1) {
-      const elapsedMs = index / SAMPLE_RATE * 1000 - atMs;
-      if (elapsedMs < 0) continue;
-      smoothA += alpha * (random() - smoothA);
-      smoothB += alpha * (smoothA - smoothB);
-      const attack = Math.min(1, elapsedMs / Math.max(1, attackMs));
-      const decay = Math.exp(-elapsedMs / decayMs);
-      const tailMs = recipe.durationMs - (index / SAMPLE_RATE * 1000);
-      const tail = Math.min(1, Math.max(0, tailMs / 7));
-      const body = bodyHz
-        ? Math.sin(2 * Math.PI * bodyHz * elapsedMs / 1000) * bodyLevel
-        : 0;
-      output[index] += (smoothB * 0.86 + body) * attack * decay * tail * level;
+  for (let index = 0; index < frameCount; index += 1) {
+    const timeMs = index / SAMPLE_RATE * 1000;
+    for (const [atMs, widthMs, level, shape] of recipe.contacts) {
+      output[index] += contactPulse(timeMs - atMs, widthMs, shape) * level;
     }
-  });
+  }
 
   const mean = output.reduce((sum, value) => sum + value, 0) / output.length;
   let largest = 0;
   for (let index = 0; index < output.length; index += 1) {
     output[index] -= mean;
-    const edgeFrames = Math.round(SAMPLE_RATE * 0.004);
+    const edgeFrames = Math.round(SAMPLE_RATE * 0.0015);
     const edge = Math.min(1, index / edgeFrames, (output.length - 1 - index) / edgeFrames);
     const edgeWindow = edge * edge * (3 - 2 * edge);
     output[index] *= edgeWindow;
     largest = Math.max(largest, Math.abs(output[index]));
   }
+
   const scale = largest ? recipe.peak / largest : 0;
   const pcm = Buffer.alloc(output.length * 2);
   for (let index = 0; index < output.length; index += 1) {
-    const softened = Math.tanh(output[index] * scale * 1.1) / Math.tanh(1.1);
-    pcm.writeInt16LE(Math.round(Math.max(-1, Math.min(1, softened)) * 32767), index * 2);
+    const sample = Math.max(-1, Math.min(1, output[index] * scale));
+    pcm.writeInt16LE(Math.round(sample * 32767), index * 2);
   }
+  pcm.writeInt16LE(0, 0);
+  pcm.writeInt16LE(0, pcm.length - 2);
   return pcm;
 }
 
+function metadataFor(pcm) {
+  let peak = 0;
+  let energy = 0;
+  for (let offset = 0; offset < pcm.length; offset += 2) {
+    const sample = pcm.readInt16LE(offset) / 32768;
+    peak = Math.max(peak, Math.abs(sample));
+    energy += sample * sample;
+  }
+  return {
+    peak: Number(peak.toFixed(4)),
+    rms: Number(Math.sqrt(energy / (pcm.length / 2)).toFixed(4))
+  };
+}
+
+function renderAll() {
+  return RECIPES.map(recipe => {
+    const pcm = renderRecipe(recipe);
+    return { recipe, pcm, metadata: metadataFor(pcm) };
+  });
+}
+
 function buildAssetModule() {
-  const rendered = RECIPES.map(recipe => ({ recipe, pcm: renderRecipe(recipe) }));
+  const rendered = renderAll();
   const totalBytes = rendered.reduce((sum, item) => sum + item.pcm.length, 0);
-  const records = rendered.map(({ recipe, pcm }) => (
-    `    '${recipe.name}': Object.freeze({ durationMs: ${recipe.durationMs}, softLimitHz: ${recipe.softLimitHz}, pcm: '${pcm.toString('base64')}' })`
+  const records = rendered.map(({ recipe, pcm, metadata }) => (
+    `    '${recipe.name}': Object.freeze({ durationMs: ${recipe.durationMs}, channels: ${CHANNELS}, material: '${MATERIAL}', peak: ${metadata.peak}, rms: ${metadata.rms}, pcm: '${pcm.toString('base64')}' })`
   )).join(',\n');
-  return `'use strict';\n\n// Generated by tools/audio-audition.cjs --build. These are pre-rendered\n// PCM16 micro-assets; production playback does not synthesize waveforms.\n(function attachMicroAudioAssets(root) {\n  const SAMPLE_RATE = ${SAMPLE_RATE};\n  const FORMAT = 'pcm-s16le-base64';\n  const ASSETS = Object.freeze({\n${records}\n  });\n  const TOTAL_PCM_BYTES = ${totalBytes};\n  const api = Object.freeze({ SAMPLE_RATE, FORMAT, ASSETS, TOTAL_PCM_BYTES });\n  root.MicroAudioAssets = api;\n  if (typeof module === 'object' && module.exports) module.exports = api;\n})(typeof window !== 'undefined' ? window : globalThis);\n`;
+  return `'use strict';\n\n// Generated by tools/audio-audition.cjs --build. These are pre-rendered\n// PCM16 tactile-contact assets; production playback does not synthesize waveforms.\n(function attachSonicIdentityAssets(root) {\n  const SAMPLE_RATE = ${SAMPLE_RATE};\n  const CHANNELS = ${CHANNELS};\n  const FORMAT = 'pcm-s16le-base64';\n  const ASSETS = Object.freeze({\n${records}\n  });\n  const TOTAL_PCM_BYTES = ${totalBytes};\n  const api = Object.freeze({ SAMPLE_RATE, CHANNELS, FORMAT, ASSETS, TOTAL_PCM_BYTES });\n  root.SonicIdentityAssets = api;\n  if (typeof module === 'object' && module.exports) module.exports = api;\n})(typeof window !== 'undefined' ? window : globalThis);\n`;
 }
 
 function wavFromPcm(pcm) {
@@ -117,7 +151,7 @@ function wavFromPcm(pcm) {
   header.write('WAVEfmt ', 8);
   header.writeUInt32LE(16, 16);
   header.writeUInt16LE(1, 20);
-  header.writeUInt16LE(1, 22);
+  header.writeUInt16LE(CHANNELS, 22);
   header.writeUInt32LE(SAMPLE_RATE, 24);
   header.writeUInt32LE(SAMPLE_RATE * 2, 28);
   header.writeUInt16LE(2, 32);
@@ -129,11 +163,23 @@ function wavFromPcm(pcm) {
 
 function build() {
   fs.writeFileSync(ASSET_PATH, buildAssetModule());
-  process.stdout.write(`Built ${RECIPES.length} micro-assets at ${ASSET_PATH}\n`);
+  process.stdout.write(`Built ${RECIPES.length} sonic-identity assets at ${ASSET_PATH}\n`);
 }
 
 function list() {
   process.stdout.write(`${Object.keys(AUDITION_ALIASES).join('\n')}\n`);
+}
+
+function report() {
+  const rows = renderAll().map(({ recipe, pcm, metadata }) => ({
+    name: recipe.name,
+    durationMs: recipe.durationMs,
+    channels: CHANNELS,
+    sampleRate: SAMPLE_RATE,
+    bytes: pcm.length,
+    ...metadata
+  }));
+  process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
 }
 
 function audition(name, repeat) {
@@ -156,5 +202,6 @@ function audition(name, repeat) {
 
 const args = process.argv.slice(2);
 if (args.includes('--build')) build();
+else if (args.includes('--report')) report();
 else if (args.includes('--list') || !args.length) list();
-else audition(args[0], Math.max(1, Math.min(20, Number(args[1]) || 1)));
+else audition(args[0], Math.max(1, Math.min(50, Number(args[1]) || 1)));

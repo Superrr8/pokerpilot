@@ -5,9 +5,9 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 function loadSoundManager(overrides = {}) {
-  const assetsFile = path.resolve(__dirname, '..', 'src', 'audio', 'micro-audio-assets.js');
+  const assetsFile = path.resolve(__dirname, '..', 'src', 'audio', 'sonic-identity-assets.js');
   const file = path.resolve(__dirname, '..', 'src', 'audio', 'sound-manager.js');
-  if (!fs.existsSync(assetsFile)) throw new Error('Required micro audio assets are missing');
+  if (!fs.existsSync(assetsFile)) throw new Error('Required sonic identity assets are missing');
   if (!fs.existsSync(file)) throw new Error('Required sound manager is missing');
   const sandbox = {
     window: {
@@ -22,7 +22,7 @@ function loadSoundManager(overrides = {}) {
     codeGeneration: { strings: false, wasm: false }
   });
   new vm.Script(fs.readFileSync(assetsFile, 'utf8'), {
-    filename: 'src/audio/micro-audio-assets.js'
+    filename: 'src/audio/sonic-identity-assets.js'
   }).runInContext(sandbox, { timeout: 2_000 });
   new vm.Script(fs.readFileSync(file, 'utf8'), {
     filename: 'src/audio/sound-manager.js'
