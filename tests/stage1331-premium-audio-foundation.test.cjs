@@ -81,10 +81,10 @@ test('premium audio language preserves exactly six reusable semantic sounds', ()
     ['tap', 'primary', 'success', 'error', 'complete', 'achievement']
   );
   assert.equal(manager.AUDIO_SOURCE, 'pre-rendered-pcm');
-  assert.ok(manager.MASTER_GAIN >= 0.18 && manager.MASTER_GAIN <= 0.28);
+  assert.ok(manager.MASTER_GAIN >= 0.3 && manager.MASTER_GAIN <= 0.4);
   for (const sound of manager.SOUNDS) {
     const definition = manager.SOUND_DEFINITIONS[sound];
-    assert.ok(definition.cooldownMs >= 45);
+    assert.ok(definition.cooldownMs >= 28);
     assert.equal(typeof definition.asset, 'string');
     assert.ok(definition.level > 0 && definition.level <= 1);
     assert.equal(Object.hasOwn(definition, 'layers'), false);
@@ -161,8 +161,8 @@ test('semantic feedback coordinates matching sound and haptic categories', () =>
 });
 
 test('foundation is loaded centrally and reuses the existing sound preference', () => {
-  assert.match(html, /src\/audio\/sonic-identity-assets\.js\?v=13\.3\.2\.2/);
-  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.2\.2/);
+  assert.match(html, /src\/audio\/sonic-identity-assets\.js\?v=13\.3\.2\.3/);
+  assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.2\.3/);
   assert.match(html, /src\/audio\/haptic-manager\.js\?v=13\.3\.2/);
   assert.match(html, /src\/audio\/feedback-manager\.js\?v=13\.3\.2/);
   assert.match(html, /SoundManager\.getInstance/);

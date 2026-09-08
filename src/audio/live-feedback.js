@@ -62,7 +62,7 @@
     function cardDeal(index) {
       const cardIndex = Number(index) || 0;
       return emit(`deal:${cardIndex}`, 'live.card.deal', {
-        sound: false,
+        sound: cardIndex === 0,
         haptic: false
       });
     }

@@ -199,15 +199,24 @@
       else if (view.type === 'exam-result') renderExamResult(view.moduleId);
     }
 
+    function playInteractionSound(eventName, enabled = true) {
+      if (!enabled) return false;
+      Promise.resolve(sound.handleUserGesture())
+        .then(() => sound.play(eventName))
+        .catch(() => false);
+      return true;
+    }
+
     function handleClick(event) {
       const button = event.target.closest('[data-learning-action]');
       if (!button) return;
       const action = button.dataset.learningAction;
       const moduleId = button.dataset.moduleId || view.moduleId;
-      sound.handleUserGesture();
-      if (!['answer-task', 'answer-exam', 'finish-exam'].includes(action)) sound.play('uiClick');
+      const shouldPlay = event.isTrusted !== false;
+      let interactionSound = button.classList.contains('primary') ? 'primary' : 'tap';
       if (action === 'toggle-sound') {
         sound.toggle();
+        playInteractionSound('tap', shouldPlay);
         render();
         return;
       }
@@ -219,23 +228,22 @@
           view = { type: 'overview', moduleId };
         } catch (error) {
           container.querySelector('.learning-header p').textContent = error.message;
+          playInteractionSound('error', shouldPlay);
           return;
         }
       }
       if (action === 'overview') view = { type: 'overview', moduleId };
       if (action === 'select-position') {
         selectedPositionId = button.dataset.positionId;
-        sound.play('cardDeal');
       }
       if (action === 'open-lesson') {
         saveLearning(Progress.openLesson(learningState(), moduleId, button.dataset.lessonId));
         view = { type: 'lesson', moduleId, lessonId: button.dataset.lessonId };
-        sound.play('cardDeal');
       }
       if (action === 'complete-lesson') {
         const next = Progress.completeLesson(learningState(), moduleId, button.dataset.lessonId);
         saveLearning(next);
-        if (Progress.moduleComplete(next, moduleId)) sound.play('unlock');
+        if (Progress.moduleComplete(next, moduleId)) interactionSound = 'complete';
         view = { type: 'overview', moduleId };
       }
       if (action === 'open-task') {
@@ -246,7 +254,7 @@
         selectedTaskChoice = button.dataset.choiceId;
         const result = Progress.answerTask(learningState(), moduleId, view.taskId, selectedTaskChoice);
         saveLearning(result.state);
-        sound.play(result.correct ? 'correct' : 'incorrect');
+        interactionSound = result.correct ? 'success' : 'error';
       }
       if (action === 'start-exam') {
         examAnswers = {};
@@ -259,7 +267,7 @@
         selectedExamChoice = button.dataset.choiceId;
         const question = moduleById(moduleId).exam.questions[examIndex];
         examAnswers[question.id] = selectedExamChoice;
-        sound.play(selectedExamChoice === question.correctChoiceId ? 'correct' : 'incorrect');
+        interactionSound = selectedExamChoice === question.correctChoiceId ? 'success' : 'error';
       }
       if (action === 'next-exam') {
         examIndex += 1;
@@ -277,13 +285,12 @@
           passed: lastExamResult.passed,
           source: 'learning'
         });
-        sound.play(
-          Progress.moduleComplete(lastExamResult.state, moduleId)
-            ? 'achievement'
-            : (lastExamResult.passed ? 'correct' : 'incorrect')
-        );
+        interactionSound = Progress.moduleComplete(lastExamResult.state, moduleId)
+          ? 'achievement'
+          : (lastExamResult.passed ? 'success' : 'error');
         view = { type: 'exam-result', moduleId };
       }
+      playInteractionSound(interactionSound, shouldPlay);
       render();
     }
 

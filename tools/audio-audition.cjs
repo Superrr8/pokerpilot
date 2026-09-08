@@ -6,49 +6,57 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
-const SAMPLE_RATE = 24000;
+const SAMPLE_RATE = 48000;
 const CHANNELS = 1;
 const MATERIAL = 'tactile-contact';
 const ASSET_PATH = path.join(ROOT, 'src', 'audio', 'sonic-identity-assets.js');
 
-// Each recipe is assembled from short, zero-centred analytic contact pulses.
-// There is no random source, sustained tone or noise bed in this palette.
+// Each recipe is assembled from compact, deterministic mechanical contacts.
+// The fused onset and body keep every transient immediate and dry.
 const RECIPES = Object.freeze([
   {
-    name: 'tactile-tap', durationMs: 18, peak: 0.72,
-    contacts: [[3, 0.34, 1, 'snap'], [5.2, 1.15, 0.28, 'body']]
+    name: 'tactile-tap', durationMs: 10, peak: 0.84,
+    contacts: [[1.15, 0.16, 1], [1.25, 0.5, 0.3]]
   },
   {
-    name: 'tactile-primary', durationMs: 30, peak: 0.76,
-    contacts: [[3.2, 0.38, 1, 'snap'], [6.1, 1.35, 0.42, 'body'], [11.8, 1.9, 0.1, 'body']]
+    name: 'tactile-primary', durationMs: 14, peak: 0.86,
+    contacts: [[1.15, 0.17, 1], [1.27, 0.58, 0.46]]
   },
   {
-    name: 'tactile-success', durationMs: 58, peak: 0.74,
-    contacts: [[3.2, 0.38, 0.9, 'snap'], [6, 1.3, 0.3, 'body'], [34, 0.4, 0.62, 'snap'], [37, 1.25, 0.2, 'body']]
+    name: 'tactile-success', durationMs: 24, peak: 0.84,
+    contacts: [[1.15, 0.17, 0.9], [1.26, 0.5, 0.3], [10.5, 0.18, 0.62], [10.62, 0.48, 0.18]]
   },
   {
-    name: 'tactile-error', durationMs: 38, peak: 0.7,
-    contacts: [[3.6, 0.52, 0.72, 'snap'], [7.2, 1.65, -0.46, 'body'], [15, 2.1, -0.11, 'body']]
+    name: 'tactile-error', durationMs: 16, peak: 0.82,
+    contacts: [[1.15, 0.2, 0.86], [1.3, 0.64, -0.4]]
   },
   {
-    name: 'tactile-complete', durationMs: 64, peak: 0.76,
-    contacts: [[3.2, 0.4, 0.82, 'snap'], [6.2, 1.45, 0.32, 'body'], [37, 0.38, 0.68, 'snap'], [40, 1.3, 0.22, 'body']]
+    name: 'tactile-complete', durationMs: 30, peak: 0.86,
+    contacts: [[1.15, 0.17, 0.84], [1.26, 0.52, 0.28], [15, 0.18, 0.7], [15.12, 0.5, 0.2]]
   },
   {
-    name: 'tactile-achievement', durationMs: 84, peak: 0.78,
-    contacts: [[3.2, 0.4, 0.78, 'snap'], [6, 1.35, 0.3, 'body'], [31, 0.38, 0.62, 'snap'], [34, 1.25, 0.2, 'body'], [59, 0.36, 0.48, 'snap'], [62, 1.2, 0.16, 'body']]
+    name: 'tactile-achievement', durationMs: 38, peak: 0.87,
+    contacts: [[1.15, 0.17, 0.8], [1.26, 0.5, 0.26], [11, 0.18, 0.66], [11.12, 0.48, 0.2], [21, 0.17, 0.52], [21.12, 0.46, 0.16]]
   },
   {
-    name: 'live-street', durationMs: 42, peak: 0.7,
-    contacts: [[3.5, 0.48, 0.72, 'snap'], [7, 1.5, 0.28, 'body'], [19, 0.55, 0.26, 'snap']]
+    name: 'live-card', durationMs: 13, peak: 0.82,
+    contacts: [[1.05, 0.14, 1], [1.15, 0.62, 0.22]]
   },
   {
-    name: 'live-commit', durationMs: 30, peak: 0.76,
-    contacts: [[3.2, 0.4, 0.9, 'snap'], [6.4, 1.55, 0.44, 'body'], [12.5, 2, 0.12, 'body']]
+    name: 'live-neutral', durationMs: 12, peak: 0.84,
+    contacts: [[1.15, 0.17, 0.92], [1.27, 0.52, 0.34]]
   },
   {
-    name: 'live-result', durationMs: 66, peak: 0.78,
-    contacts: [[3.2, 0.42, 0.78, 'snap'], [6.5, 1.6, 0.36, 'body'], [38, 0.4, 0.65, 'snap'], [41.2, 1.45, 0.24, 'body']]
+    name: 'live-commit', durationMs: 17, peak: 0.86,
+    contacts: [[1.12, 0.18, 1], [1.26, 0.7, 0.52]]
+  },
+  {
+    name: 'live-fold', durationMs: 15, peak: 0.82,
+    contacts: [[1.12, 0.19, 0.68], [1.28, 0.66, -0.5]]
+  },
+  {
+    name: 'live-result', durationMs: 32, peak: 0.87,
+    contacts: [[1.15, 0.18, 0.86], [1.28, 0.62, 0.38], [15.5, 0.18, 0.7], [15.62, 0.52, 0.24]]
   }
 ]);
 
@@ -59,27 +67,27 @@ const AUDITION_ALIASES = Object.freeze({
   error: 'tactile-error',
   complete: 'tactile-complete',
   achievement: 'tactile-achievement',
-  deal: 'tactile-tap',
-  flop: 'live-street',
-  turn: 'live-street',
-  river: 'live-street',
-  check: 'live-commit',
-  fold: 'live-commit',
-  call: 'live-commit',
+  deal: 'live-card',
+  flop: 'live-card',
+  turn: 'live-card',
+  river: 'live-card',
+  check: 'live-neutral',
+  fold: 'live-fold',
+  call: 'live-neutral',
   bet: 'live-commit',
   raise: 'live-commit',
   'all-in': 'live-commit',
-  'pot-collect': 'tactile-tap',
+  'pot-collect': 'live-neutral',
   'pot-award': 'live-result',
-  showdown: 'live-street',
+  showdown: 'live-card',
   'hand-complete': 'live-result'
 });
 
-function contactPulse(elapsedMs, widthMs, shape) {
+function contactPulse(elapsedMs, widthMs) {
+  if (elapsedMs < 0) return 0;
   const x = elapsedMs / widthMs;
-  if (Math.abs(x) >= 4) return 0;
-  const envelope = Math.exp(-0.5 * x * x);
-  return shape === 'body' ? (1 - x * x) * envelope : -x * envelope;
+  if (x >= 8) return 0;
+  return (1 - x) * Math.exp(-x);
 }
 
 function renderRecipe(recipe) {
@@ -87,19 +95,13 @@ function renderRecipe(recipe) {
   const output = new Float64Array(frameCount);
   for (let index = 0; index < frameCount; index += 1) {
     const timeMs = index / SAMPLE_RATE * 1000;
-    for (const [atMs, widthMs, level, shape] of recipe.contacts) {
-      output[index] += contactPulse(timeMs - atMs, widthMs, shape) * level;
+    for (const [atMs, widthMs, level] of recipe.contacts) {
+      output[index] += contactPulse(timeMs - atMs, widthMs) * level;
     }
   }
 
-  const mean = output.reduce((sum, value) => sum + value, 0) / output.length;
   let largest = 0;
   for (let index = 0; index < output.length; index += 1) {
-    output[index] -= mean;
-    const edgeFrames = Math.round(SAMPLE_RATE * 0.0015);
-    const edge = Math.min(1, index / edgeFrames, (output.length - 1 - index) / edgeFrames);
-    const edgeWindow = edge * edge * (3 - 2 * edge);
-    output[index] *= edgeWindow;
     largest = Math.max(largest, Math.abs(output[index]));
   }
 

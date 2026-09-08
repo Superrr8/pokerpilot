@@ -43,38 +43,44 @@
     achievement: 'achievement'
   };
 
-  // Stage 13.3.2.2 sonic identity reset. Every semantic event maps to the same
+  // Stage 13.3.2.3 release-candidate mix. Every semantic event maps to the same
   // non-random tactile-contact family. SoundManager only decodes, caches, mixes
   // and schedules pre-rendered PCM; it does not synthesize audible material.
   const AUDIO_SOURCE = 'pre-rendered-pcm';
-  const MASTER_GAIN = 0.22;
+  const MASTER_GAIN = 0.34;
   const SOUND_DEFINITIONS = Object.freeze({
-    tap: Object.freeze({ asset: 'tactile-tap', cooldownMs: 45, level: 0.68 }),
-    primary: Object.freeze({ asset: 'tactile-primary', cooldownMs: 65, level: 0.78 }),
-    success: Object.freeze({ asset: 'tactile-success', cooldownMs: 120, level: 0.82 }),
-    error: Object.freeze({ asset: 'tactile-error', cooldownMs: 150, level: 0.76 }),
-    complete: Object.freeze({ asset: 'tactile-complete', cooldownMs: 220, level: 0.84 }),
-    achievement: Object.freeze({ asset: 'tactile-achievement', cooldownMs: 350, level: 0.88 }),
-    'live.card.deal': Object.freeze({ asset: 'tactile-tap', cooldownMs: 45, level: 0.52 }),
-    'live.board.flop': Object.freeze({ asset: 'live-street', cooldownMs: 100, level: 0.6 }),
-    'live.board.turn': Object.freeze({ asset: 'live-street', cooldownMs: 120, level: 0.62 }),
-    'live.board.river': Object.freeze({ asset: 'live-street', cooldownMs: 140, level: 0.64 }),
-    'live.action.check': Object.freeze({ asset: 'live-commit', cooldownMs: 90, level: 0.68 }),
-    'live.action.fold': Object.freeze({ asset: 'live-commit', cooldownMs: 100, level: 0.68 }),
-    'live.action.call': Object.freeze({ asset: 'live-commit', cooldownMs: 100, level: 0.72 }),
-    'live.action.bet': Object.freeze({ asset: 'live-commit', cooldownMs: 120, level: 0.76 }),
-    'live.action.raise': Object.freeze({ asset: 'live-commit', cooldownMs: 150, level: 0.8 }),
-    'live.action.allIn': Object.freeze({ asset: 'live-commit', cooldownMs: 250, level: 0.84 }),
-    'live.pot.collect': Object.freeze({ asset: 'tactile-tap', cooldownMs: 180, level: 0.55 }),
-    'live.pot.award': Object.freeze({ asset: 'live-result', cooldownMs: 350, level: 0.82 }),
-    'live.showdown': Object.freeze({ asset: 'live-street', cooldownMs: 250, level: 0.6 }),
-    'live.hand.complete': Object.freeze({ asset: 'live-result', cooldownMs: 400, level: 0.76 })
+    tap: Object.freeze({ asset: 'tactile-tap', cooldownMs: 28, level: 0.78 }),
+    primary: Object.freeze({ asset: 'tactile-primary', cooldownMs: 40, level: 0.86 }),
+    success: Object.freeze({ asset: 'tactile-success', cooldownMs: 100, level: 0.9 }),
+    error: Object.freeze({ asset: 'tactile-error', cooldownMs: 110, level: 0.88 }),
+    complete: Object.freeze({ asset: 'tactile-complete', cooldownMs: 180, level: 0.92 }),
+    achievement: Object.freeze({ asset: 'tactile-achievement', cooldownMs: 260, level: 0.96 }),
+    'live.card.deal': Object.freeze({ asset: 'live-card', cooldownMs: 80, level: 0.72 }),
+    'live.board.flop': Object.freeze({ asset: 'live-card', cooldownMs: 100, level: 0.76 }),
+    'live.board.turn': Object.freeze({ asset: 'live-card', cooldownMs: 110, level: 0.78 }),
+    'live.board.river': Object.freeze({ asset: 'live-card', cooldownMs: 120, level: 0.8 }),
+    'live.action.check': Object.freeze({ asset: 'live-neutral', cooldownMs: 75, level: 0.78 }),
+    'live.action.fold': Object.freeze({ asset: 'live-fold', cooldownMs: 85, level: 0.82 }),
+    'live.action.call': Object.freeze({ asset: 'live-neutral', cooldownMs: 85, level: 0.82 }),
+    'live.action.bet': Object.freeze({ asset: 'live-commit', cooldownMs: 100, level: 0.84 }),
+    'live.action.raise': Object.freeze({ asset: 'live-commit', cooldownMs: 110, level: 0.88 }),
+    'live.action.allIn': Object.freeze({ asset: 'live-commit', cooldownMs: 180, level: 0.92 }),
+    'live.pot.collect': Object.freeze({ asset: 'live-neutral', cooldownMs: 150, level: 0.72 }),
+    'live.pot.award': Object.freeze({ asset: 'live-result', cooldownMs: 260, level: 0.94 }),
+    'live.showdown': Object.freeze({ asset: 'live-card', cooldownMs: 200, level: 0.76 }),
+    'live.hand.complete': Object.freeze({ asset: 'live-result', cooldownMs: 300, level: 0.88 })
   });
   const WARM_ASSETS = Object.freeze([
     'tactile-tap',
     'tactile-primary',
-    'live-street',
+    'tactile-success',
+    'tactile-error',
+    'tactile-complete',
+    'tactile-achievement',
+    'live-card',
+    'live-neutral',
     'live-commit',
+    'live-fold',
     'live-result'
   ]);
   const DEFAULT_SETTINGS = { enabled: true, volume: 0.35 };

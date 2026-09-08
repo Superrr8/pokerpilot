@@ -885,7 +885,7 @@
                     <button id="increaseBet" class="ghost live-v2-size-step" type="button" aria-label="Увеличить размер">+</button>
                   </div>
                   <div class="quick-sizes"><button data-size="0.33">⅓ банка</button><button data-size="0.5">½ банка</button><button data-size="0.75">¾ банка</button><button data-size="1">Банк</button></div>
-                  <div class="live-v2-sizing-actions"><button id="cancelBet" class="ghost" type="button">Назад</button><button id="confirmBet" class="primary" type="button">Подтвердить $15</button></div>
+                  <div class="live-v2-sizing-actions"><button id="cancelBet" class="ghost" type="button">Назад</button><button id="confirmBet" class="primary" type="button" data-audio-owner="semantic">Подтвердить $15</button></div>
                 </div>
                 <div id="liveActions" class="actions neutral-actions" aria-label="Действия Hero"></div>
               </div><!-- /live-decision-core -->
@@ -1023,11 +1023,12 @@
 <script src="src/live/live-presentation-state.js"></script>
 <script src="src/live/live-motion.js"></script>
 <script src="src/live/live-presentation-queue.js"></script>
-<script src="src/audio/sonic-identity-assets.js?v=13.3.2.2"></script>
-<script src="src/audio/sound-manager.js?v=13.3.2.2"></script>
+<script src="src/audio/sonic-identity-assets.js?v=13.3.2.3"></script>
+<script src="src/audio/sound-manager.js?v=13.3.2.3"></script>
 <script src="src/audio/haptic-manager.js?v=13.3.2"></script>
 <script src="src/audio/feedback-manager.js?v=13.3.2"></script>
-<script src="src/audio/live-feedback.js?v=13.3.2.2"></script>
+<script src="src/audio/live-feedback.js?v=13.3.2.3"></script>
+<script src="src/audio/interaction-feedback.js?v=13.3.2.3"></script>
 <script src="src/ui/translations.js"></script>
 <script src="src/ui/navigation.js"></script>
 <script src="src/ui/motion-system.js"></script>
@@ -1131,6 +1132,7 @@ let appSound = SoundManager.getInstance({
 let appHaptics = HapticManager.getInstance();
 let appFeedback = FeedbackManager.getInstance({ sound: appSound, haptics: appHaptics });
 let appLiveFeedback = LiveFeedback.create({ feedback: appFeedback });
+let appInteractionFeedback = InteractionFeedback.create({ documentRef: document, sound: appSound });
 let learningSound = appSound;
 let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,
@@ -1495,13 +1497,7 @@ function route(name, options = {}) {
   return true;
 }
 
-function interactionSoundFor(target) {
-  if (!target) return 'tap';
-  return target.classList.contains('primary') ? 'primary' : 'tap';
-}
-
 $$('[data-route]').forEach(b => b.addEventListener('click', () => {
-  appSound.handleUserGesture().then(() => appSound.play(interactionSoundFor(b)));
   if (b.id === 'homeFocusAction') {
     const target = PokerPilotWeaknessModel.trainingTargetFor(b.dataset.focusSkill);
     if (target.skillId) startFocusSession(target);
@@ -2973,6 +2969,7 @@ function showHeroActions(){
   decision.actionOptions.forEach(a=>{
     const b=document.createElement('button');
     b.dataset.liveAction=a;
+    if(a!=='bet'&&a!=='raise')b.dataset.audioOwner='semantic';
     b.textContent=actionLabel(a,a==='call'?session.toCall:0);
     b.addEventListener('click',()=>{if(a==='bet'||a==='raise')toggleSizer(a);else handleHeroAction(a);});
     box.appendChild(b);
@@ -3465,23 +3462,6 @@ function finishSession(reason='Сессия завершена.'){
 }
 $('#endSession').addEventListener('click',()=>{if(session&&confirm('Закончить текущую сессию?')){closeLiveSheets();finishSession();}});
 
-
-// ----- v1.6 animations -----
-function installMotion() {
-  document.addEventListener('pointerdown', e => {
-    const candidate = e.target.closest('button,.mode-card,[role="button"],label');
-    const target = candidate?.matches('label')
-      && !candidate.querySelector('input[type="radio"],input[type="checkbox"]')
-      ? null
-      : candidate;
-    if (!target) return;
-    const isLiveCommitControl=target.closest('#liveActions')||target.id==='confirmBet';
-    if (!target.dataset.route && target.id !== 'soundToggle' && !target.closest('#screen-learning') && !isLiveCommitControl) {
-      appSound.handleUserGesture().then(() => appSound.play(interactionSoundFor(target)));
-    }
-  }, { passive: true });
-}
-
 // ----- Hand Lab: manual scenario analyzer -----
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, char => ({
@@ -3882,7 +3862,7 @@ function updateBrowserSmokeState() {
 }
 
 initAnalyzer();
-installMotion();
+appInteractionFeedback.install();
 renderProgress();
 route('home');
 requestAnimationFrame(updateBrowserSmokeState);

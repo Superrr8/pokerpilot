@@ -116,7 +116,7 @@ test('LiveFeedback maps twelve domain events and deduplicates each hand event', 
   });
 
   live.startHand('hand-1');
-  assert.equal(live.cardDeal(0).sound, false);
+  assert.equal(live.cardDeal(0).sound, true);
   assert.equal(live.cardDeal(0).duplicate, true);
   live.boardReveal('flop', 0);
   live.boardReveal('turn', 0);
@@ -149,7 +149,7 @@ test('LiveFeedback maps twelve domain events and deduplicates each hand event', 
 });
 
 test('Live integration is centralized on presentation callbacks without legacy duplicate sounds', () => {
-  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2\.2/);
+  assert.match(html, /src\/audio\/live-feedback\.js\?v=13\.3\.2\.3/);
   assert.match(html, /LiveFeedback\.create\(\{\s*feedback:\s*appFeedback\s*\}\)/);
   assert.match(html, /appLiveFeedback\.startHand\(session\.handToken\)/);
   assert.match(html, /onCard:index=>appLiveFeedback\.cardDeal\(index\)/);
@@ -159,6 +159,7 @@ test('Live integration is centralized on presentation callbacks without legacy d
   assert.match(html, /appLiveFeedback\.potAward\(/);
   assert.match(html, /appLiveFeedback\.showdown\(/);
   assert.match(html, /appLiveFeedback\.handComplete\(\)/);
-  assert.match(html, /const isLiveCommitControl=target\.closest\('#liveActions'\)\|\|target\.id==='confirmBet'/);
+  assert.match(html, /id="confirmBet"[^>]+data-audio-owner="semantic"/);
+  assert.match(html, /b\.dataset\.audioOwner='semantic'/);
   assert.doesNotMatch(html, /appSound\.play\('(cardDeal|chipBet|potCollect)'\)/);
 });

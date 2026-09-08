@@ -16,8 +16,10 @@ const ASSET_NAMES = [
   'tactile-error',
   'tactile-complete',
   'tactile-achievement',
-  'live-street',
+  'live-card',
+  'live-neutral',
   'live-commit',
+  'live-fold',
   'live-result'
 ];
 
@@ -30,7 +32,7 @@ function fresh(relativePath) {
 test('pre-rendered audio foundation carries the current compact sonic identity set', () => {
   const assets = fresh('src/audio/sonic-identity-assets.js');
   assert.equal(assets.FORMAT, 'pcm-s16le-base64');
-  assert.equal(assets.SAMPLE_RATE, 24000);
+  assert.equal(assets.SAMPLE_RATE, 48000);
   assert.equal(assets.CHANNELS, 1);
   assert.deepEqual(Object.keys(assets.ASSETS), ASSET_NAMES);
 
@@ -39,7 +41,7 @@ test('pre-rendered audio foundation carries the current compact sonic identity s
     const bytes = Buffer.from(asset.pcm, 'base64');
     totalBytes += bytes.length;
     assert.ok(bytes.length > 0 && bytes.length % 2 === 0, `${name} has valid PCM16 data`);
-    assert.ok(asset.durationMs >= 16 && asset.durationMs <= 86, `${name} stays micro-length`);
+    assert.ok(asset.durationMs >= 9 && asset.durationMs <= 40, `${name} stays micro-length`);
     assert.equal(asset.channels, 1);
     assert.equal(asset.material, 'tactile-contact');
     assert.equal(Math.round(bytes.length / 2 / assets.SAMPLE_RATE * 1000), asset.durationMs);
@@ -53,7 +55,7 @@ test('pre-rendered audio foundation carries the current compact sonic identity s
       .reduce((sum, value, index) => sum + Math.abs(value - samples[index]), 0)
       / (samples.length - 1);
     assert.ok(Math.abs(samples[0]) <= 1 / 32768 && Math.abs(samples.at(-1)) <= 1 / 32768);
-    assert.ok(peak < 0.86 && rms < 0.24);
+    assert.ok(peak < 0.9 && rms < 0.24);
     assert.ok(roughness / rms < 0.8, `${name} avoids hard sample-to-sample edges`);
   }
   assert.equal(totalBytes, assets.TOTAL_PCM_BYTES);
@@ -67,7 +69,7 @@ test('SoundManager uses cached pre-rendered buffers instead of runtime synthesis
   const allSounds = [...manager.SOUNDS, ...manager.LIVE_SOUNDS];
 
   assert.equal(manager.AUDIO_SOURCE, 'pre-rendered-pcm');
-  assert.ok(manager.MASTER_GAIN >= 0.18 && manager.MASTER_GAIN <= 0.28);
+  assert.ok(manager.MASTER_GAIN >= 0.3 && manager.MASTER_GAIN <= 0.4);
   for (const sound of allSounds) {
     const definition = manager.SOUND_DEFINITIONS[sound];
     assert.ok(definition);
@@ -88,7 +90,7 @@ test('global palette restores audible navigation within the same restrained hier
   assert.ok(definitions.tap.level < definitions.primary.level);
   assert.ok(definitions.primary.level < definitions.success.level);
   assert.ok(definitions.success.level < definitions.achievement.level);
-  assert.ok(definitions.tap.cooldownMs >= 45);
+  assert.ok(definitions.tap.cooldownMs >= 28);
 });
 
 test('Live repetition policy suppresses low-value density without changing semantics', () => {
@@ -114,7 +116,7 @@ test('Live repetition policy suppresses low-value density without changing seman
 
   const dealCalls = calls.filter(call => call.key === 'live.card.deal');
   assert.equal(dealCalls.length, 18);
-  assert.equal(dealCalls.filter(call => call.channels.sound !== false).length, 0);
+  assert.equal(dealCalls.filter(call => call.channels.sound !== false).length, 1);
   assert.equal(calls.find(call => call.key === 'live.action.check').channels.sound, false);
   assert.equal(calls.find(call => call.key === 'live.action.fold').channels.sound, false);
   assert.equal(calls.filter(call => call.key === 'live.action.check')[1].channels.sound, true);
@@ -143,7 +145,7 @@ test('ten-hand repetition simulation keeps the high-frequency event layer sparse
     live.action({ sequence: 22, playerId: 4, type: 'CHECK' });
     live.handComplete();
   }
-  assert.equal(audible, 10);
+  assert.equal(audible, 20);
 });
 
 test('Live loudness hierarchy keeps repetitive sounds below meaningful actions', () => {
@@ -159,8 +161,8 @@ test('Live loudness hierarchy keeps repetitive sounds below meaningful actions',
 test('current sonic identity bundle loads before SoundManager and audition tooling stays development-only', () => {
   const html = read('index.html');
   const audition = read('tools/audio-audition.cjs');
-  const assetsTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.2"></script>';
-  const soundTag = '<script src="src/audio/sound-manager.js?v=13.3.2.2"></script>';
+  const assetsTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.3"></script>';
+  const soundTag = '<script src="src/audio/sound-manager.js?v=13.3.2.3"></script>';
   assert.ok(html.includes(assetsTag));
   assert.ok(html.includes(soundTag));
   assert.ok(html.indexOf(assetsTag) < html.indexOf(soundTag));

@@ -16,8 +16,10 @@ const ASSET_NAMES = [
   'tactile-error',
   'tactile-complete',
   'tactile-achievement',
-  'live-street',
+  'live-card',
+  'live-neutral',
   'live-commit',
+  'live-fold',
   'live-result'
 ];
 
@@ -71,7 +73,7 @@ test('sonic reset replaces every rejected noise asset with one compact tactile f
   assert.equal(exists('src/audio/sonic-identity-assets.js'), true);
   const bundle = fresh('src/audio/sonic-identity-assets.js');
   assert.equal(bundle.FORMAT, 'pcm-s16le-base64');
-  assert.equal(bundle.SAMPLE_RATE, 24000);
+  assert.equal(bundle.SAMPLE_RATE, 48000);
   assert.equal(bundle.CHANNELS, 1);
   assert.deepEqual(Object.keys(bundle.ASSETS), ASSET_NAMES);
 
@@ -86,10 +88,10 @@ test('sonic reset replaces every rejected noise asset with one compact tactile f
     const tailRms = Math.sqrt(tail.reduce((sum, value) => sum + value * value, 0) / tail.length);
     assert.equal(asset.channels, 1, `${name} remains mono`);
     assert.equal(asset.material, 'tactile-contact', `${name} stays in one family`);
-    assert.ok(asset.durationMs >= 16 && asset.durationMs <= 86, `${name} remains short`);
+    assert.ok(asset.durationMs >= 9 && asset.durationMs <= 40, `${name} remains short`);
     assert.equal(Math.round(bytes.length / 2 / bundle.SAMPLE_RATE * 1000), asset.durationMs);
     assert.ok(Math.abs(samples[0]) <= 1 / 32768 && Math.abs(samples.at(-1)) <= 1 / 32768);
-    assert.ok(peak >= 0.62 && peak < 0.86, `${name} is audible without clipping`);
+    assert.ok(peak >= 0.78 && peak < 0.9, `${name} is audible without clipping`);
     assert.ok(Math.abs(mean) < 0.001, `${name} has no meaningful DC offset`);
     assert.ok(rms < 0.24, `${name} keeps restrained average energy`);
     assert.ok(tailRms < 0.003, `${name} has no hiss or ringing tail`);
@@ -111,7 +113,7 @@ test('asset generation uses deterministic contact pulses, not random/static mate
 test('SoundManager restores practical iPhone loudness and audible navigation taps', () => {
   const manager = loadSoundManager();
   assert.equal(manager.AUDIO_SOURCE, 'pre-rendered-pcm');
-  assert.ok(manager.MASTER_GAIN >= 0.18 && manager.MASTER_GAIN <= 0.28);
+  assert.ok(manager.MASTER_GAIN >= 0.3 && manager.MASTER_GAIN <= 0.4);
   assert.equal(manager.normalizeEvent('navigation'), 'tap');
   assert.equal(manager.normalizeEvent('uiClick'), 'tap');
   assert.equal(manager.SOUND_DEFINITIONS.tap.asset, 'tactile-tap');
@@ -137,24 +139,24 @@ test('first user activation warms the frequent asset cache without starting audi
   const sound = loadSoundManager().create({ AudioContext: fake.Context });
   assert.equal(sound.getCachedAssetCount(), 0);
   await sound.handleUserGesture();
-  assert.equal(sound.getCachedAssetCount(), 5);
-  assert.equal(fake.buffers, 5);
+  assert.equal(sound.getCachedAssetCount(), 11);
+  assert.equal(fake.buffers, 11);
   assert.equal(fake.starts, 0);
   assert.equal(sound.play('tap'), true);
-  assert.equal(sound.getCachedAssetCount(), 5);
+  assert.equal(sound.getCachedAssetCount(), 11);
   assert.equal(fake.starts, 1);
 });
 
 test('global interaction wiring distinguishes primary controls and restores route feedback', () => {
   const html = read('index.html');
-  const assetTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.2"></script>';
-  const managerTag = '<script src="src/audio/sound-manager.js?v=13.3.2.2"></script>';
+  const assetTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.3"></script>';
+  const managerTag = '<script src="src/audio/sound-manager.js?v=13.3.2.3"></script>';
   assert.ok(html.includes(assetTag));
   assert.ok(html.includes(managerTag));
   assert.ok(html.indexOf(assetTag) < html.indexOf(managerTag));
-  assert.match(html, /interactionSoundFor/);
-  assert.match(html, /classList\.contains\('primary'\)[\s\S]*?'primary'/);
-  assert.match(html, /appSound\.play\(interactionSoundFor\(b\)\)/);
+  assert.match(html, /src\/audio\/interaction-feedback\.js\?v=13\.3\.2\.3/);
+  assert.match(html, /InteractionFeedback\.create/);
+  assert.match(html, /appInteractionFeedback\.install\(\)/);
   assert.doesNotMatch(html, /appSound\.play\('navigation'\)/);
 });
 
@@ -182,7 +184,7 @@ test('Live reset keeps only Hero commits, street transitions and result audio', 
   live.potAward(0);
   live.handComplete();
 
-  assert.equal(calls.filter(call => call.key === 'live.card.deal' && call.channels.sound !== false).length, 0);
+  assert.equal(calls.filter(call => call.key === 'live.card.deal' && call.channels.sound !== false).length, 1);
   assert.equal(calls.filter(call => call.key.startsWith('live.board.') && call.channels.sound !== false).length, 3);
   assert.equal(calls.find(call => call.key === 'live.action.call').channels.sound, false);
   assert.equal(calls.find(call => call.key === 'live.action.allIn').channels.sound, false);
@@ -193,7 +195,7 @@ test('Live reset keeps only Hero commits, street transitions and result audio', 
   assert.equal(calls.find(call => call.key === 'live.hand.complete').channels.sound, false);
 });
 
-test('ten-hand fatigue contract caps the modeled Live session at six sounds per hand', () => {
+test('ten-hand fatigue contract caps the modeled Live session at seven sounds per hand', () => {
   const LiveFeedback = fresh('src/audio/live-feedback.js');
   let audible = 0;
   for (let hand = 0; hand < 10; hand += 1) {
@@ -220,5 +222,5 @@ test('ten-hand fatigue contract caps the modeled Live session at six sounds per 
     live.potAward(0);
     live.handComplete();
   }
-  assert.equal(audible, 60);
+  assert.equal(audible, 70);
 });
