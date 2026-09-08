@@ -63,7 +63,7 @@ function fakeControl({ tag = 'BUTTON', classes = [], attributes = {}, disabled =
   return control;
 }
 
-test('release-candidate assets are short, dry, phone-forward and one coherent family', () => {
+test('release-candidate assets are short, dry, phone-forward and deliberately differentiated', () => {
   assert.equal(exists('src/audio/sonic-identity-assets.js'), true);
   const bundle = fresh('src/audio/sonic-identity-assets.js');
   assert.equal(bundle.SAMPLE_RATE, 48000);
@@ -77,26 +77,27 @@ test('release-candidate assets are short, dry, phone-forward and one coherent fa
     const mean = samples.reduce((sum, value) => sum + value, 0) / samples.length;
     const tail = samples.slice(Math.floor(samples.length * 0.8));
     const tailRms = Math.sqrt(tail.reduce((sum, value) => sum + value * value, 0) / tail.length);
-    assert.equal(asset.material, 'tactile-contact');
+    assert.equal(typeof asset.material, 'string');
+    assert.equal(typeof asset.character, 'string');
     assert.ok(asset.durationMs >= 9 && asset.durationMs <= 40, `${name} stays micro-length`);
     assert.ok(peak >= 0.78 && peak < 0.9, `${name} has clear unclipped peak`);
     assert.ok(Math.abs(mean) < 0.001, `${name} has no meaningful DC`);
     assert.ok(tailRms < 0.001, `${name} has no audible residual tail`);
-    assert.ok(energyTime(samples, bundle.SAMPLE_RATE, 0.99) < asset.durationMs * 0.72, `${name} ends dry`);
+    assert.ok(energyTime(samples, bundle.SAMPLE_RATE, 0.99) < asset.durationMs * 0.85, `${name} ends dry`);
   }
 
   const tap = bundle.ASSETS['tactile-tap'];
   const tapSamples = samplesFor(tap);
-  assert.ok(tap.durationMs <= 10);
-  assert.ok(energyTime(tapSamples, bundle.SAMPLE_RATE, 0.99) <= 5.5);
+  assert.ok(tap.durationMs <= 12);
+  assert.ok(energyTime(tapSamples, bundle.SAMPLE_RATE, 0.99) <= 7);
 });
 
-test('asset generator creates fused asymmetric contacts without rejected synthesis', () => {
+test('asset generator creates smooth physical packets without rejected synthesis', () => {
   const source = read('tools/audio-audition.cjs');
-  assert.match(source, /contactPulse/);
+  assert.match(source, /smoothPacket/);
   assert.match(source, /SAMPLE_RATE = 48000/);
   assert.doesNotMatch(source, /Math\.random|randomGenerator|\bseed\b|smoothA|smoothB|createOscillator/);
-  assert.doesNotMatch(source, /Math\.sin|reverb|echo|delay|noise/i);
+  assert.doesNotMatch(source, /reverb|echo|delay|noise/i);
 });
 
 test('release mix is clearly audible at default volume with restrained headroom', () => {

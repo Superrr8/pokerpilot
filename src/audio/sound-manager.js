@@ -43,9 +43,9 @@
     achievement: 'achievement'
   };
 
-  // Stage 13.3.2.3 release-candidate mix. Every semantic event maps to the same
-  // non-random tactile-contact family. SoundManager only decodes, caches, mixes
-  // and schedules pre-rendered PCM; it does not synthesize audible material.
+  // Each semantic event maps to a deliberate pre-rendered physical character.
+  // SoundManager only decodes, caches, mixes and schedules PCM; it does not
+  // synthesize audible material or substitute fallback cues at playback time.
   const AUDIO_SOURCE = 'pre-rendered-pcm';
   const MASTER_GAIN = 0.34;
   const SOUND_DEFINITIONS = Object.freeze({

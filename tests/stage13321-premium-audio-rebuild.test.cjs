@@ -43,7 +43,8 @@ test('pre-rendered audio foundation carries the current compact sonic identity s
     assert.ok(bytes.length > 0 && bytes.length % 2 === 0, `${name} has valid PCM16 data`);
     assert.ok(asset.durationMs >= 9 && asset.durationMs <= 40, `${name} stays micro-length`);
     assert.equal(asset.channels, 1);
-    assert.equal(asset.material, 'tactile-contact');
+    assert.equal(typeof asset.material, 'string');
+    assert.equal(typeof asset.character, 'string');
     assert.equal(Math.round(bytes.length / 2 / assets.SAMPLE_RATE * 1000), asset.durationMs);
     const samples = [];
     for (let offset = 0; offset < bytes.length; offset += 2) {
@@ -55,7 +56,7 @@ test('pre-rendered audio foundation carries the current compact sonic identity s
       .reduce((sum, value, index) => sum + Math.abs(value - samples[index]), 0)
       / (samples.length - 1);
     assert.ok(Math.abs(samples[0]) <= 1 / 32768 && Math.abs(samples.at(-1)) <= 1 / 32768);
-    assert.ok(peak < 0.9 && rms < 0.24);
+    assert.ok(peak < 0.9 && rms < 0.28);
     assert.ok(roughness / rms < 0.8, `${name} avoids hard sample-to-sample edges`);
   }
   assert.equal(totalBytes, assets.TOTAL_PCM_BYTES);
@@ -161,7 +162,7 @@ test('Live loudness hierarchy keeps repetitive sounds below meaningful actions',
 test('current sonic identity bundle loads before SoundManager and audition tooling stays development-only', () => {
   const html = read('index.html');
   const audition = read('tools/audio-audition.cjs');
-  const assetsTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.3"></script>';
+  const assetsTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.4"></script>';
   const soundTag = '<script src="src/audio/sound-manager.js?v=13.3.2.3"></script>';
   assert.ok(html.includes(assetsTag));
   assert.ok(html.includes(soundTag));

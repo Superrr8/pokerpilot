@@ -8,55 +8,66 @@ const { spawnSync } = require('node:child_process');
 const ROOT = path.resolve(__dirname, '..');
 const SAMPLE_RATE = 48000;
 const CHANNELS = 1;
-const MATERIAL = 'tactile-contact';
 const ASSET_PATH = path.join(ROOT, 'src', 'audio', 'sonic-identity-assets.js');
 
-// Each recipe is assembled from compact, deterministic mechanical contacts.
-// The fused onset and body keep every transient immediate and dry.
+// Each asset is assembled from compact, smoothly gated physical wave packets.
+// Different materials and cadences keep the vocabulary distinct while every
+// sound remains local, deterministic and dry.
 const RECIPES = Object.freeze([
   {
-    name: 'tactile-tap', durationMs: 10, peak: 0.84,
-    contacts: [[1.15, 0.16, 1], [1.25, 0.5, 0.3]]
+    name: 'tactile-tap', durationMs: 12, peak: 0.82,
+    material: 'soft-keycap', character: 'dry-soft-tap',
+    packets: [[0.35, 3.2, 1680, 0.58, 0.18], [1.1, 5.2, 820, 0.42, 0.12]]
   },
   {
-    name: 'tactile-primary', durationMs: 14, peak: 0.86,
-    contacts: [[1.15, 0.17, 1], [1.27, 0.58, 0.46]]
+    name: 'tactile-primary', durationMs: 16, peak: 0.84,
+    material: 'weighted-keycap', character: 'full-primary-press',
+    packets: [[0.35, 4.2, 1260, 0.46, 0.12], [0.9, 7.4, 510, 0.66, 0.08]]
   },
   {
-    name: 'tactile-success', durationMs: 24, peak: 0.84,
-    contacts: [[1.15, 0.17, 0.9], [1.26, 0.5, 0.3], [10.5, 0.18, 0.62], [10.62, 0.48, 0.18]]
+    name: 'tactile-success', durationMs: 26, peak: 0.82,
+    material: 'positive-mark', character: 'rising-confirmation',
+    packets: [[0.4, 6.8, 560, 0.58, 0.1], [12.1, 6.8, 910, 0.68, 0.08]]
   },
   {
-    name: 'tactile-error', durationMs: 16, peak: 0.82,
-    contacts: [[1.15, 0.2, 0.86], [1.3, 0.64, -0.4]]
+    name: 'tactile-error', durationMs: 24, peak: 0.8,
+    material: 'caution-mark', character: 'descending-restraint',
+    packets: [[0.4, 5.8, 760, 0.46, 0.08], [9.1, 7.5, 390, 0.7, 0.06]]
   },
   {
-    name: 'tactile-complete', durationMs: 30, peak: 0.86,
-    contacts: [[1.15, 0.17, 0.84], [1.26, 0.52, 0.28], [15, 0.18, 0.7], [15.12, 0.5, 0.2]]
+    name: 'tactile-complete', durationMs: 32, peak: 0.84,
+    material: 'completion-mark', character: 'three-step-finish',
+    packets: [[0.3, 5.8, 470, 0.5, 0.08], [9.8, 5.8, 680, 0.58, 0.08], [19.4, 6.2, 980, 0.62, 0.06]]
   },
   {
-    name: 'tactile-achievement', durationMs: 38, peak: 0.87,
-    contacts: [[1.15, 0.17, 0.8], [1.26, 0.5, 0.26], [11, 0.18, 0.66], [11.12, 0.48, 0.2], [21, 0.17, 0.52], [21.12, 0.46, 0.16]]
+    name: 'tactile-achievement', durationMs: 38, peak: 0.86,
+    material: 'achievement-mark', character: 'warm-rising-signature',
+    packets: [[0.3, 6.2, 410, 0.42, 0.08], [9.9, 6.8, 650, 0.56, 0.08], [20.5, 7.6, 940, 0.7, 0.06]]
   },
   {
-    name: 'live-card', durationMs: 13, peak: 0.82,
-    contacts: [[1.05, 0.14, 1], [1.15, 0.62, 0.22]]
+    name: 'live-card', durationMs: 14, peak: 0.8,
+    material: 'card-flick', character: 'light-card-release',
+    packets: [[0.25, 3.2, 1900, 0.56, 0.16], [1.2, 5.4, 1040, -0.38, 0.1]]
   },
   {
-    name: 'live-neutral', durationMs: 12, peak: 0.84,
-    contacts: [[1.15, 0.17, 0.92], [1.27, 0.52, 0.34]]
+    name: 'live-neutral', durationMs: 14, peak: 0.8,
+    material: 'felt-touch', character: 'muted-table-tap',
+    packets: [[0.35, 4.0, 1120, 0.38, 0.08], [1.0, 6.2, 620, 0.58, 0.06]]
   },
   {
-    name: 'live-commit', durationMs: 17, peak: 0.86,
-    contacts: [[1.12, 0.18, 1], [1.26, 0.7, 0.52]]
+    name: 'live-commit', durationMs: 18, peak: 0.84,
+    material: 'chip-seat', character: 'solid-chip-commit',
+    packets: [[0.35, 5.0, 880, 0.4, 0.08], [0.9, 8.5, 350, 0.72, 0.05]]
   },
   {
-    name: 'live-fold', durationMs: 15, peak: 0.82,
-    contacts: [[1.12, 0.19, 0.68], [1.28, 0.66, -0.5]]
+    name: 'live-fold', durationMs: 17, peak: 0.8,
+    material: 'felt-release', character: 'soft-downward-release',
+    packets: [[0.3, 4.6, 1280, 0.4, 0.1], [6.0, 6.2, 480, -0.64, 0.05]]
   },
   {
     name: 'live-result', durationMs: 32, peak: 0.87,
-    contacts: [[1.15, 0.18, 0.86], [1.28, 0.62, 0.38], [15.5, 0.18, 0.7], [15.62, 0.52, 0.24]]
+    material: 'pot-settle', character: 'two-step-pot-result',
+    packets: [[0.35, 7.5, 380, 0.62, 0.06], [14, 8.2, 690, 0.7, 0.06]]
   }
 ]);
 
@@ -83,11 +94,14 @@ const AUDITION_ALIASES = Object.freeze({
   'hand-complete': 'live-result'
 });
 
-function contactPulse(elapsedMs, widthMs) {
-  if (elapsedMs < 0) return 0;
-  const x = elapsedMs / widthMs;
-  if (x >= 8) return 0;
-  return (1 - x) * Math.exp(-x);
+function smoothPacket(elapsedMs, lengthMs, frequencyHz, color) {
+  if (elapsedMs < 0 || elapsedMs >= lengthMs) return 0;
+  const phase = elapsedMs / lengthMs;
+  const window = Math.sin(Math.PI * phase) ** 2;
+  const cycles = Math.max(2, Math.round(frequencyHz * lengthMs / 1000));
+  const body = Math.sin(2 * Math.PI * cycles * phase);
+  const overtone = Math.sin(2 * Math.PI * (cycles + 3) * phase);
+  return window * (body + color * overtone) / (1 + Math.abs(color));
 }
 
 function renderRecipe(recipe) {
@@ -95,8 +109,8 @@ function renderRecipe(recipe) {
   const output = new Float64Array(frameCount);
   for (let index = 0; index < frameCount; index += 1) {
     const timeMs = index / SAMPLE_RATE * 1000;
-    for (const [atMs, widthMs, level] of recipe.contacts) {
-      output[index] += contactPulse(timeMs - atMs, widthMs) * level;
+    for (const [atMs, lengthMs, frequencyHz, level, color] of recipe.packets) {
+      output[index] += smoothPacket(timeMs - atMs, lengthMs, frequencyHz, color) * level;
     }
   }
 
@@ -141,9 +155,9 @@ function buildAssetModule() {
   const rendered = renderAll();
   const totalBytes = rendered.reduce((sum, item) => sum + item.pcm.length, 0);
   const records = rendered.map(({ recipe, pcm, metadata }) => (
-    `    '${recipe.name}': Object.freeze({ durationMs: ${recipe.durationMs}, channels: ${CHANNELS}, material: '${MATERIAL}', peak: ${metadata.peak}, rms: ${metadata.rms}, pcm: '${pcm.toString('base64')}' })`
+    `    '${recipe.name}': Object.freeze({ durationMs: ${recipe.durationMs}, channels: ${CHANNELS}, material: '${recipe.material}', character: '${recipe.character}', peak: ${metadata.peak}, rms: ${metadata.rms}, pcm: '${pcm.toString('base64')}' })`
   )).join(',\n');
-  return `'use strict';\n\n// Generated by tools/audio-audition.cjs --build. These are pre-rendered\n// PCM16 tactile-contact assets; production playback does not synthesize waveforms.\n(function attachSonicIdentityAssets(root) {\n  const SAMPLE_RATE = ${SAMPLE_RATE};\n  const CHANNELS = ${CHANNELS};\n  const FORMAT = 'pcm-s16le-base64';\n  const ASSETS = Object.freeze({\n${records}\n  });\n  const TOTAL_PCM_BYTES = ${totalBytes};\n  const api = Object.freeze({ SAMPLE_RATE, CHANNELS, FORMAT, ASSETS, TOTAL_PCM_BYTES });\n  root.SonicIdentityAssets = api;\n  if (typeof module === 'object' && module.exports) module.exports = api;\n})(typeof window !== 'undefined' ? window : globalThis);\n`;
+  return `'use strict';\n\n// Generated by tools/audio-audition.cjs --build. These are pre-rendered\n// PCM16 phone-forward micro-assets; production playback does not synthesize waveforms.\n(function attachSonicIdentityAssets(root) {\n  const SAMPLE_RATE = ${SAMPLE_RATE};\n  const CHANNELS = ${CHANNELS};\n  const FORMAT = 'pcm-s16le-base64';\n  const ASSETS = Object.freeze({\n${records}\n  });\n  const TOTAL_PCM_BYTES = ${totalBytes};\n  const api = Object.freeze({ SAMPLE_RATE, CHANNELS, FORMAT, ASSETS, TOTAL_PCM_BYTES });\n  root.SonicIdentityAssets = api;\n  if (typeof module === 'object' && module.exports) module.exports = api;\n})(typeof window !== 'undefined' ? window : globalThis);\n`;
 }
 
 function wavFromPcm(pcm) {

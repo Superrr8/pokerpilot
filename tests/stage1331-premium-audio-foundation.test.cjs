@@ -161,7 +161,7 @@ test('semantic feedback coordinates matching sound and haptic categories', () =>
 });
 
 test('foundation is loaded centrally and reuses the existing sound preference', () => {
-  assert.match(html, /src\/audio\/sonic-identity-assets\.js\?v=13\.3\.2\.3/);
+  assert.match(html, /src\/audio\/sonic-identity-assets\.js\?v=13\.3\.2\.4/);
   assert.match(html, /src\/audio\/sound-manager\.js\?v=13\.3\.2\.3/);
   assert.match(html, /src\/audio\/haptic-manager\.js\?v=13\.3\.2/);
   assert.match(html, /src\/audio\/feedback-manager\.js\?v=13\.3\.2/);

@@ -68,7 +68,7 @@ function fakeAudioContext() {
   return { Context, get buffers() { return buffers; }, get starts() { return starts; } };
 }
 
-test('sonic reset replaces every rejected noise asset with one compact tactile family', () => {
+test('sonic reset keeps every rejected noise asset out of the compact physical palette', () => {
   assert.equal(exists('src/audio/micro-audio-assets.js'), false);
   assert.equal(exists('src/audio/sonic-identity-assets.js'), true);
   const bundle = fresh('src/audio/sonic-identity-assets.js');
@@ -87,13 +87,14 @@ test('sonic reset replaces every rejected noise asset with one compact tactile f
     const tail = samples.slice(Math.floor(samples.length * 0.85));
     const tailRms = Math.sqrt(tail.reduce((sum, value) => sum + value * value, 0) / tail.length);
     assert.equal(asset.channels, 1, `${name} remains mono`);
-    assert.equal(asset.material, 'tactile-contact', `${name} stays in one family`);
+    assert.equal(typeof asset.material, 'string', `${name} declares its physical material`);
+    assert.equal(typeof asset.character, 'string', `${name} declares its distinct character`);
     assert.ok(asset.durationMs >= 9 && asset.durationMs <= 40, `${name} remains short`);
     assert.equal(Math.round(bytes.length / 2 / bundle.SAMPLE_RATE * 1000), asset.durationMs);
     assert.ok(Math.abs(samples[0]) <= 1 / 32768 && Math.abs(samples.at(-1)) <= 1 / 32768);
     assert.ok(peak >= 0.78 && peak < 0.9, `${name} is audible without clipping`);
     assert.ok(Math.abs(mean) < 0.001, `${name} has no meaningful DC offset`);
-    assert.ok(rms < 0.24, `${name} keeps restrained average energy`);
+    assert.ok(rms < 0.28, `${name} keeps restrained average energy`);
     assert.ok(tailRms < 0.003, `${name} has no hiss or ringing tail`);
     assert.equal(asset.peak, Number(peak.toFixed(4)));
     assert.equal(asset.rms, Number(rms.toFixed(4)));
@@ -102,9 +103,9 @@ test('sonic reset replaces every rejected noise asset with one compact tactile f
   assert.ok(totalBytes <= 24 * 1024);
 });
 
-test('asset generation uses deterministic contact pulses, not random/static material', () => {
+test('asset generation uses deterministic smooth packets, not random/static material', () => {
   const source = read('tools/audio-audition.cjs');
-  assert.match(source, /contactPulse/);
+  assert.match(source, /smoothPacket/);
   assert.match(source, /sonic-identity-assets\.js/);
   assert.doesNotMatch(source, /randomGenerator|Math\.random|\bseed\b|smoothA|smoothB/);
   assert.doesNotMatch(source, /softLimitHz|card-contact|chip-call|pot-move/);
@@ -149,7 +150,7 @@ test('first user activation warms the frequent asset cache without starting audi
 
 test('global interaction wiring distinguishes primary controls and restores route feedback', () => {
   const html = read('index.html');
-  const assetTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.3"></script>';
+  const assetTag = '<script src="src/audio/sonic-identity-assets.js?v=13.3.2.4"></script>';
   const managerTag = '<script src="src/audio/sound-manager.js?v=13.3.2.3"></script>';
   assert.ok(html.includes(assetTag));
   assert.ok(html.includes(managerTag));
