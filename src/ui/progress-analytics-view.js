@@ -33,6 +33,12 @@
 
   function dayLabel(value) {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text(value));
+    if (match && root.PokerElevateI18n?.formatDate) {
+      return root.PokerElevateI18n.formatDate(
+        new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))),
+        { day: '2-digit', month: '2-digit', timeZone: 'UTC' }
+      );
+    }
     return match ? `${match[3]}.${match[2]}` : '—';
   }
 
@@ -40,6 +46,12 @@
     const timestamp = typeof value === 'string' ? Date.parse(value) : NaN;
     if (!Number.isFinite(timestamp)) return 'Дата недоступна';
     const date = new Date(timestamp);
+    if (root.PokerElevateI18n?.formatDate) {
+      return root.PokerElevateI18n.formatDate(date, {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
     return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()} · ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   }
 

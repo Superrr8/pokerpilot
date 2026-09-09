@@ -419,7 +419,7 @@
       if (initialsButton) {
         initialsButton.textContent = profile.avatar.type === 'initials'
           ? profile.avatar.value
-          : store.getProfile().displayName.slice(0, 2).toLocaleUpperCase('ru-RU');
+          : store.getProfile().displayName.slice(0, 2).toLocaleUpperCase(root.PokerElevateI18n?.getLocaleTag?.() || 'en-US');
         initialsButton.dataset.avatarValue = initialsButton.textContent;
       }
       selectAvatar(profile.avatar.type, profile.avatar.value);

@@ -104,6 +104,11 @@
     const timestamp = typeof value === 'string' ? Date.parse(value) : NaN;
     if (!Number.isFinite(timestamp)) return '';
     const date = new Date(timestamp);
+    if (root.PokerElevateI18n?.formatDate) {
+      return root.PokerElevateI18n.formatDate(date, {
+        day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC'
+      });
+    }
     return [
       String(date.getUTCDate()).padStart(2, '0'),
       String(date.getUTCMonth() + 1).padStart(2, '0'),

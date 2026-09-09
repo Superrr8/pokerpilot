@@ -16,7 +16,7 @@ function readOptional(filePath) {
   return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
 }
 
-function loadNavigation() {
+function loadNavigation(locale) {
   const sandbox = { window: {}, module: { exports: {} }, exports: {} };
   vm.createContext(sandbox, {
     name: 'PokerPilot information architecture sandbox',
@@ -29,6 +29,9 @@ function loadNavigation() {
     const source = readOptional(filePath);
     assert.ok(source, `Нет ${filename}`);
     new vm.Script(source, { filename }).runInContext(sandbox, { timeout: 2_000 });
+    if (filename === 'src/ui/translations.js' && locale) {
+      sandbox.window.PokerPilotI18n.setLocale(locale);
+    }
   }
   return {
     i18n: sandbox.window.PokerPilotI18n,
@@ -48,7 +51,7 @@ test('Stage 8.1 выделяет словарь и навигацию в classic
 });
 
 test('централизованный русский словарь содержит обязательные названия и действия', () => {
-  const { i18n } = loadNavigation();
+  const { i18n } = loadNavigation('ru');
   assert.ok(i18n);
   for (const [key, expected] of Object.entries({
     'nav.home': 'Главная',
@@ -64,7 +67,7 @@ test('централизованный русский словарь содер�
 });
 
 test('нижняя навигация содержит ровно пять постоянных разделов', () => {
-  const { navigation } = loadNavigation();
+  const { navigation } = loadNavigation('ru');
   assert.deepEqual(
     Array.from(navigation.sections, section => section.id),
     ['home', 'learning', 'training', 'analysis', 'profile']

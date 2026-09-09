@@ -28,7 +28,7 @@
     const initials = words.length > 1
       ? `${words[0][0] || ''}${words[1][0] || ''}`
       : (words[0] || 'Player').slice(0, 2);
-    return initials.toLocaleUpperCase('ru-RU');
+    return initials.toLocaleUpperCase(root.PokerElevateI18n?.getLocaleTag?.() || 'en-US');
   }
 
   function validateDisplayName(value) {

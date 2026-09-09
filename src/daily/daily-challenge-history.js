@@ -30,12 +30,21 @@
   function dateLabel(dateKey) {
     if (!DateUtils.validDateKey(dateKey)) return '';
     const [year, month, day] = dateKey.split('-');
+    if (root.PokerElevateI18n?.formatDate) {
+      return root.PokerElevateI18n.formatDate(
+        new Date(Date.UTC(Number(year), Number(month) - 1, Number(day))),
+        { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' }
+      );
+    }
     return `${day}.${month}.${year}`;
   }
 
   function weekdayLabel(dateKey) {
     if (!DateUtils.validDateKey(dateKey)) return '';
     const [year, month, day] = dateKey.split('-').map(Number);
+    if (root.PokerElevateI18n?.formatDate) {
+      return root.PokerElevateI18n.formatDate(new Date(year, month - 1, day, 12), { weekday: 'short' });
+    }
     const labels = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     return labels[new Date(year, month - 1, day, 12).getDay()];
   }
