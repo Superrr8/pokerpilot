@@ -2,6 +2,8 @@
 
 (function attachProfileUi(root) {
   const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
+  const localize = value => root.PokerElevateI18n?.translateValue?.(value) || value;
+  const localizeCopy = value => root.PokerElevateI18n?.translateCopy?.(value) || value;
   const AVATAR_SYMBOLS = Object.freeze({
     'spade-green': 'A♠',
     'diamond-blue': 'K♦',
@@ -60,7 +62,7 @@
     const streetValue = street => optionalNumber(breakdown[street]) !== null
       ? Math.round(optionalNumber(breakdown[street]))
       : null;
-    return {
+    const model = {
       isRated,
       score: isRated ? Math.round(score) : null,
       displayScore: isRated ? String(Math.round(score)) : 'Не рассчитан',
@@ -88,6 +90,7 @@
         postflop: streetValue('postflop')
       }
     };
+    return localize(model);
   }
 
   function createViewModel({
@@ -145,7 +148,7 @@
       hasProgressSnapshot ? Math.floor(number(achievementSnapshot.unlockedCount)) : 0
     );
     const avatar = profile.avatar || { type: 'initials', value: 'PL' };
-    return {
+    const model = {
       displayName: String(profile.displayName || 'Player'),
       bio: String(profile.bio || ''),
       preferredGame: String(profile.preferredGame || '$1/$3 Cash'),
@@ -215,6 +218,12 @@
         currentStreakDays: statistics.currentStreakDays ?? null
       }
     };
+    const localized = localize(model);
+    localized.displayName = model.displayName;
+    localized.bio = model.bio;
+    localized.preferredGame = model.preferredGame;
+    localized.avatar.value = model.avatar.value;
+    return localized;
   }
 
   function setText(document, selector, value) {
@@ -228,25 +237,25 @@
     element.textContent = model.avatar.value;
     element.dataset.avatarType = model.avatar.type;
     element.dataset.avatarPreset = model.avatar.preset || '';
-    element.setAttribute('aria-label', `Аватар ${model.displayName}`);
+    element.setAttribute('aria-label', root.PokerElevateI18n?.t?.('profile.avatarLabel', { name: model.displayName }) || `Аватар ${model.displayName}`);
   }
 
   function renderHomeEntry(document, model) {
     setAvatar(document, '#homeProfileAvatar', model);
     setText(document, '#homeProfileName', model.displayName);
-    setText(document, '#homeProfileLevel', `Level ${model.level} · ${model.totalXp} XP`);
+    setText(document, '#homeProfileLevel', localizeCopy(`Level ${model.level} · ${model.totalXp} XP`));
     setText(
       document,
       '#homeProfileIq',
       model.pokerIQ.isRated
-        ? `Poker IQ ${model.pokerIQ.displayScore} · ${model.pokerIQ.rank.label}`
-        : 'Poker IQ формируется'
+        ? localizeCopy(`Poker IQ ${model.pokerIQ.displayScore} · ${model.pokerIQ.rank.label}`)
+        : localizeCopy('Poker IQ формируется')
     );
     const bar = document?.querySelector('#homeProfileProgress');
     if (bar) {
       bar.style.setProperty('--profile-progress', `${model.progressPercent}%`);
       bar.setAttribute('aria-valuenow', String(model.progressPercent));
-      bar.setAttribute('aria-label', `Прогресс Level ${model.level}: ${model.progressLabel}`);
+      bar.setAttribute('aria-label', localizeCopy(`Прогресс Level ${model.level}: ${model.progressLabel}`));
     }
   }
 
@@ -262,30 +271,30 @@
     setText(document, '#profilePlayerTitle', model.playerTitle);
     setText(document, '#profileLevel', `Level ${model.level}`);
     setText(document, '#profileXpLabel', model.progressLabel);
-    setText(document, '#profileLifetimeXp', `${model.totalXp} XP всего`);
+    setText(document, '#profileLifetimeXp', localizeCopy(`${model.totalXp} XP всего`));
     setText(document, '#profileHeroPokerIq', model.pokerIQ.displayScore);
     setText(
       document,
       '#profileHeroPokerIqMeta',
-      model.pokerIQ.ratedDecisions ? `${model.pokerIQ.ratedDecisions} решений` : 'Оценка формируется'
+      model.pokerIQ.ratedDecisions ? localizeCopy(`${model.pokerIQ.ratedDecisions} решений`) : localizeCopy('Оценка формируется')
     );
-    setText(document, '#profileHeroStreak', `${model.streak.current} ${dayWord(model.streak.current)}`);
-    setText(document, '#profileHeroStreakMeta', `Лучшая: ${model.streak.best}`);
+    setText(document, '#profileHeroStreak', localizeCopy(`${model.streak.current} ${dayWord(model.streak.current)}`));
+    setText(document, '#profileHeroStreakMeta', localizeCopy(`Лучшая: ${model.streak.best}`));
     setText(document, '#profileHeroDecisionQuality', model.decisionQuality.displayValue);
     setText(
       document,
       '#profileHeroDecisionQualityMeta',
       model.decisionQuality.ratedDecisions
-        ? `${model.decisionQuality.ratedDecisions} решений`
-        : 'Оценка формируется'
+        ? localizeCopy(`${model.decisionQuality.ratedDecisions} решений`)
+        : localizeCopy('Оценка формируется')
     );
     setText(document, '#profileHeroAchievements', model.achievements.countLabel);
-    setText(document, '#profileHeroAchievementsMeta', 'Открыто');
+    setText(document, '#profileHeroAchievementsMeta', localizeCopy('Открыто'));
     const progress = document?.querySelector('#profileXpProgress');
     if (progress) {
       progress.style.setProperty('--profile-progress', `${model.progressPercent}%`);
       progress.setAttribute('aria-valuenow', String(model.progressPercent));
-      progress.setAttribute('aria-label', `Прогресс Level ${model.level}: ${model.progressLabel}`);
+      progress.setAttribute('aria-label', localizeCopy(`Прогресс Level ${model.level}: ${model.progressLabel}`));
     }
     setText(document, '#profilePokerIq', model.ratings.pokerIQ);
     setText(document, '#profileDecisionQuality', model.ratings.decisionQuality);
@@ -298,14 +307,14 @@
     setText(
       document,
       '#profilePokerIqConsistency',
-      model.pokerIQ.consistency === null ? 'Недостаточно данных' : `${model.pokerIQ.consistency} / 100`
+      model.pokerIQ.consistency === null ? localizeCopy('Недостаточно данных') : `${model.pokerIQ.consistency} / 100`
     );
     setText(
       document,
       '#profilePokerIqNext',
       model.pokerIQ.rank.nextLabel && model.pokerIQ.rank.iqToNext !== null
-        ? `${model.pokerIQ.rank.iqToNext} IQ до ранга «${model.pokerIQ.rank.nextLabel}»`
-        : model.pokerIQ.isRated ? 'Максимальный ранг' : 'Недостаточно данных'
+        ? localizeCopy(`${model.pokerIQ.rank.iqToNext} IQ до ранга «${model.pokerIQ.rank.nextLabel}»`)
+        : model.pokerIQ.isRated ? localizeCopy('Максимальный ранг') : localizeCopy('Недостаточно данных')
     );
     const pokerIqProgress = document?.querySelector('#profilePokerIqProgress');
     if (pokerIqProgress) {
@@ -314,8 +323,8 @@
       pokerIqProgress.setAttribute(
         'aria-label',
         model.pokerIQ.isRated
-          ? `Прогресс ранга ${model.pokerIQ.rank.label}: ${model.pokerIQ.rank.progressPercent}%`
-          : 'Прогресс Poker IQ: недостаточно данных'
+          ? localizeCopy(`Прогресс ранга ${model.pokerIQ.rank.label}: ${model.pokerIQ.rank.progressPercent}%`)
+          : localizeCopy('Прогресс Poker IQ: недостаточно данных')
       );
     }
     const pokerIqSummary = document?.querySelector('#profilePokerIqSummary');
@@ -323,8 +332,8 @@
       pokerIqSummary.setAttribute(
         'aria-label',
         model.pokerIQ.isRated
-          ? `Poker IQ ${model.pokerIQ.displayScore}, ранг ${model.pokerIQ.rank.label}. ${model.pokerIQ.statusLabel}.`
-          : `Poker IQ не рассчитан. ${model.pokerIQ.statusLabel}.`
+          ? localizeCopy(`Poker IQ ${model.pokerIQ.displayScore}, ранг ${model.pokerIQ.rank.label}. ${model.pokerIQ.statusLabel}.`)
+          : localizeCopy(`Poker IQ не рассчитан. ${model.pokerIQ.statusLabel}.`)
       );
       pokerIqSummary.dataset.sampleStatus = model.pokerIQ.sampleStatus;
     }
@@ -332,22 +341,22 @@
       setText(
         document,
         `#profilePokerIqStreet-${street}`,
-        value === null ? 'Недостаточно данных' : value
+        value === null ? localizeCopy('Недостаточно данных') : value
       );
     });
-    setText(document, '#profileHandsPlayed', model.statistics.handsPlayed || 'Нет данных');
+    setText(document, '#profileHandsPlayed', model.statistics.handsPlayed || localizeCopy('Нет данных'));
     setText(document, '#profileSessionsPlayed', model.statistics.sessionsPlayed);
     setText(document, '#profileDecisionsMade', model.statistics.decisionsMade);
     setText(document, '#profileCorrectDecisions', model.statistics.correctDecisions);
     setText(
       document,
       '#profileBestResult',
-      model.statistics.bestResult === null ? 'Нет данных' : `${model.statistics.bestResult}%`
+      model.statistics.bestResult === null ? localizeCopy('Нет данных') : `${model.statistics.bestResult}%`
     );
     setText(
       document,
       '#profileDayStreak',
-      model.statistics.currentStreakDays === null ? 'Нет данных' : model.statistics.currentStreakDays
+      model.statistics.currentStreakDays === null ? localizeCopy('Нет данных') : model.statistics.currentStreakDays
     );
     const empty = document?.querySelector('#profileEmptyState');
     if (empty) empty.classList.toggle('hidden', !model.statistics.isEmpty);
@@ -362,7 +371,7 @@
       element.classList.toggle('is-complete', complete);
       element.dataset.status = complete ? 'complete' : 'locked';
       const status = element.querySelector('[data-achievement-status]');
-      if (status) status.textContent = complete ? 'Выполнено' : 'Заблокировано';
+      if (status) status.textContent = localizeCopy(complete ? 'Выполнено' : 'Заблокировано');
     });
   }
 

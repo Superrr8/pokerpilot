@@ -1,6 +1,7 @@
 'use strict';
 
 (function attachTrainerExplanationEngine(root) {
+  const localize = value => root.PokerElevateI18n?.translateValue?.(value) || value;
   const ACTION_LABELS = Object.freeze({
     FOLD: 'Fold', CHECK: 'Check', CALL: 'Call', BET: 'Bet', RAISE: 'Raise', ALL_IN: 'All-in'
   });
@@ -319,15 +320,22 @@
     const explanation = street === 'preflop'
       ? preflopExplanation(source, trainerResult, action, math)
       : postflopExplanation(source, trainerResult, action, math);
-    return Object.freeze({
+    const localized = localize({
       summary: explanation.summary,
-      reasons: Object.freeze(explanation.reasons.slice()),
-      keyFactors: Object.freeze(explanation.keyFactors.slice()),
-      alternatives: Object.freeze(explanation.alternatives.slice()),
+      reasons: explanation.reasons.slice(),
+      keyFactors: explanation.keyFactors.slice(),
+      alternatives: explanation.alternatives.slice(),
       takeaway: explanation.takeaway,
-      math: Object.freeze({ ...explanation.math }),
+      math: { ...explanation.math },
       confidenceExplanation: confidenceExplanation(trainerResult),
       decisionQualityExplanation: decisionQualityExplanation(source.decisionQuality)
+    });
+    return Object.freeze({
+      ...localized,
+      reasons: Object.freeze(localized.reasons),
+      keyFactors: Object.freeze(localized.keyFactors),
+      alternatives: Object.freeze(localized.alternatives),
+      math: Object.freeze(localized.math)
     });
   }
 

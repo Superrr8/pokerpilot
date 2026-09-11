@@ -1,6 +1,7 @@
 'use strict';
 
 (function attachProgressOverview(root) {
+  const localize = value => root.PokerElevateI18n?.translateValue?.(value) || value;
   const SKILL_IDS = Object.freeze([
     'preflop',
     'value',
@@ -310,7 +311,7 @@
     const bestStreak = Math.max(currentStreak, nonNegativeInteger(streak.best));
     const validToday = typeof today === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(today);
     const todayQualified = validToday && streak.lastQualifiedDate === today;
-    return {
+    const model = {
       playerName: displayName(name),
       pokerIq: pokerIqModel(current),
       level: levelModel(current.level),
@@ -329,6 +330,9 @@
       recentEvents: recentEventsModel(current.recentChanges),
       recentEmptyMessage: 'Пока нет значимых событий прогресса.'
     };
+    const localized = localize(model);
+    localized.playerName = model.playerName;
+    return localized;
   }
 
   function find(documentRef, selector) {

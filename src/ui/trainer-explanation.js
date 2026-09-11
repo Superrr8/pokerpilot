@@ -1,6 +1,7 @@
 'use strict';
 
 (function attachTrainerExplanationUi(root) {
+  const localize = value => root.PokerElevateI18n?.translateValue?.(value) || value;
   const ACTION_LABELS = Object.freeze({
     FOLD: 'Fold', CHECK: 'Check', CALL: 'Call', BET: 'Bet', RAISE: 'Raise', ALL_IN: 'All-in'
   });
@@ -104,7 +105,7 @@
     const qualityScore = quality.isRated === true ? finite(quality.score) : null;
     const qualityGrade = qualityScore !== null ? String(quality.grade || '') : '';
     const qualityLabel = qualityScore !== null ? (QUALITY_LABELS[String(quality.classification || '').toUpperCase()] || '') : '';
-    return {
+    return localize({
       actionLabel,
       status,
       statusIcon: STATUS[status].icon,
@@ -120,7 +121,7 @@
       primaryReasons: reasons,
       supportingSections: sections.filter(section => section.kind !== 'why'),
       sections
-    };
+    });
   }
 
   function element(document, tag, className, text) {

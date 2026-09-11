@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachSavedHands(root) {
+  const translate = (key, values = {}, fallback = '') => root.PokerElevateI18n?.t?.(key, values, fallback) || fallback;
+  const localizeCopy = value => root.PokerElevateI18n?.translateCopy?.(value) || value;
   const LiveMode = root.PokerPilotLiveMode
     || (typeof require === 'function' ? require('./live-mode.js') : null);
   const SCHEMA_VERSION = 1;
@@ -97,21 +99,26 @@
 
   function formatAction(action) {
     const normalized = normalizeAction(action, 0);
-    if (normalized.type === 'CALL') return `CALL ${formatMoney(normalized.amount)}`;
-    if (normalized.type === 'BET') return `BET ${formatMoney(normalized.amount)}`;
+    if (normalized.type === 'CALL') return translate('live.actionCall', { amount: formatMoney(normalized.amount) }, `CALL ${formatMoney(normalized.amount)}`);
+    if (normalized.type === 'BET') return translate('live.actionBet', { amount: formatMoney(normalized.amount) }, `BET ${formatMoney(normalized.amount)}`);
     if (normalized.type === 'RAISE') {
-      return `RAISE TO ${formatMoney(normalized.toAmount ?? normalized.amount)}`;
+      const amount = formatMoney(normalized.toAmount ?? normalized.amount);
+      return translate('live.actionRaise', { amount }, `RAISE TO ${amount}`);
     }
     if (normalized.type === 'ALL_IN') {
-      return normalized.amount > 0 ? `ALL-IN ${formatMoney(normalized.amount)}` : 'ALL-IN';
+      return normalized.amount > 0
+        ? translate('live.actionAllIn', { amount: formatMoney(normalized.amount) }, `ALL-IN ${formatMoney(normalized.amount)}`)
+        : localizeCopy('ALL-IN');
     }
     if (normalized.type === 'POST_BLIND') {
-      return normalized.text || `POST ${formatMoney(normalized.amount)}`;
+      return translate('live.actionPost', { amount: formatMoney(normalized.amount) }, `POST ${formatMoney(normalized.amount)}`);
     }
     if (normalized.type === 'INFO' || normalized.type === 'RESULT' || normalized.type === 'SHOWDOWN') {
-      return normalized.text;
+      return localizeCopy(normalized.text);
     }
-    return normalized.type.replace('_', '-');
+    if (normalized.type === 'CHECK') return translate('live.actionCheck', {}, 'CHECK');
+    if (normalized.type === 'FOLD') return translate('live.actionFold', {}, 'FOLD');
+    return localizeCopy(normalized.type.replace('_', '-'));
   }
 
   function groupActions(actions) {
@@ -120,7 +127,7 @@
       .sort((left, right) => left.sequence - right.sequence);
     return STREETS.map(street => ({
       street,
-      label: STREET_LABELS[street],
+      label: localizeCopy(STREET_LABELS[street]),
       actions: normalized.filter(action => action.street === street)
     })).filter(group => group.actions.length);
   }

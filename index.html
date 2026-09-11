@@ -69,6 +69,13 @@
       <span class="brand-copy"><strong data-brand="wordmark">PokerElevate</strong><small data-brand="tagline">Тренировка и разбор решений</small></span>
     </button>
     <div class="top-header-actions">
+      <div id="headerLocaleControl" class="header-locale-control">
+        <button id="headerLocaleToggle" class="header-locale-toggle" type="button" aria-label="Change language. Current language: English" aria-haspopup="menu" aria-expanded="false" aria-controls="headerLocalePicker">🇺🇸</button>
+        <div id="headerLocalePicker" class="header-locale-picker" role="menu" aria-label="Choose language" hidden>
+          <button type="button" role="menuitemradio" data-locale-choice="en" aria-checked="true"><span data-i18n-ignore>USA</span><span aria-hidden="true">🇺🇸</span></button>
+          <button type="button" role="menuitemradio" data-locale-choice="ru" aria-checked="false"><span data-i18n-ignore>Russia</span><span aria-hidden="true">🇷🇺</span></button>
+        </div>
+      </div>
       <button id="homeProfileEntry" class="home-profile-entry home-header-profile" type="button" data-route="profile" aria-label="Открыть профиль">
         <span id="homeProfileAvatar" class="profile-avatar" aria-label="Аватар Player">PL</span>
         <span class="home-profile-copy">
@@ -1063,6 +1070,8 @@ BRAND.apply(document);
 const C = window.PokerCore;
 const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
+const i18nText = (key, values = {}, fallback = '') => window.PokerElevateI18n?.t?.(key, values, fallback) || fallback;
+const i18nCopy = value => window.PokerElevateI18n?.translateCopy?.(value) || value;
 const appMotion = PokerPilotMotion.createMotionSystem({ documentRef: document });
 const money = n => `${n < 0 ? '-$' : '$'}${Math.abs(Math.round(Number(n) || 0))}`;
 const signedMoney = n => `${n >= 0 ? '+' : ''}${money(n)}`;
@@ -2081,29 +2090,42 @@ $('#rangeNext').addEventListener('click', () => {
 
 // ----- Coach report -----
 function renderCoachReport() {
-  const labels = { too_tight:'Слишком тайтовые фолды',too_loose:'Слишком широкие входы',passive:'Пассивные коллы/чеки',overplay:'Переигрывание рук',pot_odds:'Пот-оддсы',outs:'Подсчёт аутов',sizing:'Размеры ставок',position:'Позиция',range_reading:'Чтение диапазона' };
+  const labels = {
+    too_tight:i18nText('coach.topicTooTight'),
+    too_loose:i18nText('coach.topicTooLoose'),
+    passive:i18nText('coach.topicPassive'),
+    overplay:i18nText('coach.topicOverplay'),
+    pot_odds:i18nText('coach.topicPotOdds'),
+    outs:i18nText('coach.topicOuts'),
+    sizing:i18nText('coach.topicSizing'),
+    position:i18nText('coach.topicPosition'),
+    range_reading:i18nText('coach.topicRangeReading')
+  };
   const entries = Object.entries(progress.mistakes).sort((a,b)=>b[1]-a[1]);
   const top = entries[0];
   const accuracy = progress.maxPoints ? Math.round(progress.scorePoints/progress.maxPoints*100) : 0;
   const plans = {
-    too_tight: 'Перед фолдом посчитай минимальное эквити и перечисли естественные блефы. Не сравнивай руку только с натсами.',
-    too_loose: 'Сначала проверь позицию, доминацию и сколько игроков остаётся за спиной. Вложенные раньше деньги не оправдывают плохой колл.',
-    passive: 'Перед чеком назови минимум три худшие руки, которые готовы платить. Если они есть — ищи вэлью и подходящий размер.',
-    overplay: 'Спроси, какие худшие руки продолжат против рейза. Если ответ — почти никакие, чаще выбирай call или fold.',
-    pot_odds: 'Формула: цена колла / финальный банк после твоего колла. Затем сравни с эквити, а не с вероятностью одного конкретного аута.',
-    outs: 'Считай конкретные карты, убирай пересечения и отдельно помечай условные ауты, которые могут улучшить, но не гарантируют победу.',
-    sizing: 'Определи цель ставки: вэлью, защита или блеф. Размер выбирай по диапазону, текстуре доски и SPR.',
-    position: 'В позиции можно лучше реализовать эквити и контролировать размер банка; без позиции диапазон должен быть строже.',
-    range_reading: 'Строй диапазон от префлопа и сужай его после каждого действия. Тип игрока меняет частоту блефов и тонкого вэлью.'
+    too_tight:i18nText('coach.planTooTight'),
+    too_loose:i18nText('coach.planTooLoose'),
+    passive:i18nText('coach.planPassive'),
+    overplay:i18nText('coach.planOverplay'),
+    pot_odds:i18nText('coach.planPotOdds'),
+    outs:i18nText('coach.planOuts'),
+    sizing:i18nText('coach.planSizing'),
+    position:i18nText('coach.planPosition'),
+    range_reading:i18nText('coach.planRangeReading')
   };
-  const plan = top && top[1] ? plans[top[0]] : 'Сыграй не менее 10 решений, чтобы тренер построил персональный план.';
+  const plan = top && top[1] ? plans[top[0]] : i18nText('coach.planDefault');
   const coachSummary=$('#coachSummary');
-  coachSummary.innerHTML = `<div class="coach-summary-card"><h4>Общая точность: ${progress.maxPoints ? accuracy+'%' : '—'}</h4><p class="muted">${progress.decisions} решений, лучшая серия ${progress.bestStreak || 0}.</p></div><div class="coach-summary-card"><h4>${top && top[1] ? `Главное слабое место: ${labels[top[0]]}` : 'Данных пока мало'}</h4><p class="muted">${top && top[1] ? `Зафиксировано ${top[1]} ошибок. ${plan}` : plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
+  const accuracyValue=progress.maxPoints ? `${accuracy}%` : '—';
+  coachSummary.innerHTML = `<div class="coach-summary-card"><h4>${i18nText('coach.overallAccuracy',{value:accuracyValue})}</h4><p class="muted">${i18nText('coach.decisionStreak',{count:progress.decisions,best:progress.bestStreak||0})}</p></div><div class="coach-summary-card"><h4>${top&&top[1]?i18nText('coach.mainWeakness',{topic:labels[top[0]]}):i18nText('coach.notEnoughData')}</h4><p class="muted">${top&&top[1]?i18nText('coach.errorsRecorded',{count:top[1],plan}):plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
   const dqSummary=DecisionQualityStats.getSummary(progress.history);
   const dqCard=document.createElement('div');
   dqCard.className='coach-summary-card';
   const dqTitle=document.createElement('h4');
-  dqTitle.textContent=dqSummary.average===null?'Decision Quality: недостаточно данных':`Decision Quality: ${Math.round(dqSummary.average)}`;
+  dqTitle.textContent=dqSummary.average===null
+    ?i18nText('coach.dqUnavailable')
+    :i18nText('coach.dqScore',{score:Math.round(dqSummary.average)});
   const dqText=document.createElement('p');
   dqText.className='muted';
   const weakestStreet=Object.entries(dqSummary.byStreet||{}).sort((a,b)=>a[1].average-b[1].average)[0];
@@ -2116,10 +2138,22 @@ function renderCoachReport() {
   const weakestQualityTag=Object.entries(qualityByMistake)
     .map(([key,scores])=>[key,scores.reduce((sum,value)=>sum+value,0)/scores.length,scores.length])
     .sort((a,b)=>a[1]-b[1])[0];
-  const trendText=dqSummary.trend.direction==='UP'?`Тренд последних решений +${dqSummary.trend.delta}.`:dqSummary.trend.direction==='DOWN'?`Тренд последних решений ${dqSummary.trend.delta}.`:dqSummary.trend.direction==='STABLE'?'Тренд последних решений стабилен.':'Для тренда пока мало данных.';
+  const trendText=dqSummary.trend.direction==='UP'
+    ?i18nText('coach.dqTrendUp',{delta:dqSummary.trend.delta})
+    :dqSummary.trend.direction==='DOWN'
+      ?i18nText('coach.dqTrendDown',{delta:dqSummary.trend.delta})
+      :dqSummary.trend.direction==='STABLE'
+        ?i18nText('coach.dqTrendStable')
+        :i18nText('coach.trendUnavailable');
+  const weakestStreetText=weakestStreet
+    ?i18nText('coach.weakestStreet',{street:weakestStreet[0].toUpperCase(),score:Math.round(weakestStreet[1].average)})
+    :'';
+  const weakestCategoryText=weakestQualityTag
+    ?i18nText('coach.lowestCategory',{category:labels[weakestQualityTag[0]]||weakestQualityTag[0],score:Math.round(weakestQualityTag[1])})
+    :'';
   dqText.textContent=dqSummary.ratedCount
-    ? `${dqSummary.ratedCount} оценённых решений${dqSummary.sampleStatus!=='ESTABLISHED'?' — выборка пока формируется':''}. ${trendText}${weakestStreet?` Самая слабая улица: ${weakestStreet[0].toUpperCase()} — ${Math.round(weakestStreet[1].average)}.`:''}${weakestQualityTag?` Низшая средняя по категории «${labels[weakestQualityTag[0]]||weakestQualityTag[0]}» — ${Math.round(weakestQualityTag[1])}.`:''} Это дополнительный сигнал; план слабых тем по-прежнему строится по фактическим ошибкам.`
-    :'Сыграйте решения с доступной рекомендацией тренера, чтобы сформировать дополнительный сигнал.';
+    ? `${i18nText('coach.ratedDecisions',{count:dqSummary.ratedCount,forming:dqSummary.sampleStatus!=='ESTABLISHED'?i18nText('coach.sampleForming'):''})} ${trendText}${weakestStreetText}${weakestCategoryText}${i18nText('coach.dqSignalNote')}`
+    :i18nText('coach.dqBuildSignal');
   dqCard.append(dqTitle,dqText);
   coachSummary.appendChild(dqCard);
   const pokerIqSummary=PokerIQStats.getSummary(progress.history);
@@ -2127,24 +2161,28 @@ function renderCoachReport() {
   iqCard.className='coach-summary-card';
   const iqTitle=document.createElement('h4');
   iqTitle.textContent=pokerIqSummary.isRated
-    ? `Poker IQ: ${pokerIqSummary.score} · ${pokerIqSummary.rank.label}`
-    :'Poker IQ: не рассчитан';
+    ?i18nText('coach.iqScoreRank',{score:pokerIqSummary.score,rank:i18nCopy(pokerIqSummary.rank.label)})
+    :i18nText('coach.iqUnavailable');
   const iqText=document.createElement('p');
   iqText.className='muted';
   if(pokerIqSummary.sampleStatus==='NONE'){
-    iqText.textContent='Сыграйте хотя бы одно оцениваемое решение. Для сформированной оценки нужно минимум 30 решений.';
+    iqText.textContent=i18nText('coach.iqStart');
   }else if(pokerIqSummary.sampleStatus!=='ESTABLISHED'){
-    iqText.textContent=`Poker IQ формируется: оценено ${pokerIqSummary.ratedDecisions} из необходимых 30 решений. Не делайте сильных выводов по малой выборке.`;
+    iqText.textContent=i18nText('coach.iqForming',{current:pokerIqSummary.ratedDecisions});
   }else{
     const availableStreets=Object.entries(pokerIqSummary.breakdown||{}).filter(([,value])=>Number.isFinite(value)&&value!==null);
     const strongest=availableStreets.slice().sort((a,b)=>b[1]-a[1])[0];
     const weakest=availableStreets.slice().sort((a,b)=>a[1]-b[1])[0];
     const trend=pokerIqSummary.trend.direction==='UP'
-      ? `Тренд растёт на ${Math.abs(pokerIqSummary.trend.delta)} IQ.`
+      ?i18nText('coach.iqTrendUp',{delta:Math.abs(pokerIqSummary.trend.delta)})
       :pokerIqSummary.trend.direction==='DOWN'
-        ?`Тренд снижается на ${Math.abs(pokerIqSummary.trend.delta)} IQ.`
-        :pokerIqSummary.trend.direction==='STABLE'?'Тренд стабилен.':'Для тренда пока мало данных.';
-    iqText.textContent=`Оценка основана на ${pokerIqSummary.ratedDecisions} решениях. ${trend}${strongest?` Сильнейший срез: ${strongest[0].toUpperCase()} — ${strongest[1]}.`:''}${weakest?` Зона внимания: ${weakest[0].toUpperCase()} — ${weakest[1]}.`:''} Денежный результат раздач в Poker IQ не входит.`;
+        ?i18nText('coach.iqTrendDown',{delta:Math.abs(pokerIqSummary.trend.delta)})
+        :pokerIqSummary.trend.direction==='STABLE'
+          ?i18nText('coach.iqTrendStable')
+          :i18nText('coach.trendUnavailable');
+    const strongestText=strongest?i18nText('coach.iqStrongest',{street:strongest[0].toUpperCase(),score:strongest[1]}):'';
+    const weakestText=weakest?i18nText('coach.iqWeakest',{street:weakest[0].toUpperCase(),score:weakest[1]}):'';
+    iqText.textContent=i18nText('coach.iqEstablished',{count:pokerIqSummary.ratedDecisions,trend,strongest:strongestText,weakest:weakestText});
   }
   iqCard.append(iqTitle,iqText);
   coachSummary.appendChild(iqCard);
@@ -2936,6 +2974,12 @@ function renderLive(){
             ?'observing'
             :'waiting';
   }
+  const liveActions=$('#liveActions');
+  liveActions.dataset.liveStateLabel=phase==='paused'
+    ?i18nText('live.sessionPaused')
+    :phase==='completed'
+      ?i18nText('live.nextHandSoon')
+      :'';
   syncLivePresentationState(undefined,decision);
   const paused=phase==='paused';
   $$('#liveActions button').forEach(button=>button.disabled=paused);

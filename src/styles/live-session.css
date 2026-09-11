@@ -1391,20 +1391,12 @@
 
 .live-v2-action-dock[data-live-dock-state="paused"] #liveActions::before,
 .live-v2-action-dock[data-live-dock-state="completed"] #liveActions::before {
-  content: "Стол продолжает раздачу";
+  content: attr(data-live-state-label);
   display: grid;
   grid-column: 1 / -1;
   place-items: center;
   color: var(--text-secondary);
   font-size: 12px;
-}
-
-.live-v2-action-dock[data-live-dock-state="paused"] #liveActions::before {
-  content: "Сессия на паузе";
-}
-
-.live-v2-action-dock[data-live-dock-state="completed"] #liveActions::before {
-  content: "Следующая раздача скоро";
 }
 
 .live-v2-coach-trigger {

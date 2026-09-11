@@ -1,7 +1,15 @@
 'use strict';
 
 (function attachDashboard(root) {
-  const translate = (key, fallback) => root.PokerPilotI18n?.t?.(key, fallback) || fallback;
+  const translate = (key, values = {}, fallback = '') => {
+    if (typeof values === 'string') {
+      fallback = values;
+      values = {};
+    }
+    return root.PokerElevateI18n?.t?.(key, values, fallback) || fallback;
+  };
+  const localize = value => root.PokerElevateI18n?.translateValue?.(value) || value;
+  const localizeCopy = value => root.PokerElevateI18n?.translateCopy?.(value) || value;
   const LiveMode = root.PokerPilotLiveMode
     || (typeof require === 'function' ? require('../live/live-mode.js') : null);
   const WeaknessModel = root.PokerPilotWeaknessModel
@@ -141,7 +149,7 @@
       coursePercent: implementedLessons.length
         ? Math.round(lessonIds.size / implementedLessons.length * 100)
         : 0,
-      lastCompletedTitle: completedModules.at(-1)?.title || 'Пока нет завершённых модулей',
+      lastCompletedTitle: localizeCopy(completedModules.at(-1)?.title || 'Пока нет завершённых модулей'),
       bestExamScore: bestExamScores.length ? Math.max(...bestExamScores) : null,
       activityCount: activityCount + lessonIds.size
     };
@@ -150,7 +158,7 @@
   function topWeakness(input) {
     const mistakes = object(object(object(input).progress).mistakes);
     return Object.entries(mistakes)
-      .map(([id, value]) => ({ id, count: number(value), label: WEAK_TOPICS[id] || id }))
+      .map(([id, value]) => ({ id, count: number(value), label: localizeCopy(WEAK_TOPICS[id] || id) }))
       .filter(item => item.count > 0)
       .sort((left, right) => right.count - left.count || left.id.localeCompare(right.id))[0] || null;
   }
@@ -164,7 +172,7 @@
       const subject = course.activeLesson?.title
         ? `${moduleTitle}: ${course.activeLesson.title}`
         : moduleTitle;
-      return {
+      return localize({
         type: 'resume-learning',
         eyebrow: 'ТВОЙ СЛЕДУЮЩИЙ ШАГ',
         title: `Продолжить: ${subject}`,
@@ -175,11 +183,11 @@
         reason: 'Есть незавершённый учебный материал.',
         resume: true,
         moduleId: course.currentModule?.id || null
-      };
+      });
     }
     const weakness = topWeakness(state);
     if (weakness) {
-      return {
+      return localize({
         type: 'weak-topic-training',
         eyebrow: 'ТВОЙ СЛЕДУЮЩИЙ ШАГ',
         title: `${weakness.label}: точная практика`,
@@ -190,11 +198,11 @@
         reason: `Зафиксировано ошибок по теме: ${weakness.count}.`,
         resume: false,
         moduleId: null
-      };
+      });
     }
     // Stage 9.3A intentionally has no synthetic daily challenge.
     if (list(progress.savedHands).length) {
-      return {
+      return localize({
         type: 'review-hand',
         eyebrow: 'ТВОЙ СЛЕДУЮЩИЙ ШАГ',
         title: 'Вернуться к сохранённой раздаче',
@@ -205,11 +213,11 @@
         reason: 'Есть сохранённая раздача для анализа.',
         resume: false,
         moduleId: null
-      };
+      });
     }
     const recentSession = list(progress.history).find(record => record?.mode === 'session');
     if (recentSession) {
-      return {
+      return localize({
         type: 'review-session',
         eyebrow: 'ТВОЙ СЛЕДУЮЩИЙ ШАГ',
         title: 'Разобрать последнюю сессию',
@@ -220,9 +228,9 @@
         reason: 'В истории есть завершённая сессия.',
         resume: false,
         moduleId: null
-      };
+      });
     }
-    return {
+    return localize({
       type: 'quick-training',
       eyebrow: 'ТВОЙ СЛЕДУЮЩИЙ ШАГ',
       title: 'Быстрая тренировка',
@@ -233,7 +241,7 @@
       reason: 'Безопасное действие по умолчанию.',
       resume: false,
       moduleId: null
-    };
+    });
   }
 
   function getHomeProgressSnapshot(input) {
@@ -269,7 +277,7 @@
     const hasSnapshotStreak = Object.keys(snapshotStreak).length > 0;
     const streakIsDays = hasSnapshotStreak || (dayStreak !== null && dayStreak > 0);
     const streakValue = streakIsDays ? Math.floor(dayStreak || 0) : decisionStreak;
-    return {
+    return localize({
       pokerIQ: {
         label: 'Poker IQ',
         value: hasIq ? String(Math.round(iqScore)) : '—',
@@ -288,16 +296,16 @@
           ? streakIsDays ? 'дней подряд' : 'решений подряд'
           : 'пока нет серии'
       }
-    };
+    });
   }
 
   function greetingFor(value, name) {
     const date = value instanceof Date ? value : new Date(value || NaN);
     const hour = Number.isFinite(date.getTime()) ? date.getHours() : null;
-    if (hour !== null && hour >= 5 && hour < 12) return `Доброе утро, ${name}`;
-    if (hour !== null && hour >= 12 && hour < 18) return `Добрый день, ${name}`;
-    if (hour !== null && hour >= 18) return `Добрый вечер, ${name}`;
-    return `С возвращением, ${name}`;
+    if (hour !== null && hour >= 5 && hour < 12) return translate('dashboard.goodMorning', { name });
+    if (hour !== null && hour >= 12 && hour < 18) return translate('dashboard.goodAfternoon', { name });
+    if (hour !== null && hour >= 18) return translate('dashboard.goodEvening', { name });
+    return translate('dashboard.welcomeBack', { name });
   }
 
   function focusSnapshot(input) {
@@ -310,7 +318,7 @@
         };
     const weakness = summary.primary;
     if (!weakness) {
-      return {
+      return localize({
         eyebrow: 'ФОКУС НЕДЕЛИ',
         title: summary.hasReliableData ? 'Поддерживайте сильную форму' : 'Фокус формируется',
         description: summary.emptyMessage,
@@ -318,46 +326,77 @@
         target: 'study',
         skillId: null,
         fallback: true
-      };
+      });
     }
-    const trend = weakness.trendLabel ? ` ${weakness.trendLabel}.` : '';
+    const trend = weakness.trendLabel
+      ? translate('dashboard.focusTrend', { trend: localizeCopy(weakness.trendLabel) })
+      : '';
     return {
-      eyebrow: 'ФОКУС НЕДЕЛИ',
-      title: weakness.label,
-      description: `Средняя оценка ${weakness.scoreLabel} по ${weakness.relevantDecisions} решениям.${trend}`,
-      actionLabel: 'Тренировать тему',
+      eyebrow: translate('dashboard.weeklyFocus'),
+      title: localizeCopy(weakness.label),
+      description: translate('dashboard.focusScore', {
+        score: weakness.scoreLabel,
+        count: weakness.relevantDecisions,
+        trend
+      }),
+      actionLabel: localizeCopy('Тренировать тему'),
       target: weakness.trainingTarget.route,
       skillId: weakness.id,
       fallback: weakness.trainingTarget.fallback
     };
   }
 
+  function handUnit(count) {
+    if (root.PokerElevateI18n?.getLocale?.() !== 'ru') {
+      return translate(count === 1 ? 'dashboard.handOne' : 'dashboard.handMany');
+    }
+    const lastTwo = count % 100;
+    const last = count % 10;
+    if (lastTwo >= 11 && lastTwo <= 14) return translate('dashboard.handMany');
+    if (last === 1) return translate('dashboard.handOne');
+    if (last >= 2 && last <= 4) return translate('dashboard.handFew');
+    return translate('dashboard.handMany');
+  }
+
+  function recentSessionTitle(value) {
+    const normalized = LiveMode.normalizeDisplayText(text(value, 'Последняя Live Cash сессия'));
+    if (!root.PokerElevateI18n?.translateCopy) return normalized;
+    const match = normalized.match(/^(.*?)\s*[•·]\s*(\d+)\s+(?:рук|раздач(?:а|и)?|hands?)\.?$/iu);
+    if (!match) return localizeCopy(normalized);
+    const count = Math.max(0, Number(match[2]) || 0);
+    return translate('dashboard.liveHands', {
+      title: match[1].trim(),
+      count,
+      unit: handUnit(count)
+    });
+  }
+
   function secondaryActivitySnapshot(input, course) {
     const progress = object(object(input).progress);
     const savedHands = list(progress.savedHands);
     if (savedHands.length) {
-      return {
+      return localize({
         type: 'saved-hand',
         eyebrow: 'НЕДАВНЯЯ АКТИВНОСТЬ',
         title: 'Сохранённая раздача ждёт разбора',
         description: `${savedHands.length} ${savedHands.length === 1 ? 'раздача сохранена' : 'раздач сохранено'} в Hand Lab.`,
         actionLabel: 'Открыть Hand Lab',
         target: 'analyzer'
-      };
+      });
     }
     const recentSession = list(progress.history).find(record => record?.mode === 'session');
     if (recentSession) {
-      return {
+      return localize({
         type: 'recent-session',
         eyebrow: 'НЕДАВНЯЯ АКТИВНОСТЬ',
-        title: LiveMode.normalizeDisplayText(text(recentSession.title, 'Последняя Live Cash сессия')),
-        description: 'История решений доступна в разделе разбора.',
+        title: recentSessionTitle(recentSession.title),
+        description: translate('dashboard.recentDecisionHistory'),
         actionLabel: 'Посмотреть разбор',
         target: 'analyzer'
-      };
+      });
     }
     if (course.completedLessons > 0) {
-      return {
+      return localize({
         type: 'course-progress',
         eyebrow: 'УЧЕБНЫЙ МАРШРУТ',
         title: `${course.completedLessons} из ${course.totalLessons} уроков завершено`,
@@ -366,7 +405,7 @@
           : `Последний завершённый модуль: ${course.lastCompletedTitle}.`,
         actionLabel: 'Открыть обучение',
         target: 'learning'
-      };
+      });
     }
     return null;
   }
@@ -394,11 +433,11 @@
       status,
       nextAction,
       progress: homeProgress,
-      quickActions: [
+      quickActions: localize([
         { id: 'training', label: 'Тренировка', icon: '◎', target: 'study' },
         { id: 'hand', label: 'Ввести раздачу', icon: '＋', target: 'analyzer' },
         { id: 'equity', label: 'Equity', icon: '%', target: 'analyzer', focus: 'equity' }
-      ],
+      ]),
       focus: focusSnapshot(state),
       secondaryActivity,
       isEmpty: decisions === 0 && course.activityCount === 0,

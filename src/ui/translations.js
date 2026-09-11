@@ -5,6 +5,10 @@
   const DEFAULT_LOCALE = 'en';
   const LOCALE_TAGS = Object.freeze({ en: 'en-US', ru: 'ru-RU' });
   const LOCALE_STORAGE_KEY = 'pokerelevate.locale.v1';
+  const LOCALE_OPTIONS = Object.freeze([
+    Object.freeze({ locale: 'en', flag: '🇺🇸', pickerLabel: 'USA', languageLabel: 'English' }),
+    Object.freeze({ locale: 'ru', flag: '🇷🇺', pickerLabel: 'Russia', languageLabel: 'Russian' })
+  ]);
 
   const PAIRS = Object.freeze({
     'nav.home': ['Home', 'Главная'],
@@ -57,6 +61,10 @@
     'decisionQuality.minimumSample': ['Play at least one rated decision', 'Сыграйте минимум одно оцениваемое решение'],
     'settings.language': ['Language', 'Язык'],
     'settings.languageDescription': ['Choose the language used throughout PokerElevate.', 'Выберите язык интерфейса PokerElevate.'],
+    'settings.chooseLanguage': ['Choose language', 'Выберите язык'],
+    'settings.headerLanguage': ['Change language. Current language: {language}', 'Изменить язык. Текущий язык: {language}'],
+    'settings.englishLanguage': ['English', 'английский'],
+    'settings.russianLanguage': ['Russian', 'русский'],
     'settings.appearance': ['Appearance', 'Оформление'],
     'settings.interface': ['Interface', 'Интерфейс'],
     'settings.theme': ['Theme', 'Тема'],
@@ -79,6 +87,22 @@
     'dashboard.level': ['Level', 'Уровень'],
     'dashboard.streak': ['Streak', 'Серия'],
     'dashboard.noStreak': ['No active streak', 'пока нет серии'],
+    'dashboard.goodMorning': ['Good morning, {name}', 'Доброе утро, {name}'],
+    'dashboard.goodAfternoon': ['Good afternoon, {name}', 'Добрый день, {name}'],
+    'dashboard.goodEvening': ['Good evening, {name}', 'Добрый вечер, {name}'],
+    'dashboard.welcomeBack': ['Welcome back, {name}', 'С возвращением, {name}'],
+    'dashboard.liveHands': ['{title} • {count} {unit}', '{title} • {count} {unit}'],
+    'dashboard.handOne': ['hand', 'раздача'],
+    'dashboard.handFew': ['hands', 'раздачи'],
+    'dashboard.handMany': ['hands', 'раздач'],
+    'dashboard.recentDecisionHistory': ['Decision history is available in Review.', 'История решений доступна в разделе разбора.'],
+    'dashboard.focusScore': ['Average score {score} across {count} decisions.{trend}', 'Средняя оценка {score} по {count} решениям.{trend}'],
+    'dashboard.focusTrend': [' {trend}.', ' {trend}.'],
+    'dashboard.reviewLastSession': ['Review the last session', 'Разобрать последнюю сессию'],
+    'dashboard.reviewLastSessionDescription': ['Review the latest session decisions separately from the cash result.', 'Посмотрите решения последней сессии отдельно от денежного результата.'],
+    'dashboard.aboutFourMinutes': ['about 4 minutes', 'около 4 минут'],
+    'dashboard.goToReview': ['Go to Review', 'Перейти к разбору'],
+    'dashboard.sessionAvailable': ['A completed session is available in history.', 'В истории есть завершённая сессия.'],
     'daily.title': ['Daily Hand', 'Раздача дня'],
     'daily.solve': ['Play Hand', 'Решить'],
     'daily.history': ['History', 'История'],
@@ -116,6 +140,104 @@
     'progress.todayInactive': ['No activity recorded today yet', 'Сегодня активность ещё не засчитана'],
     'progress.noRecent': ['No meaningful progress events yet.', 'Пока нет значимых событий прогресса.'],
     'progress.notifications': ['Progress notifications', 'Уведомления прогресса'],
+    'progress.sampleNone': ['Not enough decisions', 'Недостаточно решений'],
+    'progress.sampleProvisional': ['{count} decisions · provisional', '{count} решений · предварительно'],
+    'progress.sampleForming': ['{count} decisions · sample forming', '{count} решений · выборка формируется'],
+    'progress.sampleEstablished': ['{count} decisions · stable sample', '{count} решений · устойчивая выборка'],
+    'progress.attemptOne': ['{count} attempt', '{count} попытка'],
+    'progress.attemptFew': ['{count} attempts', '{count} попытки'],
+    'progress.attemptMany': ['{count} attempts', '{count} попыток'],
+    'progress.focusReserve': ['Most reliably measured growth opportunity: {score}.', 'Самый надёжно измеренный резерв роста: {score}.'],
+    'progress.focusUnavailable': ['Weekly focus is not available yet', 'Фокус недели пока не определён'],
+    'progress.focusInsufficient': ['Not enough reliable skill data yet. Keep training.', 'Недостаточно надёжных данных по навыкам. Продолжайте тренироваться.'],
+    'progress.todayCounted': ['Counted today', 'Сегодня уже засчитано'],
+    'progress.attemptsInsufficient': ['Not enough attempts to calculate', 'Недостаточно попыток для оценки'],
+    'progress.unlockedOn': ['Unlocked {date}', 'Открыто {date}'],
+    'progress.highConfidence': ['High confidence', 'Высокая уверенность'],
+    'progress.mediumConfidence': ['Medium confidence', 'Средняя уверенность'],
+    'progress.lowConfidence': ['Low confidence', 'Низкая уверенность'],
+    'progress.limitedData': ['Limited data', 'Мало данных'],
+    'progress.trendUp': ['Growing', 'Растёт'],
+    'progress.trendDown': ['Declining', 'Снижается'],
+    'progress.trendStable': ['Stable', 'Стабильно'],
+    'profile.iqNone': ['At least 30 rated decisions are required. Start with your first decision.', 'Нужно минимум 30 оцениваемых решений. Начните с первого решения.'],
+    'profile.iqProvisional': ['Provisional Poker IQ · {count} of 30 decisions', 'Предварительный Poker IQ · {count} из 30 решений'],
+    'profile.iqForming': ['Poker IQ is forming · {count} of 30 decisions', 'Poker IQ формируется · {count} из 30 решений'],
+    'profile.iqEstablished': ['Rating established from {count} decisions', 'Оценка сформирована по {count} решениям'],
+    'profile.trendUp': ['↗ Growing{delta}', '↗ Растёт{delta}'],
+    'profile.trendDown': ['↘ Declining{delta}', '↘ Снижается{delta}'],
+    'profile.trendStable': ['→ Stable', '→ Стабилен'],
+    'profile.trendUnavailable': ['— Not enough data', '— Недостаточно данных'],
+    'profile.decisionCount': ['{count} decisions', '{count} решений'],
+    'profile.ratingForming': ['Rating in progress', 'Оценка формируется'],
+    'profile.bestStreak': ['Best: {count}', 'Лучшая: {count}'],
+    'profile.achievementsUnlocked': ['Unlocked', 'Открыто'],
+    'profile.iqToRank': ['{count} IQ to “{rank}”', '{count} IQ до ранга «{rank}»'],
+    'profile.maximumRank': ['Maximum rank', 'Максимальный ранг'],
+    'profile.rankProgress': ['{rank} rank progress: {percent}%', 'Прогресс ранга {rank}: {percent}%'],
+    'profile.pokerIqSummary': ['Poker IQ {score}, rank {rank}. {status}.', 'Poker IQ {score}, ранг {rank}. {status}.'],
+    'profile.pokerIqUnavailable': ['Poker IQ is not calculated. {status}.', 'Poker IQ не рассчитан. {status}.'],
+    'profile.noData': ['No data', 'Нет данных'],
+    'coach.overallAccuracy': ['Overall accuracy: {value}', 'Общая точность: {value}'],
+    'coach.decisionStreak': ['{count} decisions, best streak {best}.', '{count} решений, лучшая серия {best}.'],
+    'coach.topicTooTight': ['Too-tight folds', 'Слишком тайтовые фолды'],
+    'coach.topicTooLoose': ['Loose entries', 'Слишком широкие входы'],
+    'coach.topicPassive': ['Passive calls/checks', 'Пассивные коллы/чеки'],
+    'coach.topicOverplay': ['Hand overplay', 'Переигрывание рук'],
+    'coach.topicPotOdds': ['Pot odds', 'Пот-оддсы'],
+    'coach.topicOuts': ['Counting outs', 'Подсчёт аутов'],
+    'coach.topicSizing': ['Bet sizing', 'Размеры ставок'],
+    'coach.topicPosition': ['Position', 'Позиция'],
+    'coach.topicRangeReading': ['Range reading', 'Чтение диапазона'],
+    'coach.planTooTight': ['Before folding, calculate required equity and list natural bluffs. Do not compare your hand only with the nuts.', 'Перед фолдом посчитай минимальное эквити и перечисли естественные блефы. Не сравнивай руку только с натсами.'],
+    'coach.planTooLoose': ['First check position, domination risk, and how many players remain behind. Previously invested chips do not justify a poor call.', 'Сначала проверь позицию, доминацию и сколько игроков остаётся за спиной. Вложенные раньше деньги не оправдывают плохой колл.'],
+    'coach.planPassive': ['Before checking, name at least three worse hands that will pay. If they exist, look for value and the right size.', 'Перед чеком назови минимум три худшие руки, которые готовы платить. Если они есть — ищи вэлью и подходящий размер.'],
+    'coach.planOverplay': ['Ask which worse hands continue against a raise. If the answer is almost none, choose call or fold more often.', 'Спроси, какие худшие руки продолжат против рейза. Если ответ — почти никакие, чаще выбирай call или fold.'],
+    'coach.planPotOdds': ['Formula: call price / final pot after your call. Then compare it with equity, not the chance of hitting one specific out.', 'Формула: цена колла / финальный банк после твоего колла. Затем сравни с эквити, а не с вероятностью одного конкретного аута.'],
+    'coach.planOuts': ['Count specific cards, remove overlaps, and mark conditional outs separately; they can improve your hand without guaranteeing a win.', 'Считай конкретные карты, убирай пересечения и отдельно помечай условные ауты, которые могут улучшить, но не гарантируют победу.'],
+    'coach.planSizing': ['Define the bet’s goal: value, protection, or bluff. Choose size from the ranges, board texture, and SPR.', 'Определи цель ставки: вэлью, защита или блеф. Размер выбирай по диапазону, текстуре доски и SPR.'],
+    'coach.planPosition': ['In position, equity is easier to realize and pot size easier to control; out of position, use a tighter range.', 'В позиции можно лучше реализовать эквити и контролировать размер банка; без позиции диапазон должен быть строже.'],
+    'coach.planRangeReading': ['Build the range from preflop and narrow it after each action. Player type changes bluff and thin-value frequencies.', 'Строй диапазон от префлопа и сужай его после каждого действия. Тип игрока меняет частоту блефов и тонкого вэлью.'],
+    'coach.planDefault': ['Play at least 10 decisions so the Trainer can build a personal plan.', 'Сыграй не менее 10 решений, чтобы тренер построил персональный план.'],
+    'coach.mainWeakness': ['Main weakness: {topic}', 'Главное слабое место: {topic}'],
+    'coach.errorsRecorded': ['{count} errors recorded. {plan}', 'Зафиксировано {count} ошибок. {plan}'],
+    'coach.notEnoughData': ['Not enough data yet', 'Данных пока мало'],
+    'coach.dqUnavailable': ['Decision Quality: not enough data', 'Decision Quality: недостаточно данных'],
+    'coach.dqScore': ['Decision Quality: {score}', 'Decision Quality: {score}'],
+    'coach.dqTrendUp': ['Recent-decision trend +{delta}.', 'Тренд последних решений +{delta}.'],
+    'coach.dqTrendDown': ['Recent-decision trend {delta}.', 'Тренд последних решений {delta}.'],
+    'coach.dqTrendStable': ['Recent-decision trend is stable.', 'Тренд последних решений стабилен.'],
+    'coach.trendUnavailable': ['Not enough data for a trend yet.', 'Для тренда пока мало данных.'],
+    'coach.ratedDecisions': ['{count} rated decisions{forming}.', '{count} оценённых решений{forming}.'],
+    'coach.sampleForming': [' — the sample is still forming', ' — выборка пока формируется'],
+    'coach.weakestStreet': [' Weakest street: {street} — {score}.', ' Самая слабая улица: {street} — {score}.'],
+    'coach.lowestCategory': [' Lowest category average, “{category}”: {score}.', ' Низшая средняя по категории «{category}» — {score}.'],
+    'coach.dqSignalNote': [' This is an additional signal; the weak-topic plan is still based on actual mistakes.', ' Это дополнительный сигнал; план слабых тем по-прежнему строится по фактическим ошибкам.'],
+    'coach.dqBuildSignal': ['Play decisions with an available Trainer recommendation to build this signal.', 'Сыграйте решения с доступной рекомендацией тренера, чтобы сформировать дополнительный сигнал.'],
+    'coach.iqUnavailable': ['Poker IQ: not calculated', 'Poker IQ: не рассчитан'],
+    'coach.iqStart': ['Play at least one rated decision. A stable rating requires at least 30 decisions.', 'Сыграйте хотя бы одно оцениваемое решение. Для сформированной оценки нужно минимум 30 решений.'],
+    'coach.iqForming': ['Poker IQ is forming: {current} of the required 30 decisions are rated. Avoid strong conclusions from a small sample.', 'Poker IQ формируется: оценено {current} из необходимых 30 решений. Не делайте сильных выводов по малой выборке.'],
+    'coach.iqTrendUp': ['The trend is up {delta} IQ.', 'Тренд растёт на {delta} IQ.'],
+    'coach.iqTrendDown': ['The trend is down {delta} IQ.', 'Тренд снижается на {delta} IQ.'],
+    'coach.iqTrendStable': ['The trend is stable.', 'Тренд стабилен.'],
+    'coach.iqEstablished': ['Rating based on {count} decisions. {trend}{strongest}{weakest} Cash results are not included in Poker IQ.', 'Оценка основана на {count} решениях. {trend}{strongest}{weakest} Денежный результат раздач в Poker IQ не входит.'],
+    'coach.iqStrongest': [' Strongest street: {street} — {score}.', ' Сильнейший срез: {street} — {score}.'],
+    'coach.iqWeakest': [' Focus area: {street} — {score}.', ' Зона внимания: {street} — {score}.'],
+    'coach.iqScoreRank': ['Poker IQ: {score} · {rank}', 'Poker IQ: {score} · {rank}'],
+    'live.actionPost': ['POST {amount}', 'СТАВИТ {amount}'],
+    'live.actionCall': ['CALL {amount}', 'КОЛЛ {amount}'],
+    'live.actionBet': ['BET {amount}', 'СТАВКА {amount}'],
+    'live.actionRaise': ['RAISE TO {amount}', 'РЕЙЗ ДО {amount}'],
+    'live.actionAllIn': ['ALL-IN {amount}', 'ОЛЛ-ИН {amount}'],
+    'live.actionCheck': ['CHECK', 'ЧЕК'],
+    'live.actionFold': ['FOLD', 'ФОЛД'],
+    'live.showdown': ['{player} shows {hand}.', '{player} показывает {hand}.'],
+    'live.wins': ['{player} wins {amount}.', '{player} выигрывает {amount}.'],
+    'live.splitPot': ['Pot {amount} is split between {count} players.', 'Банк {amount} разделён между {count} игроками.'],
+    'live.yourTurnHand': ['Your turn: {position} • {hand}', 'Твой ход: {position} • {hand}'],
+    'live.yourTurnStreet': ['Your turn on {street}', 'Твой ход на {street}'],
+    'live.sessionPaused': ['Session paused', 'Сессия на паузе'],
+    'live.nextHandSoon': ['Next hand soon', 'Следующая раздача скоро'],
     'achievement.all': ['All', 'Все'],
     'achievement.unlocked': ['Unlocked', 'Открытые'],
     'achievement.locked': ['Locked', 'Не открытые'],
@@ -399,6 +521,20 @@
     ['Enter a hand', 'Ввести раздачу'],
     ['Equity', 'Equity'],
     ['Train topic', 'Тренировать тему'],
+    ['Train', 'Тренировать'],
+    ['{topic}: focused practice', '{topic}: точная практика'],
+    ['A short practice session on a topic where mistakes have already occurred.', 'Короткая тренировка по теме, в которой уже были ошибки.'],
+    ['{count} errors recorded for this topic.', 'Зафиксировано ошибок по теме: {count}.'],
+    ['Return to a saved hand', 'Вернуться к сохранённой раздаче'],
+    ['Review the recent hand in Hand Lab while the line is still fresh.', 'Разберите недавнюю раздачу в Hand Lab, пока линия ещё свежа.'],
+    ['about 3 minutes', 'около 3 минут'],
+    ['Open Review', 'Открыть разбор'],
+    ['A saved hand is available for analysis.', 'Есть сохранённая раздача для анализа.'],
+    ['Safe default action.', 'Безопасное действие по умолчанию.'],
+    ['A saved hand is waiting for review', 'Сохранённая раздача ждёт разбора'],
+    ['{count} saved hand in Hand Lab.', '{count} раздача сохранена в Hand Lab.'],
+    ['{count} saved hands in Hand Lab.', '{count} раздач сохранено в Hand Lab.'],
+    ['Open Hand Lab', 'Открыть Hand Lab'],
     ['Recent activity', 'Недавняя активность'],
     ['Open Daily Hand', 'Открыть раздачу дня'],
     ['Daily Hand history', 'История раздач дня'],
@@ -683,6 +819,7 @@
     ,['A short set of decisions to keep your game sharp.', 'Короткая серия решений для поддержания формы.']
     ,['5 hands · about 4 minutes', '5 раздач · около 4 минут']
     ,['Continue learning', 'Продолжить обучение']
+    ,['An unfinished lesson is available.', 'Есть незавершённый учебный материал.']
     ,['{street} · {difficulty}', '{street} · {difficulty}']
     ,['{position} • {street}', '{position} • {street}']
     ,['Daily Hand cards', 'Карты раздачи дня']
@@ -692,6 +829,15 @@
     ,['Training', 'Тренировка']
     ,['Focus is taking shape', 'Фокус формируется']
     ,['Complete at least 10 rated decisions in a topic to unlock a personal focus.', 'Нужно минимум 10 оценённых решений по теме, чтобы выбрать персональный фокус.']
+    ,['Keep your game sharp', 'Поддерживайте сильную форму']
+    ,['Decision discipline', 'Дисциплина решений']
+    ,['Value betting', 'Вэлью-беты']
+    ,['Poker math', 'Покерная математика']
+    ,['Decision dynamics are improving', 'Динамика улучшается']
+    ,['Recent performance is declining', 'Недавняя динамика снижается']
+    ,['Performance is stable', 'Динамика стабильна']
+    ,['No reliable weak topics are currently detected. Keep your game sharp with regular training.', 'Надёжных слабых тем сейчас не обнаружено. Поддерживайте форму обычной тренировкой.']
+    ,['At least {count} rated decisions in a topic are needed to select a personal focus.', 'Нужно минимум {count} оценённых решений по теме, чтобы выбрать персональный фокус.']
     ,['{current}/{target} lessons', '{current}/{target} уроков']
     ,['No completed modules yet', 'Пока нет завершённых модулей']
     ,['Your personal focus will appear after a few training sessions.', 'Персональный фокус появится после нескольких тренировок.']
@@ -977,6 +1123,8 @@
     ,['Model confidence is low, so the score is deliberately compressed.', 'Уверенность модели низкая, поэтому оценка намеренно сжата.']
     ,['Available equity exceeds the price to continue in the current model.', 'Доступная equity превышает цену продолжения в текущей модели.']
     ,['Available equity is insufficient for the current price to continue.', 'Доступной equity не хватает для заданной цены продолжения.']
+    ,['{action}: available equity exceeds the price to continue in the current model.', '{action}: доступная equity превышает цену продолжения в текущей модели.']
+    ,['{action}: available equity is insufficient for the current price to continue.', '{action}: доступной equity не хватает для заданной цены продолжения.']
     ,['Confidence is high here: the decision is far from the boundary in the current model.', 'Здесь уверенность высокая: решение находится далеко от границы текущей модели.']
     ,['Confidence is moderate: the line is preferred, but the spot is not completely clear-cut.', 'Уверенность средняя: линия предпочтительна, но ситуация не полностью однозначная.']
     ,['This is a marginal spot: a small range, bet-size, or context change could alter the recommendation.', 'Это пограничный spot: небольшое изменение диапазона, размера ставки или контекста может поменять рекомендацию.']
@@ -1018,6 +1166,7 @@
     ,['{count} limper(s) are already in the pot, so an isolation raise must account for multiway risk.', '{count} лимпер(а) уже вошли в банк, поэтому изоляция должна учитывать риск multiway-игры.']
     ,['A raise has already been made before Hero, so continuing requires a stronger range than in an unopened pot.', 'Перед Hero уже был рейз, поэтому нужен более сильный диапазон продолжения, чем в неоткрытом банке.']
     ,['Hero faces a 3-bet: continuing requires a substantially stronger hand and attention to effective stack.', 'Hero столкнулся с 3-bet: продолжение требует заметно более сильной руки и учёта effective stack.']
+    ,['Hero faces a 3-bet', 'Hero столкнулся с 3-bet']
     ,['Hero is deciding against an existing bet.', 'Hero принимает решение против уже сделанной ставки.']
     ,['Hero is not facing a bet, so the choice is between Check and Bet.', 'Перед Hero нет ставки, поэтому выбор идёт между Check и Bet.']
     ,['{hand} is a premium pair: it is far ahead of most continuing hands and suits aggressive play.', '{hand} — премиальная пара: она далеко впереди большинства рук продолжения и подходит для агрессивного розыгрыша.']
@@ -1050,7 +1199,9 @@
     ,['The board is connected and dynamic: many straight/flush draws and strong continuations are possible.', 'Доска связанная и динамичная: возможны многочисленные straight/flush draw и сильные продолжения.']
     ,['The board is dry and calm: made hands need less protection.', 'Доска сухая и спокойная: готовые руки реже нуждаются в большой защите.']
     ,['A short effective stack turns the continuation into ALL-IN instead of an intermediate raise or Call.', 'Короткий effective stack превращает продолжение в ALL-IN вместо промежуточного рейза или Call.']
+    ,['short effective stack', 'короткий effective stack']
     ,['The pot is multiway: marginal hands realize their potential less effectively.', 'В банке несколько соперников: marginal-руки хуже реализуют свой потенциал multiway.']
+    ,['multiway: {count} opponents', 'multiway: {count} соперника']
     ,['The recommendation follows the current validated Trainer range for this context.', 'Рекомендация следует текущему проверенному диапазону Trainer для этого контекста.']
     ,['The suited {hand} version gains more flush draws and usually plays wider.', 'Suited-версия {hand} получает больше flush draw и обычно играет шире.']
     ,['BTN ranges are wider because fewer players remain behind.', 'С BTN диапазон шире, потому что игроков позади меньше.']
@@ -1062,6 +1213,11 @@
     ,['Suited connectors are stronger in position and at the right price; alone they do not justify every Call.', 'Suited connectors сильнее в позиции и при подходящей цене; сами по себе они не оправдывают любой Call.']
     ,['With a premium pair, building the pot is usually more important than disguising strength at the cost of lost value.', 'С премиальной парой обычно важнее строить банк, чем маскировать силу ценой упущенного value.']
     ,['First identify position and the action before Hero, then match the hand to the continuing range.', 'Сначала определяй позицию и действие перед Hero, затем сопоставляй руку с диапазоном продолжения.']
+    ,['{action} — baseline Trainer line for {hand} ({category}) from {position}.', '{action} — базовая линия Trainer для {hand} ({category}) из позиции {position}.']
+    ,['{hand} is a premium pair. {action} preserves value and matches the current Trainer model.', '{hand} — премиальная пара. {action} сохраняет value и соответствует текущей модели Trainer.']
+    ,['{hand} is a weak offsuit king: a weak kicker and domination risk make Fold a calm baseline decision.', '{hand} — слабый разномастный king: слабый kicker и риск доминации делают Fold спокойным базовым решением.']
+    ,['Decision Quality {score} ({grade}) reflects how the action and sizing match the current Trainer recommendation.', 'Decision Quality {score} ({grade}) отражает совпадение действия и размера с готовой рекомендацией Trainer.']
+    ,['Decision Quality {score} reflects how the action and sizing match the current Trainer recommendation.', 'Decision Quality {score} отражает совпадение действия и размера с готовой рекомендацией Trainer.']
     ,['Hero is in position (IP): more information helps control pot size.', 'Hero в позиции (IP): больше информации помогает контролировать размер банка.']
     ,['Hero is out of position (OOP): realizing hand potential and controlling the pot is harder.', 'Hero без позиции (OOP): сложнее реализовать потенциал руки и контролировать pot.']
     ,['The line follows the established Trainer recommendation and the actual hand context.', 'Линия следует готовой рекомендации Trainer и фактическому контексту раздачи.']
@@ -1141,6 +1297,9 @@
     ,['Medium', 'Средний']
     ,['Low', 'Низкий']
     ,['Showdown', 'Шоудаун']
+    ,['flop', 'флоп']
+    ,['turn', 'тёрн']
+    ,['river', 'ривер']
     ,['Advanced', 'Продвинутая']
     ,['Intermediate', 'Средний уровень']
     ,['Beginner', 'Новичок']
@@ -1447,6 +1606,15 @@
       return key ? `${leading}${t(key, values, core)}${trailing}` : source;
     }
 
+    function translateValue(value) {
+      if (typeof value === 'string') return translateCopy(value);
+      if (Array.isArray(value)) return value.map(translateValue);
+      if (value && typeof value === 'object') {
+        return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, translateValue(item)]));
+      }
+      return value;
+    }
+
     function applyDocumentLanguage() {
       const element = documentRef?.documentElement;
       if (!element) return;
@@ -1496,12 +1664,63 @@
     }
 
     function updateLanguageSelector() {
-      const container = documentRef?.querySelector?.('#profileLanguage');
-      if (!container) return;
-      container.querySelectorAll?.('[data-locale-choice]').forEach(button => {
+      documentRef?.querySelectorAll?.('[data-locale-choice]').forEach(button => {
         const selected = button.dataset.localeChoice === locale;
         button.classList?.toggle?.('is-selected', selected);
         button.setAttribute?.('aria-pressed', String(selected));
+        button.setAttribute?.('aria-checked', String(selected));
+      });
+      const option = LOCALE_OPTIONS.find(item => item.locale === locale) || LOCALE_OPTIONS[0];
+      const toggle = documentRef?.querySelector?.('#headerLocaleToggle');
+      if (toggle) {
+        toggle.textContent = option.flag;
+        const language = t(
+          option.locale === 'ru' ? 'settings.russianLanguage' : 'settings.englishLanguage',
+          option.languageLabel
+        );
+        toggle.setAttribute?.('aria-label', t('settings.headerLanguage', { language }));
+      }
+    }
+
+    function setHeaderPickerOpen(open, restoreFocus = false) {
+      const picker = documentRef?.querySelector?.('#headerLocalePicker');
+      const toggle = documentRef?.querySelector?.('#headerLocaleToggle');
+      if (!picker || !toggle) return false;
+      picker.hidden = !open;
+      toggle.setAttribute?.('aria-expanded', String(open));
+      if (!open && restoreFocus) toggle.focus?.();
+      return open;
+    }
+
+    function mountHeaderLanguagePicker() {
+      const container = documentRef?.querySelector?.('#headerLocaleControl');
+      const toggle = documentRef?.querySelector?.('#headerLocaleToggle');
+      const picker = documentRef?.querySelector?.('#headerLocalePicker');
+      if (!container || !toggle || !picker || container.dataset.localeMounted === 'true') return;
+      container.dataset.localeMounted = 'true';
+      setHeaderPickerOpen(false);
+      container.addEventListener?.('click', event => {
+        const choice = event.target?.closest?.('[data-locale-choice]');
+        if (choice && container.contains?.(choice)) {
+          event.preventDefault?.();
+          setLocale(choice.dataset.localeChoice);
+          setHeaderPickerOpen(false, true);
+          return;
+        }
+        const trigger = event.target?.closest?.('#headerLocaleToggle');
+        if (trigger && container.contains?.(trigger)) {
+          event.preventDefault?.();
+          setHeaderPickerOpen(picker.hidden);
+        }
+      });
+      documentRef?.addEventListener?.('click', event => {
+        if (!picker.hidden && !container.contains?.(event.target)) setHeaderPickerOpen(false);
+      });
+      documentRef?.addEventListener?.('keydown', event => {
+        if (event.key === 'Escape' && !picker.hidden) {
+          event.preventDefault?.();
+          setHeaderPickerOpen(false, true);
+        }
       });
     }
 
@@ -1538,6 +1757,7 @@
           if (button && container.contains?.(button)) setLocale(button.dataset.localeChoice);
         });
       }
+      mountHeaderLanguagePicker();
       if (!observer && typeof root.MutationObserver === 'function' && documentRef?.documentElement) {
         observer = new root.MutationObserver(records => {
           records.forEach(record => {
@@ -1561,6 +1781,7 @@
     return Object.freeze({
       t,
       translateCopy,
+      translateValue,
       translateDocument,
       localizeTree,
       setLocale,
@@ -1595,6 +1816,7 @@
     DEFAULT_LOCALE,
     LOCALE_TAGS,
     LOCALE_STORAGE_KEY,
+    LOCALE_OPTIONS,
     REQUIRED_KEYS,
     messages,
     normalizeLocale,
@@ -1602,6 +1824,7 @@
     createLocalization,
     t: manager.t,
     translateCopy: manager.translateCopy,
+    translateValue: manager.translateValue,
     translateDocument: manager.translateDocument,
     localizeTree: manager.localizeTree,
     setLocale: manager.setLocale,
