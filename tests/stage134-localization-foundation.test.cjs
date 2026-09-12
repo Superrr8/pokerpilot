@@ -125,10 +125,11 @@ test('required production translations are complete in both English and Russian'
   }
 });
 
-test('Settings exposes only English and Russian and applies through the canonical manager', () => {
-  assert.match(html, /id="profileLanguage"/);
-  assert.match(html, /data-locale-choice="en"[^>]*>[\s\S]*?<strong>English<\/strong>/);
-  assert.match(html, /data-locale-choice="ru"[^>]*>[\s\S]*?<strong>Русский<\/strong>/);
+test('Header exposes only English and Russian and applies through the canonical manager', () => {
+  assert.doesNotMatch(html, /id="profileLanguage"/);
+  assert.match(html, /id="headerLocaleToggle"[^>]*aria-haspopup="menu"/);
+  assert.match(html, /data-locale-choice="en"[^>]*>[\s\S]*?USA[\s\S]*?🇺🇸/);
+  assert.match(html, /data-locale-choice="ru"[^>]*>[\s\S]*?Russia[\s\S]*?🇷🇺/);
   assert.doesNotMatch(html, /data-locale-choice="es"/);
   assert.match(source, /PokerElevateI18n/);
   assert.match(html, /src\/ui\/translations\.js/);

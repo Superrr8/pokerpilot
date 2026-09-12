@@ -249,6 +249,7 @@
     'live.yourTurnStreet': ['Your turn on {street}', 'Твой ход на {street}'],
     'live.sessionPaused': ['Session paused', 'Сессия на паузе'],
     'live.nextHandSoon': ['Next hand soon', 'Следующая раздача скоро'],
+    'live.coachPreflopGuidance': ['Trainer: first identify your position, the action before you, and the hand category. Do not decide based only on attractive hole cards.', 'Trainer: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.'],
     'live.modelPrefersSummary': ['Model prefers {action} · {confidence} confidence.', 'Модель предпочитает {action} · уверенность {confidence}.'],
     'live.modelPrefersDetail': ['Model prefers: {action}. Confidence: {confidence}. This is an educational exploit evaluation, not a solver answer.', 'Модель предпочитает: {action}. Уверенность: {confidence}. Это учебная exploit-оценка, не ответ солвера.'],
     'live.remainingOpponentsFolded': ['The remaining opponents folded.', 'Остальные соперники выбросили карты.'],

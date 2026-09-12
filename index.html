@@ -657,19 +657,6 @@
         </section>
 
         <section id="profileAppearance" class="profile-appearance" aria-labelledby="profileAppearanceTitle">
-          <section id="profileLanguage" class="profile-language-setting" aria-labelledby="profileLanguageTitle">
-            <header class="profile-appearance-header">
-              <div>
-                <span class="tag">Interface</span>
-                <h2 id="profileLanguageTitle">Language</h2>
-                <p>Choose the language used throughout PokerElevate.</p>
-              </div>
-            </header>
-            <div class="theme-picker" role="group" aria-label="Language">
-              <button class="theme-option is-selected" type="button" data-locale-choice="en" aria-pressed="true"><span class="theme-preview" aria-hidden="true">EN</span><span class="theme-option-copy"><strong>English</strong><small>United States</small></span></button>
-              <button class="theme-option" type="button" data-locale-choice="ru" aria-pressed="false"><span class="theme-preview" aria-hidden="true">RU</span><span class="theme-option-copy"><strong>Русский</strong><small>Россия</small></span></button>
-            </div>
-          </section>
           <header class="profile-appearance-header">
             <div>
               <span class="tag">Интерфейс</span>
@@ -3103,7 +3090,7 @@ $('#liveHint').addEventListener('click',()=>{
   if(!session.awaiting?.startsWith('hero'))return;
   const box=$('#liveHintBox');
   box.classList.remove('hidden');
-  if(session.street==='preflop')box.innerHTML='Тренер: сначала назови позицию, действие до тебя и категорию руки. Не принимай решение только по красивым картам.';
+  if(session.street==='preflop')box.innerHTML=i18nText('live.coachPreflopGuidance');
   else{
     const out=C.analyzeOuts(session.players[0].cards,session.board);
     box.innerHTML=`Тренер: сравни диапазон соперника, цену колла и реализацию эквити.${out.rawOuts?` У тебя до ${out.rawOuts} сырых аутов, из них ${out.conditionalOuts} условных.`:''}`;

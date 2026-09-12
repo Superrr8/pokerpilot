@@ -1,6 +1,15 @@
 'use strict';
 
 (function attachDailyChallengeHistoryUI(root) {
+  function localizeExplanation(value) {
+    const source = String(value ?? '');
+    const translate = root.PokerElevateI18n?.translateCopy;
+    if (typeof translate !== 'function') return source;
+    const direct = translate(source);
+    if (direct !== source) return direct;
+    return source.replace(/[^.!?]+[.!?]+(?:\s+|$)|[^.!?]+$/gu, sentence => translate(sentence));
+  }
+
   function dayStatusPresentation(day = {}) {
     const key = day.completed
       ? (day.correct === true ? 'correct' : (day.correct === false ? 'incorrect' : 'completed'))
@@ -199,7 +208,7 @@
       setText(documentRef, '#dailyReviewCorrect', review.correctActionLabel);
       setText(documentRef, '#dailyReviewXp', Number.isFinite(review.xpAwarded) ? `+${review.xpAwarded} XP` : 'XP не начислялся');
       setText(documentRef, '#dailyReviewContext', review.context);
-      setText(documentRef, '#dailyReviewExplanation', review.explanation);
+      setText(documentRef, '#dailyReviewExplanation', localizeExplanation(review.explanation));
       setText(documentRef, '#dailyReviewFallback', review.challengeAvailable ? '' : review.unavailableMessage);
       setHidden(documentRef, '#dailyReviewFallback', review.challengeAvailable);
       renderCards(documentRef, '#dailyReviewHeroCards', review.heroCards, cardRenderer);
@@ -211,7 +220,7 @@
     return Object.freeze({ openHistory, openReview, reviewDate, reviewToday });
   }
 
-  const api = Object.freeze({ create, dayStatusPresentation });
+  const api = Object.freeze({ create, dayStatusPresentation, localizeExplanation });
   root.PokerPilotDailyChallengeHistoryUI = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
