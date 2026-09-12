@@ -1,6 +1,8 @@
 'use strict';
 
 (function attachDailyChallengeUI(root) {
+  const translate = (key, values = {}, fallback = '') => root.PokerElevateI18n?.t?.(key, values, fallback) || fallback;
+  const localizeCopy = value => root.PokerElevateI18n?.translateCopy?.(value) || value;
   const ACTION_LABELS = Object.freeze({
     FOLD: 'Fold', CHECK: 'Check', CALL: 'Call', BET: 'Bet', RAISE: 'Raise', ALL_IN: 'All-in'
   });
@@ -24,10 +26,15 @@
     const count = Math.max(0, Math.floor(Number(value) || 0));
     const lastTwo = count % 100;
     const last = count % 10;
-    if (lastTwo >= 11 && lastTwo <= 14) return 'дней';
-    if (last === 1) return 'день';
-    if (last >= 2 && last <= 4) return 'дня';
-    return 'дней';
+    if (lastTwo >= 11 && lastTwo <= 14) return translate('daily.dayMany', {}, 'дней');
+    if (last === 1) return translate('daily.dayOne', {}, 'день');
+    if (last >= 2 && last <= 4) return translate('daily.dayFew', {}, 'дня');
+    return translate('daily.dayMany', {}, 'дней');
+  }
+
+  function dailyStreakLabel(value) {
+    const count = Math.max(0, Math.floor(Number(value) || 0));
+    return translate('daily.streak', { count, unit: dayLabel(count) }, `Серия раздачи дня: ${count} ${dayLabel(count)}`);
   }
 
   function actionLabel(action) {
@@ -37,10 +44,26 @@
   }
 
   function dashboardResultLabel(review) {
-    const outcome = review?.isCorrect ? 'Правильное решение' : 'Ошибка';
+    const outcome = review?.isCorrect
+      ? translate('daily.correctDecision', {}, 'Правильное решение')
+      : translate('daily.incorrect', {}, 'Ошибка');
     return Number.isFinite(review?.xpAwarded)
-      ? `${outcome} · +${review.xpAwarded} XP`
+      ? translate('daily.resultWithXp', { outcome, xp: review.xpAwarded }, `${outcome} · +${review.xpAwarded} XP`)
       : outcome;
+  }
+
+  function selectionStatusLabel(action, completed = false) {
+    const label = actionLabel(action);
+    return completed
+      ? translate('daily.answerSaved', { action: label }, `Ответ сохранён: ${label}`)
+      : translate('daily.actionSelected', { action: label }, `Выбрано: ${label}`);
+  }
+
+  function localizeExplanation(value) {
+    return String(value || '')
+      .split(/(?<=[.!?])\s+/u)
+      .map(localizeCopy)
+      .join(' ');
   }
 
   function resultPresentation(status) {
@@ -48,11 +71,13 @@
     const actionFor = actionClass => status.challenge?.actions?.find(action => action.actionClass === actionClass)
       || { actionClass, amount: null };
     return {
-      title: status.review.isCorrect ? 'Правильно' : 'Ошибка',
-      stateLabel: 'Раздача завершена',
+      title: status.review.isCorrect
+        ? translate('daily.correct', {}, 'Правильно')
+        : translate('daily.incorrect', {}, 'Ошибка'),
+      stateLabel: translate('daily.handComplete', {}, 'Раздача завершена'),
       selectedActionLabel: actionLabel(actionFor(status.review.selectedAction)),
       correctActionLabel: actionLabel(actionFor(status.review.correctAction)),
-      explanation: status.review.explanation,
+      explanation: localizeExplanation(status.review.explanation),
       tone: status.review.isCorrect ? 'good' : 'bad'
     };
   }
@@ -103,7 +128,7 @@
       setText(documentRef, '#dailyChallengeTodayState', progressSnapshot?.completedToday
         ? 'Сегодня выполнено'
         : 'Сегодня доступно');
-      setText(documentRef, '#dailyChallengeStreak', `Серия раздачи дня: ${progressSnapshot?.currentStreak || 0} ${dayLabel(progressSnapshot?.currentStreak)}`);
+      setText(documentRef, '#dailyChallengeStreak', dailyStreakLabel(progressSnapshot?.currentStreak));
       setText(documentRef, '#dailyChallengeAccuracy', `Решено: ${progressSnapshot?.completedCount || 0} · Точность: ${progressSnapshot?.accuracy || 0}%`);
       const cta = documentRef.querySelector('#dailyChallengeCta');
       if (cta) cta.textContent = completed ? 'Посмотреть разбор' : 'Решить';
@@ -120,7 +145,7 @@
         button.setAttribute('aria-pressed', String(selected));
       });
       const selected = status.challenge.actions.find(action => action.actionClass === actionClass);
-      setText(documentRef, '#dailySelectionStatus', `Выбрано: ${actionLabel(selected || { actionClass })}`);
+      setText(documentRef, '#dailySelectionStatus', selectionStatusLabel(selected || { actionClass }));
       documentRef.querySelector('#dailySelectionStatus')?.classList.add('has-selection');
       if (confirmButton) confirmButton.disabled = false;
       return true;
@@ -176,7 +201,7 @@
         : null;
       setText(documentRef, '#dailyReward', recorded ? `+${status.review.xpAwarded} XP` : '');
       setText(documentRef, '#dailyStreak', Number.isFinite(dailySnapshot?.currentStreak)
-        ? `Серия раздачи дня: ${dailySnapshot.currentStreak} ${dayLabel(dailySnapshot.currentStreak)}`
+        ? dailyStreakLabel(dailySnapshot.currentStreak)
         : '');
       setText(documentRef, '#dailyProgressPending', pending
         ? 'Награда будет зачислена при следующем открытии'
@@ -211,9 +236,9 @@
       renderActions(status);
       const selectedDefinition = challenge.actions.find(action => action.actionClass === selectedAction);
       setText(documentRef, '#dailySelectionStatus', completed
-        ? `Ответ сохранён: ${actionLabel(selectedDefinition || { actionClass: selectedAction })}`
+        ? selectionStatusLabel(selectedDefinition || { actionClass: selectedAction }, true)
         : selectedAction
-          ? `Выбрано: ${actionLabel(selectedDefinition || { actionClass: selectedAction })}`
+          ? selectionStatusLabel(selectedDefinition || { actionClass: selectedAction })
           : 'Выберите действие');
       documentRef.querySelector('#dailySelectionStatus')?.classList.toggle('has-selection', Boolean(selectedAction));
       if (confirmButton) {
@@ -241,7 +266,7 @@
     return Object.freeze({ renderDashboard, renderScreen, open: renderScreen, selectAction, submit });
   }
 
-  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS, dashboardResultLabel, resultPresentation });
+  const api = Object.freeze({ create, ACTION_LABELS, STREET_LABELS, dashboardResultLabel, resultPresentation, selectionStatusLabel, dailyStreakLabel });
   root.PokerPilotDailyChallengeUI = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

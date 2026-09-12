@@ -2690,7 +2690,7 @@ function aiLeadsIntoHero(){const v=session.players[session.villain],type=TYPES[v
 function aiActsAfterHeroCheck(){const v=session.players[session.villain],type=TYPES[v.type],sig=handSignal(v.cards,session.board),draw=C.analyzeOuts(v.cards,session.board);if(Math.random()<C.clamp(type.aggression*.32+sig*.52+(draw.strongOuts?.12:0)+type.bluff*.12,.05,.88)){const size=Math.min(v.stack,Math.max(3,Math.round(session.pot*sample([.4,.55,.7])))),allIn=size>=v.stack;const paid=commitTo(v,size);session.currentBet=size;session.toCall=size;return {action:recordLiveAction(v,allIn?'ALL_IN':'BET',{amount:paid,text:allIn?`${v.name} all-in ${money(size)}`:`${v.name} bet ${money(size)}`,legacyAction:allIn?'all-in':`bet ${money(size)}`}),after:()=>{session.awaiting='hero-postflop';showHeroActions();}};}return {action:recordLiveAction(v,'CHECK',{text:`${v.name} check`,legacyAction:'check'}),after:advanceStreet};}
 function lineRangeFor(type,line){const t=type||'reg';if(line==='raise')return t==='wild'?'55+,A8s+,KTs+,QTs+,JTs,T9s,AJo+,KQo':'99+,AQs+,AKo';if(line==='bet'){if(t==='nit')return '22+,AJs+,KQs,AQo+';if(t==='wild')return '22+,A2s+,K7s+,Q8s+,J8s+,T8s+,97s+,86s+,A8o+,KTo+,QTo+,JTo';return '22+,A8s+,KTs+,QTs+,JTs,T9s,AJo+,KQo';}return '22+,A2s+,K9s+,QTs+,JTs,T9s,98s,AJo,KQo';}
 function currentLiveMath(trials=2200){const hero=session.players[0];if(session.street==='preflop')return {preflop:true,power:preflopPower(hero.cards),position:positionsFor(session.n,session.button)[0]};const v=session.players[session.villain],line=v?.lastAction?.includes('raise')?'raise':v?.lastAction?.includes('bet')?'bet':'call',range=lineRangeFor(v?.type,line),equity=C.equityVsRange({hero:hero.cards,board:session.board,range,trials}),outs=C.analyzeOuts(hero.cards,session.board),required=session.toCall?session.toCall/(session.pot+session.toCall):0;return {preflop:false,equity,outs,required,range,villain:v};}
-function liveMathHTML(m){if(m.preflop)return `<div class="math-grid"><div class="math-cell"><small>Сила руки</small><strong>${Math.round(m.power)}/100</strong></div><div class="math-cell"><small>Позиция</small><strong>${m.position}</strong></div></div><p class="muted">Префлоп-рекомендация строится по позиции, действиям до тебя и базовым live-диапазонам $1/$3.</p>`;const groups=m.outs.groups.map(g=>`<span class="out-pill ${g.quality==='conditional'?'conditional':''}">${g.label}: ${g.outs}</span>`).join('');const method=m.equity.exact?'точный перебор':`${m.equity.samples.toLocaleString((typeof window !== 'undefined' && window.PokerElevateI18n?.getLocaleTag?.()) || 'en-US')} сим.`;return `<div class="math-grid"><div class="math-cell"><small>Эквити против диапазона</small><strong>${pct(m.equity.equity)}</strong></div><div class="math-cell"><small>Нужно для колла</small><strong>${session.toCall?pct(m.required):'—'}</strong></div><div class="math-cell"><small>Победа / ничья / проигрыш</small><strong>${pct(m.equity.win)} / ${pct(m.equity.tie)} / ${pct(m.equity.lose)}</strong></div><div class="math-cell"><small>Метод</small><strong>${method}</strong></div><div class="math-cell"><small>Сильные / условные ауты</small><strong>${m.outs.strongOuts||0} / ${m.outs.conditionalOuts||0}</strong></div><div class="math-cell"><small>Сильный аут: следующая карта</small><strong>${m.outs.strongOuts?pct(m.outs.strongNextCard):'—'}</strong></div>${session.board.length===3?`<div class="math-cell"><small>Сильный аут к риверу</small><strong>${m.outs.strongOuts?pct(m.outs.strongByRiver):'—'}</strong></div>`:''}</div>${groups?`<div class="outs-list">${groups}</div>`:''}<p class="muted">Диапазон модели: ${m.range}. Ауты показывают улучшение, а эквити — реальную долю банка против диапазона. Live-рекомендация является учебной exploit-моделью, а не GTO-солвером.</p>`;}
+function liveMathHTML(m){if(m.preflop)return `<div class="math-grid"><div class="math-cell"><small>${i18nText('handReview.handStrength')}</small><strong>${Math.round(m.power)}/100</strong></div><div class="math-cell"><small>${i18nText('handReview.position')}</small><strong>${m.position}</strong></div></div><p class="muted">${i18nText('handReview.preflopRecommendation')}</p>`;const groups=m.outs.groups.map(g=>`<span class="out-pill ${g.quality==='conditional'?'conditional':''}">${g.label}: ${g.outs}</span>`).join('');const method=m.equity.exact?'точный перебор':`${m.equity.samples.toLocaleString((typeof window !== 'undefined' && window.PokerElevateI18n?.getLocaleTag?.()) || 'en-US')} сим.`;return `<div class="math-grid"><div class="math-cell"><small>Эквити против диапазона</small><strong>${pct(m.equity.equity)}</strong></div><div class="math-cell"><small>Нужно для колла</small><strong>${session.toCall?pct(m.required):'—'}</strong></div><div class="math-cell"><small>Победа / ничья / проигрыш</small><strong>${pct(m.equity.win)} / ${pct(m.equity.tie)} / ${pct(m.equity.lose)}</strong></div><div class="math-cell"><small>Метод</small><strong>${method}</strong></div><div class="math-cell"><small>Сильные / условные ауты</small><strong>${m.outs.strongOuts||0} / ${m.outs.conditionalOuts||0}</strong></div><div class="math-cell"><small>Сильный аут: следующая карта</small><strong>${m.outs.strongOuts?pct(m.outs.strongNextCard):'—'}</strong></div>${session.board.length===3?`<div class="math-cell"><small>Сильный аут к риверу</small><strong>${m.outs.strongOuts?pct(m.outs.strongByRiver):'—'}</strong></div>`:''}</div>${groups?`<div class="outs-list">${groups}</div>`:''}<p class="muted">Диапазон модели: ${m.range}. Ауты показывают улучшение, а эквити — реальную долю банка против диапазона. Live-рекомендация является учебной exploit-моделью, а не GTO-солвером.</p>`;}
 function evaluateLiveAction(action,amount=0){
   const hero=session.players[0];
   if(session.street==='preflop'){
@@ -2699,14 +2699,28 @@ function evaluateLiveAction(action,amount=0){
     if(session.currentBet<=3){
       const range=limpers?(ISO_RANGES[pos]||OPEN_RANGES[pos]||OPEN_RANGES.CO):(OPEN_RANGES[pos]||OPEN_RANGES.CO);
       const inR=classInRange(hero.cards,range);
-      rec={best:inR?'raise':'fold',confidence:inR?'средняя':'средняя',why:inR?`${C.handClass(hero.cards)} входит в учебный диапазон ${limpers?'изоляции':'открытия'} из ${pos}.`:`${C.handClass(hero.cards)} обычно слишком слаба из ${pos} в базовой 9-max live-модели.`};
-      if(pos==='BB'&&session.toCall===0)rec={best:'check',confidence:'высокая',why:'На BB можно бесплатно увидеть флоп.'};
+      rec={
+        best:inR?'raise':'fold',
+        confidence:'средняя',
+        why:inR
+          ?i18nText(limpers?'live.reason.isolationRange':'live.reason.openingRange',{hand:C.handClass(hero.cards),position:pos})
+          :i18nText('live.reason.weakNineMax',{hand:C.handClass(hero.cards),position:pos})
+      };
+      if(pos==='BB'&&session.toCall===0)rec={best:'check',confidence:'высокая',why:i18nText('live.reason.bbFreeFlop')};
     }else{
       const opener=session.players.find((p,i)=>i!==0&&!p.folded&&p.lastAction?.includes('raise'));
       const openerPos=positionsFor(session.n,session.button)[opener?.id];
       const chart=['UTG','UTG+1','MP'].includes(openerPos)?DEFEND_VS_EARLY:DEFEND_VS_LATE;
       const raise=classInRange(hero.cards,chart.raise),call=classInRange(hero.cards,chart.call);
-      rec={best:raise?'raise':call?'call':'fold',confidence:raise||!call?'средняя':'низкая',why:raise?'Рука входит в базовый 3-бет диапазон.':call?'Рука достаточно сильна для продолжения, но точная линия зависит от позиции и типа соперника.':'Рука не входит в базовый диапазон продолжения.'};
+      rec={
+        best:raise?'raise':call?'call':'fold',
+        confidence:raise||!call?'средняя':'низкая',
+        why:raise
+          ?i18nText('live.reason.threeBetRange')
+          :call
+            ?i18nText('live.reason.conditionalContinue')
+            :i18nText('live.reason.outsideContinue')
+      };
     }
     let grade=action===rec.best?'best':'mistake';
     if(rec.best==='raise'&&action==='call')grade='acceptable';
@@ -2725,7 +2739,15 @@ function evaluateLiveAction(action,amount=0){
     if(best==='raise'&&action==='call')grade='good';
     if(best==='call'&&action==='raise'&&m.equity.equity>=m.required+.10)grade='good';
     if(confidence==='низкая'&&((best==='call'&&action==='fold')||(best==='fold'&&action==='call')))grade='acceptable';
-    return {grade,best,confidence,math:m,why:`Эквити ${pct(m.equity.equity)}, минимально нужно ${pct(m.required)}. Запас: ${(edge*100).toFixed(1)} п.п. ${draw.strongOuts?`Сильных аутов: ${draw.strongOuts}; условных: ${draw.conditionalOuts}.`:''}`};
+    const outsReason=draw.strongOuts
+      ?i18nText('live.reason.outs',{strong:draw.strongOuts,conditional:draw.conditionalOuts})
+      :'';
+    return {grade,best,confidence,math:m,why:i18nText('live.reason.equityCall',{
+      equity:pct(m.equity.equity),
+      required:pct(m.required),
+      edge:(edge*100).toFixed(1),
+      outs:outsReason
+    })};
   }
 
   let best='check';
@@ -2734,7 +2756,12 @@ function evaluateLiveAction(action,amount=0){
   if(best==='bet'&&action==='check'&&(m.equity.equity<.67||cat===1))grade='acceptable';
   if(best==='check'&&action==='bet'&&(m.equity.equity>=.45||draw.strongOuts>=4))grade='acceptable';
   const noBetConfidence=(m.equity.equity>=.67||m.equity.equity<=.38||cat>=3)?'средняя':'низкая';
-  return {grade,best,confidence:noBetConfidence,math:m,why:`Готовая комбинация: ${C.handName(C.best7([...hero.cards,...session.board]))}. Эквити против модели диапазона: ${pct(m.equity.equity)}. ${draw.strongOuts?`Сильных аутов: ${draw.strongOuts}.`:''}`};
+  const outsReason=draw.strongOuts?i18nText('live.reason.strongOuts',{count:draw.strongOuts}):'';
+  return {grade,best,confidence:noBetConfidence,math:m,why:i18nText('live.reason.madeHand',{
+    hand:i18nCopy(C.handName(C.best7([...hero.cards,...session.board]))),
+    equity:pct(m.equity.equity),
+    outs:outsReason
+  })};
 }
 function createLiveSeatElement(playerId){
   const el=document.createElement('div');
@@ -3002,7 +3029,10 @@ function showLiveResultSummary(evaluation){
   if(!summary)return;
   summary.className=`live-result-summary ${GRADE[evaluation.grade].cls}`;
   $('[data-live-result-grade]',summary).textContent=`${GRADE[evaluation.grade].label}.`;
-  $('[data-live-result-copy]',summary).textContent=`Модель предпочитает ${actionLabel(evaluation.best)} · уверенность ${evaluation.confidence||'средняя'}.`;
+  $('[data-live-result-copy]',summary).textContent=i18nText('live.modelPrefersSummary',{
+    action:i18nCopy(actionLabel(evaluation.best)),
+    confidence:i18nCopy(evaluation.confidence||'средняя')
+  });
 }
 function showLiveMath(precomputed=null,{openLearning=true}={}){
   const box=$('#mathBox'),panel=$('#liveLearningPanel');
@@ -3202,7 +3232,10 @@ function handleHeroAction(action,amount=0){
   showLiveResultSummary(evaluation);
   const feedback=$('#liveFeedback');
   feedback.className=`feedback ${GRADE[evaluation.grade].cls}${liveExplanationModel ? ' trainer-feedback-superseded' : ''}`;
-  feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${evaluation.why}<br><span class="muted">Модель предпочитает: ${actionLabel(evaluation.best)}. Уверенность: ${evaluation.confidence || 'средняя'}. Это учебная exploit-оценка, не ответ солвера.</span>`;
+  feedback.innerHTML=`<strong>${GRADE[evaluation.grade].label}.</strong><br>${i18nCopy(evaluation.why)}<br><span class="muted">${i18nText('live.modelPrefersDetail',{
+    action:i18nCopy(actionLabel(evaluation.best)),
+    confidence:i18nCopy(evaluation.confidence||'средняя')
+  })}</span>`;
   showLiveMath(evaluation.math||null,{openLearning:false});
   if(action==='fold'){
     closeLiveBetSizer();
@@ -3313,8 +3346,12 @@ function updateLastHandControls(){
 function awardPot(winnerId,message){
   const winner=session.players[winnerId],potSize=session.pot;
   session.players.forEach(player=>{player.showCards=false;player.reachedShowdown=false;player.winner=false;});
-  const winnerText=winnerId===0?'Ты выигрываешь':winner?`Банк забирает ${winner.name}`:'Банк присуждён';
-  const summary=`${message} ${winnerText}: ${money(potSize)}.`;
+  const winnerText=winnerId===0
+    ?i18nText('live.youWin')
+    :winner
+      ?i18nText('live.playerTakesPot',{player:winner.name})
+      :i18nText('live.potAwarded');
+  const summary=i18nText('live.potAwardSummary',{reason:i18nCopy(message),winner:winnerText,amount:money(potSize)});
   presentationQueue.playShowdown({
     token:session.handToken,
     playerIds:[],

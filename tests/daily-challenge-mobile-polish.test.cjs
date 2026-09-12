@@ -74,7 +74,8 @@ test('completion feedback exposes a prominent review CTA', () => {
 });
 
 test('completion feedback distinguishes result, stored XP and Daily Challenge streak', () => {
-  assert.match(dailyUiSource, /status\.review\.isCorrect\s*\?\s*'Правильно'\s*:\s*'Ошибка'/);
+  assert.match(dailyUiSource, /translate\('daily\.correct'/);
+  assert.match(dailyUiSource, /translate\('daily\.incorrect'/);
   assert.match(dailyUiSource, /status\.review\.xpAwarded/);
   assert.match(dailyUiSource, /Серия раздачи дня:/);
   assert.doesNotMatch(dailyUiSource, /status\.review\.streak/);

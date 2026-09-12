@@ -26,7 +26,7 @@ test('Dashboard renderers keep the affected strings complete in data', () => {
   assert.match(dashboard, /label:\s*'Ввести раздачу'/);
   assert.match(daily, /setText\(documentRef, '#dailyChallengeHandLabel', status\.challenge\.title\)/);
   assert.match(daily, /`\$\{outcome\} · \+\$\{review\.xpAwarded\} XP`/);
-  assert.match(daily, /`Серия раздачи дня: \$\{progressSnapshot\?\.currentStreak \|\| 0\}/);
+  assert.match(daily, /dailyStreakLabel\(progressSnapshot\?\.currentStreak\)/);
   assert.match(daily, /`Решено: \$\{progressSnapshot\?\.completedCount \|\| 0\} · Точность:/);
 });
 
