@@ -9,6 +9,17 @@
     Object.freeze({ locale: 'en', flag: '🇺🇸', pickerLabel: 'USA', languageLabel: 'English' }),
     Object.freeze({ locale: 'ru', flag: '🇷🇺', pickerLabel: 'Russia', languageLabel: 'Russian' })
   ]);
+  const HAND_RANK_KEYS = Object.freeze([
+    'poker.handRank.highCard',
+    'poker.handRank.onePair',
+    'poker.handRank.twoPair',
+    'poker.handRank.threeOfAKind',
+    'poker.handRank.straight',
+    'poker.handRank.flush',
+    'poker.handRank.fullHouse',
+    'poker.handRank.fourOfAKind',
+    'poker.handRank.straightFlush'
+  ]);
 
   const PAIRS = Object.freeze({
     'nav.home': ['Home', 'Главная'],
@@ -243,6 +254,15 @@
     'live.actionCheck': ['CHECK', 'ЧЕК'],
     'live.actionFold': ['FOLD', 'ФОЛД'],
     'live.showdown': ['{player} shows {hand}.', '{player} показывает {hand}.'],
+    'poker.handRank.highCard': ['High Card', 'Старшая карта'],
+    'poker.handRank.onePair': ['One Pair', 'Пара'],
+    'poker.handRank.twoPair': ['Two Pair', 'Две пары'],
+    'poker.handRank.threeOfAKind': ['Three of a Kind', 'Сет'],
+    'poker.handRank.straight': ['Straight', 'Стрит'],
+    'poker.handRank.flush': ['Flush', 'Флеш'],
+    'poker.handRank.fullHouse': ['Full House', 'Фулл-хаус'],
+    'poker.handRank.fourOfAKind': ['Four of a Kind', 'Каре'],
+    'poker.handRank.straightFlush': ['Straight Flush', 'Стрит-флеш'],
     'live.wins': ['{player} wins {amount}.', '{player} выигрывает {amount}.'],
     'live.splitPot': ['Pot {amount} is split between {count} players.', 'Банк {amount} разделён между {count} игроками.'],
     'live.yourTurnHand': ['Your turn: {position} • {hand}', 'Твой ход: {position} • {hand}'],
@@ -1640,6 +1660,12 @@
       return key ? `${leading}${t(key, values, core)}${trailing}` : source;
     }
 
+    function handRankLabel(evaluation, fallback = '') {
+      const category = Number(Array.isArray(evaluation) ? evaluation[0] : evaluation);
+      const key = HAND_RANK_KEYS[category];
+      return key ? t(key, {}, fallback) : fallback;
+    }
+
     function translateValue(value) {
       if (typeof value === 'string') return translateCopy(value);
       if (Array.isArray(value)) return value.map(translateValue);
@@ -1815,6 +1841,7 @@
     return Object.freeze({
       t,
       translateCopy,
+      handRankLabel,
       translateValue,
       translateDocument,
       localizeTree,
@@ -1851,6 +1878,7 @@
     LOCALE_TAGS,
     LOCALE_STORAGE_KEY,
     LOCALE_OPTIONS,
+    HAND_RANK_KEYS,
     REQUIRED_KEYS,
     messages,
     normalizeLocale,
@@ -1858,6 +1886,7 @@
     createLocalization,
     t: manager.t,
     translateCopy: manager.translateCopy,
+    handRankLabel: manager.handRankLabel,
     translateValue: manager.translateValue,
     translateDocument: manager.translateDocument,
     localizeTree: manager.localizeTree,

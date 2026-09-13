@@ -1059,6 +1059,7 @@ const $ = (s, root = document) => root.querySelector(s);
 const $$ = (s, root = document) => [...root.querySelectorAll(s)];
 const i18nText = (key, values = {}, fallback = '') => window.PokerElevateI18n?.t?.(key, values, fallback) || fallback;
 const i18nCopy = value => window.PokerElevateI18n?.translateCopy?.(value) || value;
+const i18nHandRank = evaluation => window.PokerElevateI18n?.handRankLabel?.(evaluation, C.handName(evaluation)) || C.handName(evaluation);
 const appMotion = PokerPilotMotion.createMotionSystem({ documentRef: document });
 const money = n => `${n < 0 ? '-$' : '$'}${Math.abs(Math.round(Number(n) || 0))}`;
 const signedMoney = n => `${n >= 0 ? '+' : ''}${money(n)}`;
@@ -2647,8 +2648,8 @@ function observerShowdown(){
       if(!entry)return;
       entry.player.reachedShowdown=true;
       entry.player.showCards=PokerPilotLiveFlow.canRevealHoleCards({folded:entry.player.folded,reachedShowdown:true});
-      entry.player.showdownLabel=C.handName(entry.evaluation);
-      recordLiveAction(entry.player,'SHOWDOWN',{text:`${entry.player.name} показывает ${entry.player.showdownLabel}.`,street:'showdown'});
+      entry.player.showdownLabel=i18nHandRank(entry.evaluation);
+      recordLiveAction(entry.player,'SHOWDOWN',{text:i18nText('live.showdown',{player:entry.player.name,hand:entry.player.showdownLabel}),street:'showdown'});
       appLiveFeedback.showdown(entry.player.id);
       renderLive();
     },
@@ -3374,8 +3375,8 @@ function showdown(){
       const player=session.players[playerId],evaluation=evaluations.get(playerId);
       player.reachedShowdown=true;
       player.showCards=playerId!==0&&PokerPilotLiveFlow.canRevealHoleCards({folded:player.folded,reachedShowdown:true});
-      player.showdownLabel=C.handName(evaluation);
-      recordLiveAction(player,'SHOWDOWN',{text:`${player.name} показывает ${player.showdownLabel}.`,street:'showdown'});
+      player.showdownLabel=i18nHandRank(evaluation);
+      recordLiveAction(player,'SHOWDOWN',{text:i18nText('live.showdown',{player:player.name,hand:player.showdownLabel}),street:'showdown'});
       appLiveFeedback.showdown(player.id);
       renderLive();
     },
