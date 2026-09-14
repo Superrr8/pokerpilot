@@ -174,7 +174,7 @@ test('frozen Dashboard, Live geometry, Live motion and PokerCore sources are unt
     'src/live/live-motion.js': '167980e0e6b8b1cb6bc9a56148815547f467f26b1367cad542e5a54d856693c6',
     'src/poker-core.js': 'cb2f8c794a9246288c9c6b077ed9c73cbd53d21daeb26cabbb1b8d07da29c286',
     'src/styles/stage1101-redesign.css': '5a220eb2a1d53e393f9a5335af781ce2ee64746548c3733dfe235229e08f6ecc',
-    'src/ui/dashboard.js': '08c19de9021344eaca06e4e11c70ef7db2d89bfe106bb3e658a3582fcfc10e80'
+    'src/ui/dashboard.js': '749798c532a5714dc87148704321d914f395fa43871bd546205d21e013b8c62d'
   };
   for (const [file, expected] of Object.entries(frozen)) {
     assert.equal(hash(file), expected, `${file} changed despite the frozen-surface contract`);

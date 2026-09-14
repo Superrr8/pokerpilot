@@ -185,6 +185,29 @@
         moduleId: course.currentModule?.id || null
       });
     }
+    const assessmentResult = object(state.assessmentResult);
+    const assessmentFocus = text(assessmentResult.recommendedFocus);
+    if (
+      text(assessmentResult.bandId)
+      && assessmentFocus
+      && number(progress.decisions) === 0
+      && course.activityCount === 0
+      && !list(progress.savedHands).length
+    ) {
+      const focusLabel = translate(`onboarding.skill.${assessmentFocus}`, {}, assessmentFocus);
+      return {
+        type: 'assessment-focus',
+        eyebrow: translate('dashboard.assessmentNextEyebrow'),
+        title: translate('dashboard.assessmentNextTitle', { focus: focusLabel }),
+        description: translate('dashboard.assessmentNextDescription'),
+        meta: translate('dashboard.assessmentNextMeta'),
+        actionLabel: translate('dashboard.assessmentNextAction'),
+        target: assessmentFocus === 'preflop' ? 'ranges' : 'study',
+        reason: 'Initial assessment focus.',
+        resume: false,
+        moduleId: null
+      };
+    }
     const weakness = topWeakness(state);
     if (weakness) {
       return localize({

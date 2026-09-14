@@ -3,8 +3,15 @@
 (function attachProfileStore(root) {
   const ProgressConfig = root.PokerPilotProgressConfig
     || (typeof require === 'function' ? require('../progress/progress-config.js') : null);
-  const PROFILE_SCHEMA_VERSION = 1;
+  const PROFILE_SCHEMA_VERSION = 2;
   const PROFILE_STORAGE_KEY = 'pokerpilot_profile';
+  const ESTABLISHED_STORAGE_KEYS = Object.freeze([
+    'pokerpilot_progress_system',
+    'pokerpilot_v1_6_progress',
+    'pokerpilot_v1_5_1_progress',
+    'pokerpilot_v1_5_progress',
+    'pokerpilot_v1_4_progress'
+  ]);
   const MAX_DISPLAY_NAME_LENGTH = 24;
   const MAX_BIO_LENGTH = 120;
   const MAX_PREFERRED_GAME_LENGTH = 32;
@@ -85,6 +92,56 @@
     return Number.isFinite(numeric) ? numeric : null;
   }
 
+  function defaultOnboarding() {
+    return {
+      onboardingCompleted: false,
+      assessmentCompleted: false,
+      assessmentVersion: null,
+      termsVersion: null,
+      termsAcceptedAt: null,
+      currentStep: 'welcome',
+      answers: [],
+      result: null,
+      progressInitializedAt: null
+    };
+  }
+
+  function normalizeOnboarding(value, { establishedUser = false } = {}) {
+    const base = defaultOnboarding();
+    const raw = value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+    if (!raw) {
+      return establishedUser
+        ? { ...base, onboardingCompleted: true, currentStep: 'complete' }
+        : base;
+    }
+    const answers = Array.isArray(raw.answers)
+      ? raw.answers.slice(0, 10).map(item => ({
+          questionId: cleanText(item?.questionId).slice(0, 80),
+          selectedAction: cleanText(item?.selectedAction).toUpperCase().slice(0, 24)
+        })).filter(item => item.questionId && item.selectedAction)
+      : [];
+    const result = raw.result && typeof raw.result === 'object' && !Array.isArray(raw.result)
+      ? clone(raw.result)
+      : null;
+    const onboardingCompleted = raw.onboardingCompleted === true;
+    const assessmentCompleted = raw.assessmentCompleted === true;
+    const allowedSteps = new Set(['welcome', 'consent', 'assessment', 'result', 'complete']);
+    const currentStep = onboardingCompleted
+      ? 'complete'
+      : allowedSteps.has(raw.currentStep) ? raw.currentStep : 'welcome';
+    return {
+      onboardingCompleted,
+      assessmentCompleted,
+      assessmentVersion: cleanText(raw.assessmentVersion) || null,
+      termsVersion: cleanText(raw.termsVersion) || null,
+      termsAcceptedAt: safeIsoDate(raw.termsAcceptedAt, null),
+      currentStep,
+      answers,
+      result,
+      progressInitializedAt: safeIsoDate(raw.progressInitializedAt, null)
+    };
+  }
+
   function defaultProfile({ now, createId } = {}) {
     const timestamp = typeof now === 'function' ? now() : new Date().toISOString();
     const id = typeof createId === 'function'
@@ -121,7 +178,8 @@
       achievements: [],
       settings: {
         profileVisibility: 'private'
-      }
+      },
+      onboarding: defaultOnboarding()
     };
   }
 
@@ -129,6 +187,7 @@
     const base = defaultProfile(options);
     const raw = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
     const legacy = Number(raw.schemaVersion) < PROFILE_SCHEMA_VERSION;
+    const establishedUser = options.establishedUser === true || Object.keys(raw).length > 0;
     const rawName = cleanText(
       legacy ? raw.displayName || raw.name : raw.displayName
     );
@@ -188,14 +247,16 @@
         profileVisibility: raw.settings?.profileVisibility === 'private'
           ? 'private'
           : 'private'
-      }
+      },
+      onboarding: normalizeOnboarding(raw.onboarding, { establishedUser })
     };
   }
 
   function createProfileStore({
     storage,
     now = () => new Date().toISOString(),
-    createId
+    createId,
+    detectEstablishedProgress = storage === undefined
   } = {}) {
     let activeStorage = storage;
     if (activeStorage === undefined) {
@@ -230,18 +291,33 @@
 
     function load() {
       let parsed = null;
+      let hadStoredProfile = false;
+      let establishedProgress = false;
       try {
         const stored = activeStorage && typeof activeStorage.getItem === 'function'
           ? activeStorage.getItem(PROFILE_STORAGE_KEY)
           : null;
+        hadStoredProfile = stored !== null && stored !== undefined && stored !== '';
         parsed = stored ? JSON.parse(stored) : null;
+        if (!hadStoredProfile && detectEstablishedProgress && activeStorage) {
+          establishedProgress = ESTABLISHED_STORAGE_KEYS.some(key => {
+            const value = activeStorage.getItem(key);
+            return value !== null && value !== undefined && value !== '';
+          });
+        }
       } catch (error) {
         status = { persisted: false, error: String(error?.message || error) };
       }
       try {
-        profile = migrateProfile(parsed, options);
+        profile = migrateProfile(parsed, {
+          ...options,
+          establishedUser: hadStoredProfile || establishedProgress
+        });
       } catch (_) {
-        profile = defaultProfile(options);
+        profile = migrateProfile(null, {
+          ...options,
+          establishedUser: hadStoredProfile || establishedProgress
+        });
       }
       persist();
       return clone(profile);
@@ -296,6 +372,19 @@
       getProgression() {
         return clone(profile.progression);
       },
+      getOnboarding() {
+        return clone(profile.onboarding);
+      },
+      updateOnboarding(patch = {}) {
+        if (!patch || typeof patch !== 'object' || Array.isArray(patch)) {
+          throw new Error('Onboarding changes must be an object');
+        }
+        return commit({
+          ...profile,
+          onboarding: normalizeOnboarding({ ...profile.onboarding, ...patch }),
+          updatedAt: now()
+        }).onboarding;
+      },
       addXp(amount, source = 'manual') {
         const numeric = Number(amount);
         if (!Number.isFinite(numeric) || numeric < 0) {
@@ -327,10 +416,13 @@
   const api = Object.freeze({
     PROFILE_SCHEMA_VERSION,
     PROFILE_STORAGE_KEY,
+    ESTABLISHED_STORAGE_KEYS,
     MAX_DISPLAY_NAME_LENGTH,
     MAX_BIO_LENGTH,
     MAX_PREFERRED_GAME_LENGTH,
     AVATAR_PRESETS,
+    defaultOnboarding,
+    normalizeOnboarding,
     xpRequiredForLevel,
     calculateLevelFromXp,
     defaultProfile,
@@ -340,6 +432,8 @@
     updateProfile: singleton.updateProfile,
     resetProfile: singleton.resetProfile,
     getProgression: singleton.getProgression,
+    getOnboarding: singleton.getOnboarding,
+    updateOnboarding: singleton.updateOnboarding,
     addXp: singleton.addXp,
     subscribe: singleton.subscribe,
     getStatus: singleton.getStatus

@@ -41,6 +41,7 @@
 
   </style>
   <link rel="stylesheet" href="src/styles/app-shell.css">
+  <link rel="stylesheet" href="src/styles/onboarding.css">
   <link rel="stylesheet" href="src/styles/profile.css?v=13.2.3">
   <link rel="stylesheet" href="src/styles/motion.css">
   <link rel="stylesheet" href="src/styles/live-session.css">
@@ -96,6 +97,69 @@
   </header>
 
   <main>
+    <section id="screen-onboarding" class="screen onboarding-screen" aria-label="PokerElevate onboarding">
+      <div class="onboarding-shell">
+        <section id="onboardingWelcome" class="onboarding-step" aria-labelledby="onboardingWelcomeTitle">
+          <div class="onboarding-mark" aria-hidden="true">PE</div>
+          <span id="onboardingWelcomeEyebrow" class="eyebrow"></span>
+          <h1 id="onboardingWelcomeTitle"></h1>
+          <p id="onboardingWelcomeBody"></p>
+          <p id="onboardingWelcomeDetail" class="onboarding-detail"></p>
+          <button id="onboardingWelcomeStart" class="onboarding-primary" type="button"></button>
+        </section>
+
+        <section id="onboardingConsent" class="onboarding-step" aria-labelledby="onboardingConsentTitle" hidden>
+          <span id="onboardingConsentEyebrow" class="eyebrow"></span>
+          <h1 id="onboardingConsentTitle"></h1>
+          <p id="onboardingConsentBody" class="onboarding-consent-copy"></p>
+          <label class="onboarding-consent" for="onboardingConsentCheck">
+            <input id="onboardingConsentCheck" type="checkbox">
+            <span id="onboardingConsentLabel"></span>
+          </label>
+          <div class="onboarding-legal-actions" aria-label="Legal documents">
+            <button class="onboarding-legal-action" type="button" data-onboarding-legal="terms" aria-haspopup="dialog"></button>
+            <button class="onboarding-legal-action" type="button" data-onboarding-legal="privacy" aria-haspopup="dialog"></button>
+          </div>
+          <button id="onboardingConsentContinue" class="onboarding-primary" type="button" disabled></button>
+          <button id="onboardingConsentBack" class="onboarding-secondary" type="button"></button>
+        </section>
+
+        <section id="onboardingAssessment" class="onboarding-step" aria-labelledby="onboardingAssessmentPrompt" hidden>
+          <div class="onboarding-progress-head">
+            <span id="onboardingAssessmentEyebrow" class="eyebrow"></span>
+            <strong id="onboardingAssessmentProgress"></strong>
+          </div>
+          <div id="onboardingAssessmentTrack" class="onboarding-progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1"><span></span></div>
+          <div class="onboarding-hand-meta">
+            <div id="onboardingPositionMeta"><small id="onboardingPositionLabel"></small><strong id="onboardingPositionValue"></strong></div>
+            <div id="onboardingPotMeta"><small id="onboardingPotLabel"></small><strong id="onboardingPotValue"></strong></div>
+            <div id="onboardingCallMeta"><small id="onboardingCallLabel"></small><strong id="onboardingCallValue"></strong></div>
+            <div id="onboardingStackMeta"><small id="onboardingStackLabel"></small><strong id="onboardingStackValue"></strong></div>
+          </div>
+          <div id="onboardingHeroCards" class="onboarding-cards" aria-label="Hero cards"></div>
+          <div id="onboardingBoardCards" class="onboarding-cards onboarding-board" aria-label="Board cards" hidden></div>
+          <p id="onboardingAssessmentContext" class="onboarding-context"></p>
+          <h1 id="onboardingAssessmentPrompt" class="onboarding-question"></h1>
+          <div id="onboardingActions" class="onboarding-actions" role="group" aria-label="Decision choices"></div>
+        </section>
+
+        <section id="onboardingResult" class="onboarding-step" aria-labelledby="onboardingResultTitle" hidden>
+          <span id="onboardingResultEyebrow" class="eyebrow"></span>
+          <h1 id="onboardingResultTitle"></h1>
+          <strong id="onboardingResultBand" class="onboarding-result-band"></strong>
+          <div class="onboarding-result-iq">
+            <small id="onboardingResultIqLabel"></small>
+            <strong id="onboardingResultIq"></strong>
+          </div>
+          <div class="onboarding-result-grid">
+            <div><small id="onboardingStrengthsLabel"></small><strong id="onboardingStrengths"></strong></div>
+            <div><small id="onboardingFocusLabel"></small><strong id="onboardingFocus"></strong></div>
+          </div>
+          <button id="onboardingResultStart" class="onboarding-primary" type="button"></button>
+        </section>
+      </div>
+    </section>
+
     <section id="screen-home" class="screen active dashboard-screen" data-smoke="dashboard-ready">
       <div class="home-dashboard home-dashboard-pro">
         <header class="home-welcome">
@@ -1016,6 +1080,7 @@
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
 <script src="src/progress/progress-system.js"></script>
+<script src="src/onboarding/onboarding-system.js"></script>
 <script src="src/progress/weakness-model.js"></script>
 <script src="src/training/focus-session.js"></script>
 <script src="src/training/trainer-explanation-engine.js"></script>
@@ -1041,6 +1106,7 @@
 <script src="src/ui/motion-system.js"></script>
 <script src="src/ui/dashboard.js"></script>
 <script src="src/ui/poker-card.js"></script>
+<script src="src/ui/onboarding.js"></script>
 <script src="src/ui/daily-challenge.js"></script>
 <script src="src/ui/daily-challenge-history.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
@@ -1086,6 +1152,10 @@ let progress = loadProgress();
 ProgressSystem.load({
   legacyProfile: ProfileStore.getProfile(),
   legacyProgress: progress
+});
+const onboardingSystem = PokerElevateOnboarding.create({
+  profileStore: ProfileStore,
+  progressSystem: ProgressSystem
 });
 let studyIndex = 0;
 let currentStudy = null;
@@ -1144,6 +1214,16 @@ let appFeedback = FeedbackManager.getInstance({ sound: appSound, haptics: appHap
 let appLiveFeedback = LiveFeedback.create({ feedback: appFeedback });
 let appInteractionFeedback = InteractionFeedback.create({ documentRef: document, sound: appSound });
 let learningSound = appSound;
+const onboardingUi = PokerElevateOnboardingUI.create({
+  onboarding: onboardingSystem,
+  i18n: window.PokerElevateI18n,
+  cardRenderer: PokerCardUI,
+  feedback: UIFeedback,
+  onComplete: () => {
+    renderProgress();
+    route('home');
+  }
+});
 let profileUi = PokerPilotProfileUI.create({
   store: ProfileStore,
   getStatistics: () => ProfileStatistics.fromProgress(progress),
@@ -1276,6 +1356,7 @@ function renderProgress() {
     course: window.POKERPILOT_COURSE,
     courseProgress: CourseProgress,
     profile: ProfileStore.getProfile(),
+    assessmentResult: ProfileStore.getOnboarding().result,
     pokerIQ,
     statistics,
     now: new Date()
@@ -1452,6 +1533,7 @@ function closeLiveSheets(){
 
 function route(name, options = {}) {
   name = PokerPilotNavigation.resolveRoute(name);
+  if (onboardingUi.shouldStart() && name !== 'onboarding') name = 'onboarding';
   if(name!=='live')closeLiveSheets();
   if (
     focusSessionController.getSnapshot()
@@ -1469,6 +1551,7 @@ function route(name, options = {}) {
   $('.app-shell').dataset.activeRoute = name;
   syncLivePresentationState(name);
   PokerPilotNavigation.setActive($('#primaryNavigation'), name);
+  if (name === 'onboarding') onboardingUi.open();
   if (name === 'home') renderProgress();
   if (name === 'daily') dailyChallengeUi.open();
   if (name === 'daily-history') dailyChallengeHistoryUi.openHistory();
@@ -3950,7 +4033,7 @@ window.PokerElevateI18n?.subscribe?.(() => {
   renderProgress();
   window.PokerElevateI18n.translateDocument();
 });
-route('home');
+route(onboardingUi.shouldStart() ? 'onboarding' : 'home');
 requestAnimationFrame(updateBrowserSmokeState);
 window.addEventListener('resize', updateBrowserSmokeState, { passive: true });
 window.addEventListener('pagehide', () => appMotion.settleAll(), { passive: true });
