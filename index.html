@@ -60,6 +60,7 @@
   <link rel="stylesheet" href="src/styles/trainer-explanation.css">
   <link rel="stylesheet" href="src/styles/theme-system.css">
   <link rel="stylesheet" href="src/styles/layout-foundation.css">
+  <link rel="stylesheet" href="src/styles/stage1351-iphone-profile-density.css">
 </head>
 <body>
 <div class="app app-shell" data-active-route="home">
@@ -686,20 +687,25 @@
             <button id="progressFocusCta" class="primary progress-focus-cta" type="button" data-route="study" hidden disabled>Открыть Trainer</button>
           </section>
 
-          <section class="progress-overview-section" aria-labelledby="progressAchievementsTitle">
-            <div class="progress-section-heading">
-              <div>
+          <details id="progressAchievementsDisclosure" class="progress-overview-section profile-disclosure progress-disclosure">
+            <summary class="progress-disclosure-summary" aria-controls="progressAchievementsContent">
+              <span>
                 <span class="progress-section-label">Коллекция</span>
-                <h3 id="progressAchievementsTitle">Достижения</h3>
-              </div>
-              <div class="progress-achievement-link">
+                <strong id="progressAchievementsTitle">Достижения</strong>
+              </span>
+              <span class="profile-disclosure-meta">
                 <small id="progressAchievementsCount">0 / 10</small>
+                <span class="profile-disclosure-indicator" aria-hidden="true">⌄</span>
+              </span>
+            </summary>
+            <div id="progressAchievementsContent" class="profile-disclosure-content">
+              <div class="progress-achievement-actions">
                 <button id="progressAchievementsOpen" class="ghost" type="button">Все достижения</button>
               </div>
+              <div id="progressAchievementsList" class="progress-achievements-list" hidden></div>
+              <p id="progressAchievementsEmpty" class="progress-empty">Пока нет данных о достижениях.</p>
             </div>
-            <div id="progressAchievementsList" class="progress-achievements-list" hidden></div>
-            <p id="progressAchievementsEmpty" class="progress-empty">Пока нет данных о достижениях.</p>
-          </section>
+          </details>
 
           <div class="progress-overview-footer">
             <section class="progress-streak" aria-labelledby="progressStreakTitle">
@@ -901,12 +907,27 @@
           </div>
         </section>
 
-        <section class="panel">
-          <span class="tag">Персональный фокус</span><h2>Coach</h2>
-          <div id="coachSummary"></div>
+        <section id="profileCoachPanel" class="panel profile-coach-panel" aria-labelledby="profileCoachTitle">
+          <span class="tag">Персональный фокус</span><h2 id="profileCoachTitle">Coach</h2>
+          <div id="coachSummary" class="profile-coach-summary"></div>
+          <details id="profileCoachDisclosure" class="profile-disclosure profile-coach-disclosure">
+            <summary class="profile-disclosure-summary" aria-controls="coachDetails">
+              <span>Coach insights</span>
+              <span class="profile-disclosure-indicator" aria-hidden="true">⌄</span>
+            </summary>
+            <div id="coachDetails" class="profile-disclosure-content profile-coach-details"></div>
+          </details>
           <button id="startFocusTraining" class="primary wide">Начать тренировку слабого места</button>
         </section>
-        <section class="panel"><span class="tag">Последние решения</span><h2>История</h2><div id="historyList" class="history-list"></div></section>
+        <section id="profileHistoryPanel" class="panel profile-history-panel">
+          <details id="profileHistoryDisclosure" class="profile-disclosure">
+            <summary class="profile-disclosure-summary" aria-controls="historyList">
+              <span><span class="tag">Последние решения</span><strong>История</strong></span>
+              <span class="profile-disclosure-meta"><small id="profileHistoryCount">Последних решений: 0</small><span class="profile-disclosure-indicator" aria-hidden="true">⌄</span></span>
+            </summary>
+            <div id="historyList" class="history-list profile-disclosure-content"></div>
+          </details>
+        </section>
       </div>
     </section>
     <section id="screen-coach" class="screen legacy-route" aria-hidden="true"></section>
@@ -2188,8 +2209,10 @@ function renderCoachReport() {
   };
   const plan = top && top[1] ? plans[top[0]] : i18nText('coach.planDefault');
   const coachSummary=$('#coachSummary');
+  const coachDetails=$('#coachDetails');
   const accuracyValue=progress.maxPoints ? `${accuracy}%` : '—';
-  coachSummary.innerHTML = `<div class="coach-summary-card"><h4>${i18nText('coach.overallAccuracy',{value:accuracyValue})}</h4><p class="muted">${i18nText('coach.decisionStreak',{count:progress.decisions,best:progress.bestStreak||0})}</p></div><div class="coach-summary-card"><h4>${top&&top[1]?i18nText('coach.mainWeakness',{topic:labels[top[0]]}):i18nText('coach.notEnoughData')}</h4><p class="muted">${top&&top[1]?i18nText('coach.errorsRecorded',{count:top[1],plan}):plan}</p></div>${entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('')}`;
+  coachSummary.innerHTML = `<div class="coach-summary-card"><h4>${i18nText('coach.overallAccuracy',{value:accuracyValue})}</h4><p class="muted">${i18nText('coach.decisionStreak',{count:progress.decisions,best:progress.bestStreak||0})}</p></div><div class="coach-summary-card"><h4>${top&&top[1]?i18nText('coach.mainWeakness',{topic:labels[top[0]]}):i18nText('coach.notEnoughData')}</h4><p class="muted">${top&&top[1]?i18nText('coach.errorsRecorded',{count:top[1],plan}):plan}</p></div>`;
+  coachDetails.innerHTML = entries.filter(x=>x[1]>0).slice(0,5).map(([k,v])=>`<div class="score-row"><span>${labels[k]}</span><strong>${v}</strong></div>`).join('');
   const dqSummary=DecisionQualityStats.getSummary(progress.history);
   const dqCard=document.createElement('div');
   dqCard.className='coach-summary-card';
@@ -2226,7 +2249,7 @@ function renderCoachReport() {
     ? `${i18nText('coach.ratedDecisions',{count:dqSummary.ratedCount,forming:dqSummary.sampleStatus!=='ESTABLISHED'?i18nText('coach.sampleForming'):''})} ${trendText}${weakestStreetText}${weakestCategoryText}${i18nText('coach.dqSignalNote')}`
     :i18nText('coach.dqBuildSignal');
   dqCard.append(dqTitle,dqText);
-  coachSummary.appendChild(dqCard);
+  coachDetails.appendChild(dqCard);
   const pokerIqSummary=PokerIQStats.getSummary(progress.history);
   const iqCard=document.createElement('div');
   iqCard.className='coach-summary-card';
@@ -2256,7 +2279,8 @@ function renderCoachReport() {
     iqText.textContent=i18nText('coach.iqEstablished',{count:pokerIqSummary.ratedDecisions,trend,strongest:strongestText,weakest:weakestText});
   }
   iqCard.append(iqTitle,iqText);
-  coachSummary.appendChild(iqCard);
+  coachDetails.appendChild(iqCard);
+  $('#profileHistoryCount').textContent=i18nText('profile.recentDecisionCount',{count:progress.history.length});
   DecisionQualityUI.renderHistory(document,$('#historyList'),progress.history,15);
 }
 $('#startFocusTraining').addEventListener('click', () => {

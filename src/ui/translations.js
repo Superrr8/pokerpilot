@@ -108,6 +108,8 @@
     'profile.totalXp': ['{xp} lifetime XP', '{xp} XP всего'],
     'profile.avatarLabel': ['{name} avatar', 'Аватар {name}'],
     'profile.edit': ['Edit profile', 'Редактировать профиль'],
+    'profile.coachInsights': ['Coach insights', 'Рекомендации Coach'],
+    'profile.recentDecisionCount': ['{count} recent decisions', 'Последних решений: {count}'],
     'profile.editAvatar': ['Edit avatar', 'Изменить аватар'],
     'profile.preferredGame': ['Preferred game', 'Предпочитаемая игра'],
     'profile.bio': ['Bio', 'Bio'],
