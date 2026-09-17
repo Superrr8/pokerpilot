@@ -2,9 +2,12 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const {
   createProgressStorageHarness
 } = require('./progress-storage-loader.cjs');
+const Compliance = require('../src/compliance/release-compliance.js');
 
 const KEYS = {
   STORAGE_KEY: 'pokerpilot_v1_6_progress',
@@ -170,38 +173,28 @@ test('сохранение пишет только текущий ключ и н
   );
 });
 
-test('сброс выполняется только после существующего подтверждения', () => {
-  const stored = {
-    decisions: 7,
-    scorePoints: 12,
-    maxPoints: 21,
-    mistakes: { outs: 4 },
-    history: [{ date: 'saved' }]
-  };
-  const denied = createProgressStorageHarness({
-    initial: { [KEYS.STORAGE_KEY]: json(stored) },
-    confirmResult: false
-  });
-  denied.triggerReset();
-  assert.equal(denied.getProgress().decisions, 7);
-  assert.equal(
-    denied.operations.filter(([operation]) => operation === 'setItem').length,
-    0
-  );
+test('полное удаление заменяет частичный reset и сохраняет чужое browser storage', () => {
+  const root = path.resolve(__dirname, '..');
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const ui = fs.readFileSync(path.join(root, 'src/ui/release-compliance.js'), 'utf8');
+  assert.match(html, /id="resetProgress"[^>]*data-delete-local-data/);
+  assert.doesNotMatch(html, /\$\('#resetProgress'\)\.addEventListener/);
+  assert.match(ui, /confirmRef\(t\('compliance\.deleteConfirm'\)\)/);
+  assert.match(ui, /compliance\.deleteAllLocalData\(storage\)/);
 
-  const accepted = createProgressStorageHarness({
-    initial: { [KEYS.STORAGE_KEY]: json(stored) },
-    confirmResult: true
-  });
-  accepted.triggerReset();
-  assert.deepEqual(
-    plain(accepted.getProgress()),
-    plain(accepted.defaultProgress())
-  );
-  assert.deepEqual(
-    JSON.parse(accepted.snapshot()[KEYS.STORAGE_KEY]),
-    plain(accepted.defaultProgress())
-  );
+  const values = new Map(Object.entries({
+    [KEYS.STORAGE_KEY]: json({ decisions: 7 }),
+    unrelated_application: 'keep'
+  }));
+  const storage = {
+    get length() { return values.size; },
+    key(index) { return [...values.keys()][index] ?? null; },
+    getItem(key) { return values.get(key) ?? null; },
+    removeItem(key) { values.delete(key); }
+  };
+  Compliance.deleteAllLocalData(storage);
+  assert.equal(storage.getItem(KEYS.STORAGE_KEY), null);
+  assert.equal(storage.getItem('unrelated_application'), 'keep');
 });
 
 test('обновление страницы повторно загружает сохранённые данные без потери', () => {

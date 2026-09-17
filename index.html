@@ -456,7 +456,7 @@
           <label><input type="radio" name="assistMode" value="training" checked><span><b>Тренировка</b><small>Подсказки открываются только по запросу.</small></span></label>
           <label><input type="radio" name="assistMode" value="review"><span><b>Разбор</b><small>Математика видна сразу, ответ не подсвечивается.</small></span></label>
           <p class="muted">Рекомендации используют учебную exploit-модель live $1/$3. Это не GTO-солвер и не гарантия выигрыша.</p>
-          <button id="resetProgress" class="ui-button-ghost small">Сбросить статистику</button>
+          <button id="resetProgress" class="ui-button-ghost small" type="button" data-delete-local-data>Удалить все локальные данные</button>
         </div>
       </details>
     </section>
@@ -749,6 +749,33 @@
           </div>
         </section>
 
+        <section id="profileCompliance" class="panel profile-compliance" aria-labelledby="profileComplianceTitle">
+          <header class="profile-compliance-header">
+            <div>
+              <span class="tag" data-compliance-copy="eyebrow">LEGAL &amp; PRIVACY</span>
+              <h2 id="profileComplianceTitle" data-compliance-copy="title">Release &amp; data controls</h2>
+              <p data-compliance-copy="description">Review product terms, privacy, responsible-play limits, support, and local-data controls.</p>
+            </div>
+          </header>
+          <div class="profile-compliance-actions">
+            <button class="profile-compliance-action" type="button" data-legal-document="terms">
+              <span><strong data-compliance-copy="terms">Terms of Use</strong><small data-compliance-copy="termsDetail">Current version and permitted use</small></span><b aria-hidden="true">›</b>
+            </button>
+            <button class="profile-compliance-action" type="button" data-legal-document="privacy">
+              <span><strong data-compliance-copy="privacy">Privacy Policy</strong><small data-compliance-copy="privacyDetail">Local storage, retention, and deletion</small></span><b aria-hidden="true">›</b>
+            </button>
+            <button class="profile-compliance-action" type="button" data-legal-document="support">
+              <span><strong data-compliance-copy="support">Support &amp; Contact</strong><small data-compliance-copy="supportDetail">Current support destination</small></span><b aria-hidden="true">›</b>
+            </button>
+            <button class="profile-compliance-action" type="button" data-legal-document="responsiblePlay">
+              <span><strong data-compliance-copy="responsiblePlay">Educational Use &amp; Responsible Play</strong><small data-compliance-copy="responsiblePlayDetail">Training limits and financial-risk notice</small></span><b aria-hidden="true">›</b>
+            </button>
+            <button class="profile-compliance-action is-danger" type="button" data-delete-local-data>
+              <span><strong data-compliance-copy="deleteData">Delete All Local Data</strong><small data-compliance-copy="deleteDataDetail">Reset PokerElevate to a clean first launch</small></span><b aria-hidden="true">›</b>
+            </button>
+          </div>
+        </section>
+
         <section id="progressAnalytics" class="panel progress-analytics" aria-labelledby="progressAnalyticsTitle" aria-hidden="true" hidden>
           <button id="progressAnalyticsBack" class="back progress-analytics-back" type="button">‹ К прогрессу</button>
           <header class="progress-analytics-header">
@@ -1035,7 +1062,8 @@
 <dialog id="appDialog" class="ui-dialog" aria-labelledby="appDialogTitle">
   <div class="ui-dialog-content">
     <h2 id="appDialogTitle" data-dialog-title data-brand="wordmark">PokerElevate</h2>
-    <p data-dialog-message></p>
+    <div class="ui-dialog-message" data-dialog-message></div>
+    <a class="ui-dialog-destination" data-dialog-destination target="_blank" rel="noopener noreferrer" hidden></a>
     <button class="ui-button-primary wide" type="button" data-dialog-close>Закрыть</button>
   </div>
 </dialog>
@@ -1097,6 +1125,7 @@
 <script src="src/progress/achievement-system.js"></script>
 <script src="src/progress/progress-date-utils.js"></script>
 <script src="src/progress/progress-analytics.js"></script>
+<script src="src/compliance/release-compliance.js"></script>
 <script src="src/storage/progress-storage.js"></script>
 <script src="src/profile/profile-store.js"></script>
 <script src="src/profile/profile-statistics.js"></script>
@@ -1132,6 +1161,7 @@
 <script src="src/ui/daily-challenge-history.js"></script>
 <script src="src/live/live-ux-controller.js"></script>
 <script src="src/ui/ui-feedback.js"></script>
+<script src="src/ui/release-compliance.js"></script>
 <script src="src/ui/decision-quality.js"></script>
 <script src="src/ui/trainer-explanation.js"></script>
 <script src="src/ui/profile.js?v=13.2.2"></script>
@@ -1235,11 +1265,17 @@ let appFeedback = FeedbackManager.getInstance({ sound: appSound, haptics: appHap
 let appLiveFeedback = LiveFeedback.create({ feedback: appFeedback });
 let appInteractionFeedback = InteractionFeedback.create({ documentRef: document, sound: appSound });
 let learningSound = appSound;
+const complianceUi = PokerElevateComplianceUI.create({
+  compliance: PokerElevateCompliance,
+  i18n: window.PokerElevateI18n,
+  feedback: UIFeedback
+});
 const onboardingUi = PokerElevateOnboardingUI.create({
   onboarding: onboardingSystem,
   i18n: window.PokerElevateI18n,
   cardRenderer: PokerCardUI,
   feedback: UIFeedback,
+  openLegalDocument: complianceUi.openDocument,
   onComplete: () => {
     renderProgress();
     route('home');
@@ -1651,23 +1687,6 @@ $$('input[name="assistMode"]').forEach(r => r.addEventListener('change', () => {
   saveProgress();
   if ($('#screen-study').classList.contains('active')) renderStudy();
 }));
-$('#resetProgress').addEventListener('click', () => {
-  const productName = globalThis.ProductBrand?.productName || 'PokerElevate';
-  if (confirm(`Сбросить всю статистику ${productName} на этом устройстве?`)) {
-    progress = defaultProgress();
-    if (typeof learningMode !== 'undefined') {
-      if (learningMode) learningMode.destroy();
-      learningMode = null;
-      learningSound = typeof appSound !== 'undefined' ? appSound : null;
-    }
-    if (typeof appSound !== 'undefined' && appSound) {
-      appSound.setEnabled(CourseProgress.DEFAULT_SOUND.enabled);
-      appSound.setVolume(CourseProgress.DEFAULT_SOUND.volume);
-    }
-    saveProgress();
-  }
-});
-
 function cardHTML(c, small = false, options = {}) {
   return PokerCardUI.render(c, { ...options, small });
 }

@@ -7,6 +7,7 @@
     i18n = root.PokerElevateI18n,
     cardRenderer = root.PokerCardUI,
     feedback = root.UIFeedback,
+    openLegalDocument = () => false,
     onComplete = () => {}
   } = {}) {
     if (!documentRef || !onboarding) throw new Error('Onboarding UI dependencies are required');
@@ -42,16 +43,19 @@
       setText('#onboardingWelcomeStart', t('onboarding.welcome.start'));
     }
 
-    function renderConsent() {
+    function renderConsent(state) {
       showStep(consentStep);
-      setText('#onboardingConsentEyebrow', t('onboarding.consent.eyebrow'));
-      setText('#onboardingConsentTitle', t('onboarding.consent.title'));
-      setText('#onboardingConsentBody', t('onboarding.consent.body'));
+      const prefix = state.reconsent ? 'onboarding.reconsent' : 'onboarding.consent';
+      setText('#onboardingConsentEyebrow', t(`${prefix}.eyebrow`));
+      setText('#onboardingConsentTitle', t(`${prefix}.title`));
+      setText('#onboardingConsentBody', t(`${prefix}.body`));
       setText('#onboardingConsentLabel', t('onboarding.consent.agree'));
       setText('[data-onboarding-legal="terms"]', t('onboarding.consent.terms'));
       setText('[data-onboarding-legal="privacy"]', t('onboarding.consent.privacy'));
-      setText('#onboardingConsentContinue', t('onboarding.consent.continue'));
+      setText('#onboardingConsentContinue', t(`${prefix}.continue`));
       setText('#onboardingConsentBack', t('onboarding.consent.back'));
+      const back = documentRef.querySelector('#onboardingConsentBack');
+      if (back) back.hidden = state.reconsent;
       continueButton.disabled = !consent.checked;
     }
 
@@ -147,7 +151,7 @@
     function render() {
       const state = onboarding.getState();
       if (state.step === 'welcome') renderWelcome();
-      else if (state.step === 'consent') renderConsent();
+      else if (state.step === 'consent') renderConsent(state);
       else if (state.step === 'assessment') renderAssessment(state);
       else if (state.step === 'result') renderResult(state);
       return state;
@@ -178,8 +182,10 @@
         continueButton.disabled = !consent.checked;
       });
       continueButton?.addEventListener('click', () => {
-        const accepted = onboarding.acceptTerms(consent.checked);
-        if (accepted.accepted) render();
+        const accepted = onboarding.acceptLegal(consent.checked);
+        if (!accepted.accepted) return;
+        if (accepted.step === 'complete') onComplete();
+        else render();
       });
       documentRef.querySelector('#onboardingActions')?.addEventListener('click', event => {
         const button = event.target.closest('[data-onboarding-action]');
@@ -194,10 +200,7 @@
       documentRef.querySelectorAll('[data-onboarding-legal]').forEach(button => {
         button.addEventListener('click', () => {
           const documentName = button.dataset.onboardingLegal;
-          feedback?.openDialog?.({
-            title: t(`onboarding.consent.${documentName}`),
-            message: t(`onboarding.legal.${documentName}Pending`)
-          });
+          openLegalDocument(documentName);
         });
       });
     }

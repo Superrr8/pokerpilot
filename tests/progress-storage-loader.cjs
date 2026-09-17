@@ -33,19 +33,7 @@ function inlineStorageSource(html) {
   ].join('\n\n');
 }
 
-function resetHandlerSource(html) {
-  const start = html.indexOf("$('#resetProgress').addEventListener");
-  const end = html.indexOf('\n\nfunction cardHTML', start);
-  if (start === -1 || end === -1) {
-    throw new Error('Reset progress handler was not found in index.html');
-  }
-  return html.slice(start, end);
-}
-
-function createProgressStorageHarness({
-  initial = {},
-  confirmResult = false
-} = {}) {
+function createProgressStorageHarness({ initial = {} } = {}) {
   const root = path.resolve(__dirname, '..');
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const storagePath = path.join(root, 'src', 'storage', 'progress-storage.js');
@@ -62,7 +50,6 @@ function createProgressStorageHarness({
   ].join('\n');
   const values = new Map(Object.entries(initial));
   const operations = [];
-  let resetHandler = null;
   let renderCount = 0;
 
   const localStorage = {
@@ -85,26 +72,10 @@ function createProgressStorageHarness({
   };
   const sandbox = {
     localStorage,
-    confirm: () => confirmResult,
     renderProgress: () => { renderCount += 1; },
-    $: selector => {
-      if (selector !== '#resetProgress') {
-        throw new Error(`Unexpected selector: ${selector}`);
-      }
-      return {
-        addEventListener(event, handler) {
-          if (event !== 'click') throw new Error(`Unexpected event: ${event}`);
-          resetHandler = handler;
-        }
-      };
-    },
     __operations: operations,
     __snapshot: () => Object.fromEntries(values),
     __getRenderCount: () => renderCount,
-    __triggerReset: () => {
-      if (!resetHandler) throw new Error('Reset handler was not registered');
-      return resetHandler();
-    },
     module: { exports: {} },
     exports: {}
   };
@@ -118,7 +89,6 @@ function createProgressStorageHarness({
 ${learningSource}
 ${source}
 let progress = loadProgress();
-${resetHandlerSource(html)}
 module.exports = {
   keys: { STORAGE_KEY, PREVIOUS_STORAGE_KEY, OLD_STORAGE_KEY, LEGACY_STORAGE_KEY },
   defaultProgress,
@@ -126,7 +96,6 @@ module.exports = {
   saveProgress,
   getProgress: () => progress,
   setProgress: value => { progress = value; },
-  triggerReset: __triggerReset,
   snapshot: __snapshot,
   operations: __operations,
   getRenderCount: __getRenderCount

@@ -3,7 +3,7 @@
 (function attachProfileStore(root) {
   const ProgressConfig = root.PokerPilotProgressConfig
     || (typeof require === 'function' ? require('../progress/progress-config.js') : null);
-  const PROFILE_SCHEMA_VERSION = 2;
+  const PROFILE_SCHEMA_VERSION = 3;
   const PROFILE_STORAGE_KEY = 'pokerpilot_profile';
   const ESTABLISHED_STORAGE_KEYS = Object.freeze([
     'pokerpilot_progress_system',
@@ -99,6 +99,12 @@
       assessmentVersion: null,
       termsVersion: null,
       termsAcceptedAt: null,
+      termsAcceptedLocale: null,
+      termsDocumentId: null,
+      privacyVersion: null,
+      privacyAcceptedAt: null,
+      privacyAcceptedLocale: null,
+      privacyDocumentId: null,
       currentStep: 'welcome',
       answers: [],
       result: null,
@@ -135,6 +141,16 @@
       assessmentVersion: cleanText(raw.assessmentVersion) || null,
       termsVersion: cleanText(raw.termsVersion) || null,
       termsAcceptedAt: safeIsoDate(raw.termsAcceptedAt, null),
+      termsAcceptedLocale: ['en', 'ru'].includes(cleanText(raw.termsAcceptedLocale))
+        ? cleanText(raw.termsAcceptedLocale)
+        : null,
+      termsDocumentId: cleanText(raw.termsDocumentId) || null,
+      privacyVersion: cleanText(raw.privacyVersion) || null,
+      privacyAcceptedAt: safeIsoDate(raw.privacyAcceptedAt, null),
+      privacyAcceptedLocale: ['en', 'ru'].includes(cleanText(raw.privacyAcceptedLocale))
+        ? cleanText(raw.privacyAcceptedLocale)
+        : null,
+      privacyDocumentId: cleanText(raw.privacyDocumentId) || null,
       currentStep,
       answers,
       result,

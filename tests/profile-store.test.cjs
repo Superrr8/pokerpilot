@@ -66,8 +66,8 @@ test('Default profile создаётся с безопасными фактич�
 
 test('schemaVersion и единый storage key имеют текущие значения', () => {
   const { api, store, storage } = createStore();
-  assert.equal(api.PROFILE_SCHEMA_VERSION, 2);
-  assert.equal(store.getProfile().schemaVersion, 2);
+  assert.equal(api.PROFILE_SCHEMA_VERSION, 3);
+  assert.equal(store.getProfile().schemaVersion, 3);
   assert.equal(api.PROFILE_STORAGE_KEY, 'pokerpilot_profile');
   assert.deepEqual(
     [...new Set(storage.operations.map(([, key]) => key))],
@@ -81,10 +81,10 @@ test('повреждённый JSON восстанавливается без п
   });
   assert.doesNotThrow(() => store.getProfile());
   assert.equal(store.getProfile().displayName, 'Player');
-  assert.equal(store.getProfile().schemaVersion, 2);
+  assert.equal(store.getProfile().schemaVersion, 3);
 });
 
-test('старый профиль мигрирует в schemaVersion 2 без потери допустимых полей', () => {
+test('старый профиль мигрирует в schemaVersion 3 без потери допустимых полей', () => {
   const old = {
     schemaVersion: 0,
     name: '  Daria  ',
@@ -98,7 +98,7 @@ test('старый профиль мигрирует в schemaVersion 2 без �
     initial: { pokerpilot_profile: JSON.stringify(old) }
   });
   const profile = store.getProfile();
-  assert.equal(profile.schemaVersion, 2);
+  assert.equal(profile.schemaVersion, 3);
   assert.equal(profile.displayName, 'Daria');
   assert.equal(profile.preferredGame, '$2/$5 Cash');
   assert.equal(profile.avatar.value, 'spade-green');

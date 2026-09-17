@@ -14,13 +14,25 @@
     return true;
   }
 
-  function openDialog({ title, message } = {}) {
+  function openDialog({ title, message, destination = null } = {}) {
     const dialog = root.document?.querySelector('#appDialog');
     if (!dialog) return false;
     const titleNode = dialog.querySelector('[data-dialog-title]');
     const messageNode = dialog.querySelector('[data-dialog-message]');
+    const destinationNode = dialog.querySelector('[data-dialog-destination]');
     if (titleNode) titleNode.textContent = String(title || Brand.productName);
     if (messageNode) messageNode.textContent = String(message || '');
+    if (destinationNode) {
+      const visible = Boolean(destination?.url);
+      destinationNode.hidden = !visible;
+      if (visible) {
+        destinationNode.href = String(destination.url);
+        destinationNode.textContent = String(destination.label || destination.url);
+      } else {
+        destinationNode.removeAttribute('href');
+        destinationNode.textContent = '';
+      }
+    }
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
     return true;

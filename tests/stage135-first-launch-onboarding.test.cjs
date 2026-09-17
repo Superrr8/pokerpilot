@@ -55,7 +55,7 @@ function completeAssessment(env, choose = question => Onboarding.correctActionFo
   return env.onboarding.getState();
 }
 
-test('new profiles enter onboarding while established profile/progress users bypass it', () => {
+test('new profiles enter onboarding while established users require non-destructive legal re-consent', () => {
   const fresh = harness();
   assert.equal(fresh.onboarding.shouldStart(), true);
   assert.equal(fresh.onboarding.getState().step, 'welcome');
@@ -67,12 +67,16 @@ test('new profiles enter onboarding while established profile/progress users byp
   const existingProfile = harness(memoryStorage({
     [ProfileStore.PROFILE_STORAGE_KEY]: JSON.stringify(legacy)
   }));
-  assert.equal(existingProfile.onboarding.shouldStart(), false);
+  assert.equal(existingProfile.onboarding.shouldStart(), true);
+  assert.equal(existingProfile.onboarding.getState().step, 'consent');
+  assert.equal(existingProfile.onboarding.getState().reconsent, true);
 
   const existingProgress = harness(memoryStorage({
     pokerpilot_progress_system: JSON.stringify({ schemaVersion: 3, lifetimeXp: 0 })
   }));
-  assert.equal(existingProgress.onboarding.shouldStart(), false);
+  assert.equal(existingProgress.onboarding.shouldStart(), true);
+  assert.equal(existingProgress.onboarding.getState().step, 'consent');
+  assert.equal(existingProgress.onboarding.getState().reconsent, true);
 });
 
 test('consent gates assessment and persists the versioned acceptance timestamp', () => {
@@ -82,10 +86,14 @@ test('consent gates assessment and persists the versioned acceptance timestamp',
   assert.deepEqual(env.onboarding.acceptTerms(false), { accepted: false, reason: 'CONSENT_REQUIRED' });
   assert.equal(env.onboarding.getState().step, 'consent');
 
-  assert.equal(env.onboarding.acceptTerms(true).accepted, true);
+  assert.equal(env.onboarding.acceptLegal(true).accepted, true);
   const state = env.profileStore.getOnboarding();
   assert.equal(state.termsVersion, Onboarding.TERMS_VERSION);
+  assert.equal(state.privacyVersion, Onboarding.PRIVACY_VERSION);
   assert.equal(state.termsAcceptedAt, NOW);
+  assert.equal(state.privacyAcceptedAt, NOW);
+  assert.equal(state.termsAcceptedLocale, 'en');
+  assert.equal(state.privacyAcceptedLocale, 'en');
   assert.equal(env.onboarding.getState().step, 'assessment');
 });
 
@@ -180,6 +188,8 @@ test('UI keeps one header language picker, accessible legal actions, and no solu
   assert.match(html, /data-onboarding-legal="privacy"/);
   assert.match(ui, /consent\.checked/);
   assert.match(ui, /continueButton\.disabled\s*=\s*!consent\.checked/);
+  assert.match(ui, /openLegalDocument\(documentName\)/);
+  assert.doesNotMatch(ui, /termsPending|privacyPending/);
   assert.doesNotMatch(ui, /correctAction|\.grades|explanation/);
   assert.match(css, /\.app-shell\[data-active-route="onboarding"\]\s+#headerLocaleControl\s*\{[^}]*display:\s*block/s);
   assert.match(css, /min-height:\s*48px/);

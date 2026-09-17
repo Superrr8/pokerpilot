@@ -10,9 +10,12 @@
     || (typeof require === 'function' ? require('../data/postflop-scenarios.js') : []);
   const DecisionQuality = root.DecisionQualityEngine
     || (typeof require === 'function' ? require('../decision-quality/decision-quality-engine.js') : null);
+  const Compliance = root.PokerElevateCompliance
+    || (typeof require === 'function' ? require('../compliance/release-compliance.js') : null);
 
   const ASSESSMENT_VERSION = '1.0';
-  const TERMS_VERSION = '1.0';
+  const TERMS_VERSION = Compliance?.TERMS_VERSION || '1.0';
+  const PRIVACY_VERSION = Compliance?.PRIVACY_VERSION || '1.0';
   const ASSESSMENT_COUNT = 10;
   const ACTIONS = new Set(['FOLD', 'CHECK', 'CALL', 'BET', 'RAISE', 'ALL_IN']);
   const REQUIRED_I18N_KEYS = Object.freeze([
@@ -29,8 +32,10 @@
     'onboarding.consent.privacy',
     'onboarding.consent.continue',
     'onboarding.consent.back',
-    'onboarding.legal.termsPending',
-    'onboarding.legal.privacyPending',
+    'onboarding.reconsent.eyebrow',
+    'onboarding.reconsent.title',
+    'onboarding.reconsent.body',
+    'onboarding.reconsent.continue',
     'onboarding.assessment.eyebrow',
     'onboarding.assessment.progress',
     'onboarding.assessment.prompt',
@@ -215,7 +220,10 @@
     profileStore,
     progressSystem,
     now = () => new Date().toISOString(),
-    timezoneOffsetMinutes = () => new Date().getTimezoneOffset()
+    timezoneOffsetMinutes = () => new Date().getTimezoneOffset(),
+    getLocale = () => root.PokerElevateI18n?.getLocale?.() || 'en',
+    termsVersion = TERMS_VERSION,
+    privacyVersion = PRIVACY_VERSION
   } = {}) {
     if (!profileStore?.getOnboarding || !profileStore?.updateOnboarding) {
       throw new Error('ProfileStore onboarding API is required');
@@ -228,19 +236,38 @@
       return profileStore.getOnboarding();
     }
 
-    function hasCurrentTerms(state = profileState()) {
-      return state.termsVersion === TERMS_VERSION && Boolean(state.termsAcceptedAt);
+    const currentTermsVersion = String(termsVersion || TERMS_VERSION);
+    const currentPrivacyVersion = String(privacyVersion || PRIVACY_VERSION);
+
+    function acceptedDocument(state, type, version) {
+      const acceptedLocale = state[`${type}AcceptedLocale`];
+      const expectedIdentity = Compliance?.documentIdentity
+        ? Compliance.documentIdentity(type, acceptedLocale, version)
+        : `pokerelevate:${type}:${version}:${acceptedLocale}`;
+      return state[`${type}Version`] === version
+        && Boolean(state[`${type}AcceptedAt`])
+        && ['en', 'ru'].includes(acceptedLocale)
+        && state[`${type}DocumentId`] === expectedIdentity;
+    }
+
+    function hasCurrentLegal(state = profileState()) {
+      return acceptedDocument(state, 'terms', currentTermsVersion)
+        && acceptedDocument(state, 'privacy', currentPrivacyVersion);
     }
 
     function shouldStart() {
-      return profileState().onboardingCompleted !== true;
+      const state = profileState();
+      return state.onboardingCompleted !== true || !hasCurrentLegal(state);
     }
 
     function stepFor(state) {
+      if (!hasCurrentLegal(state)) {
+        if (state.onboardingCompleted) return 'consent';
+        return state.currentStep === 'consent' ? 'consent' : 'welcome';
+      }
       if (state.onboardingCompleted) return 'complete';
       if (state.assessmentCompleted) return 'result';
-      if (hasCurrentTerms(state)) return 'assessment';
-      return state.currentStep === 'consent' ? 'consent' : 'welcome';
+      return 'assessment';
     }
 
     function normalizedAnswers(state = profileState()) {
@@ -333,7 +360,7 @@
     function finalizeAssessment() {
       const state = profileState();
       const answers = normalizedAnswers(state);
-      if (!hasCurrentTerms(state) || answers.length !== ASSESSMENT_COUNT) {
+      if (!hasCurrentLegal(state) || answers.length !== ASSESSMENT_COUNT) {
         return { completed: false, reason: 'ASSESSMENT_INCOMPLETE' };
       }
       const timestamp = now();
@@ -361,14 +388,18 @@
       const answers = normalizedAnswers(stored);
       const index = Math.min(answers.length, ASSESSMENT_COUNT - 1);
       return {
-        required: !stored.onboardingCompleted,
+        required: shouldStart(),
+        reconsent: stored.onboardingCompleted === true && !hasCurrentLegal(stored),
         step,
         questionNumber: step === 'assessment' ? answers.length + 1 : null,
         totalQuestions: ASSESSMENT_COUNT,
         question: step === 'assessment' ? getAssessmentQuestions()[index] : null,
         answers: clone(answers),
         result: stored.result ? clone(stored.result) : null,
-        termsAccepted: hasCurrentTerms(stored)
+        termsAccepted: hasCurrentLegal(stored),
+        legalAccepted: hasCurrentLegal(stored),
+        termsVersion: currentTermsVersion,
+        privacyVersion: currentPrivacyVersion
       };
     }
 
@@ -379,26 +410,46 @@
     }
 
     function returnToWelcome() {
-      if (!shouldStart() || hasCurrentTerms()) return false;
+      const state = profileState();
+      if (!shouldStart() || state.onboardingCompleted || hasCurrentLegal(state)) return false;
       profileStore.updateOnboarding({ currentStep: 'welcome' });
       return true;
     }
 
-    function acceptTerms(accepted) {
+    function acceptLegal(accepted) {
       if (accepted !== true) return { accepted: false, reason: 'CONSENT_REQUIRED' };
       const state = profileState();
-      const resetAssessment = state.assessmentVersion && state.assessmentVersion !== ASSESSMENT_VERSION;
+      const acceptedAt = now();
+      const locale = Compliance?.normalizeLocale
+        ? Compliance.normalizeLocale(getLocale())
+        : ['en', 'ru'].includes(getLocale()) ? getLocale() : 'en';
+      const resetAssessment = !state.onboardingCompleted
+        && state.assessmentVersion
+        && state.assessmentVersion !== ASSESSMENT_VERSION;
+      const nextStep = state.onboardingCompleted ? 'complete' : 'assessment';
       profileStore.updateOnboarding({
-        termsVersion: TERMS_VERSION,
-        termsAcceptedAt: now(),
-        assessmentVersion: ASSESSMENT_VERSION,
-        currentStep: 'assessment',
+        termsVersion: currentTermsVersion,
+        termsAcceptedAt: acceptedAt,
+        termsAcceptedLocale: locale,
+        termsDocumentId: Compliance?.documentIdentity
+          ? Compliance.documentIdentity('terms', locale, currentTermsVersion)
+          : `pokerelevate:terms:${currentTermsVersion}:${locale}`,
+        privacyVersion: currentPrivacyVersion,
+        privacyAcceptedAt: acceptedAt,
+        privacyAcceptedLocale: locale,
+        privacyDocumentId: Compliance?.documentIdentity
+          ? Compliance.documentIdentity('privacy', locale, currentPrivacyVersion)
+          : `pokerelevate:privacy:${currentPrivacyVersion}:${locale}`,
+        assessmentVersion: resetAssessment ? ASSESSMENT_VERSION : state.assessmentVersion,
+        currentStep: nextStep,
         answers: resetAssessment ? [] : normalizedAnswers(state),
         assessmentCompleted: resetAssessment ? false : state.assessmentCompleted,
         result: resetAssessment ? null : state.result
       });
-      return { accepted: true, step: 'assessment' };
+      return { accepted: true, step: nextStep };
     }
+
+    const acceptTerms = acceptLegal;
 
     function submitAnswer(value) {
       const state = profileState();
@@ -417,6 +468,7 @@
 
     function completeOnboarding() {
       const state = profileState();
+      if (!hasCurrentLegal(state)) return { completed: false, reason: 'CONSENT_REQUIRED' };
       if (!state.assessmentCompleted || !state.result) {
         return { completed: false, reason: 'ASSESSMENT_INCOMPLETE' };
       }
@@ -428,7 +480,7 @@
     if (
       !pending.onboardingCompleted
       && !pending.assessmentCompleted
-      && hasCurrentTerms(pending)
+      && hasCurrentLegal(pending)
       && normalizedAnswers(pending).length === ASSESSMENT_COUNT
     ) finalizeAssessment();
 
@@ -437,6 +489,7 @@
       getState,
       advanceWelcome,
       returnToWelcome,
+      acceptLegal,
       acceptTerms,
       submitAnswer,
       completeOnboarding
@@ -446,6 +499,7 @@
   const api = Object.freeze({
     ASSESSMENT_VERSION,
     TERMS_VERSION,
+    PRIVACY_VERSION,
     ASSESSMENT_COUNT,
     REQUIRED_I18N_KEYS,
     getAssessmentQuestions,
