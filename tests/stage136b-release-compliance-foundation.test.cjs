@@ -98,9 +98,9 @@ test('versioned local Terms, Privacy, support, and responsible-play documents ar
   assert.match(Compliance.getDocument('terms', 'en').plainText, /educational and training product/i);
   assert.match(Compliance.getDocument('terms', 'en').plainText, /prohibited real-time assistance/i);
   assert.match(Compliance.getDocument('terms', 'en').plainText, /not standardized IQ tests/i);
-  assert.equal(Compliance.getDestination('terms').url, null);
-  assert.equal(Compliance.getDestination('privacy').url, null);
-  assert.equal(Compliance.getDestination('support').url, null);
+  assert.match(Compliance.getDestination('terms', 'en').url, /^https:\/\/superrr8\.github\.io\/pokerpilot\/legal\//);
+  assert.match(Compliance.getDestination('privacy', 'ru').url, /document=privacy&lang=ru/);
+  assert.match(Compliance.getDestination('support', 'en').url, /document=support&lang=en/);
 });
 
 test('clean first run accepts current Terms and Privacy identities before assessment', () => {

@@ -39,8 +39,9 @@
     }
 
     function openDocument(type) {
-      const document = compliance.getDocument(type, locale());
-      const destination = compliance.getDestination(type);
+      const activeLocale = locale();
+      const document = compliance.getDocument(type, activeLocale);
+      const destination = compliance.getDestination(type, activeLocale);
       return feedback?.openDialog?.({
         title: document.title,
         message: documentMessage(document),

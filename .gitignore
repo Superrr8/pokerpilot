@@ -18,3 +18,5 @@ coverage/
 # Dependency folders are not application assets
 node_modules/
 
+# Local validation captures are not production web assets
+artifacts/

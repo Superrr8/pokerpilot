@@ -13,11 +13,27 @@
     support: SUPPORT_VERSION,
     responsiblePlay: RESPONSIBLE_PLAY_VERSION
   });
+  const PUBLIC_SITE_URL = 'https://superrr8.github.io/pokerpilot';
+  const DOCUMENT_SLUGS = Object.freeze({
+    terms: 'terms',
+    privacy: 'privacy',
+    support: 'support',
+    responsiblePlay: 'responsible-play'
+  });
+
+  function publicDocumentUrl(type, locale = 'en') {
+    if (!Object.hasOwn(DOCUMENT_VERSIONS, type)) throw new Error(`Unknown legal document: ${type}`);
+    const url = new URL(`${PUBLIC_SITE_URL}/legal/`);
+    url.searchParams.set('document', DOCUMENT_SLUGS[type]);
+    url.searchParams.set('lang', normalizeLocale(locale));
+    return url.toString();
+  }
+
   const DEFAULT_DESTINATIONS = Object.freeze({
-    terms: Object.freeze({ url: null }),
-    privacy: Object.freeze({ url: null }),
-    support: Object.freeze({ url: null }),
-    responsiblePlay: Object.freeze({ url: null })
+    terms: Object.freeze({ url: publicDocumentUrl('terms') }),
+    privacy: Object.freeze({ url: publicDocumentUrl('privacy') }),
+    support: Object.freeze({ url: publicDocumentUrl('support') }),
+    responsiblePlay: Object.freeze({ url: publicDocumentUrl('responsiblePlay') })
   });
   const OWNED_STORAGE_KEYS = Object.freeze([
     'pokerpilot_v1_6_progress',
@@ -109,7 +125,7 @@
         sections: Object.freeze([
           Object.freeze({
             title: 'Current contact path',
-            body: 'A verified production support URL has not yet been configured for this release candidate. This local page remains available so a final HTTPS destination can be connected without changing the Profile interface.'
+            body: 'This public support-information page is the permanent repository-hosted destination for this release. A verified operator contact channel has not yet been configured and must be supplied before App Store submission.'
           }),
           Object.freeze({
             title: 'Privacy',
@@ -211,7 +227,7 @@
         sections: Object.freeze([
           Object.freeze({
             title: 'Текущий канал связи',
-            body: 'Проверенная финальная ссылка поддержки пока не настроена для этой версии-кандидата. Эта локальная страница остаётся доступной, чтобы позднее подключить финальный HTTPS-адрес без изменения интерфейса Профиля.'
+            body: 'Эта публичная информационная страница — постоянный адрес поддержки для данного релиза. Проверенный канал связи с оператором ещё не настроен и должен быть добавлен до отправки приложения в App Store.'
           }),
           Object.freeze({
             title: 'Конфиденциальность',
@@ -273,12 +289,28 @@
     }
   }
 
-  function create({ destinations = {} } = {}) {
+  function create({ destinations = DEFAULT_DESTINATIONS } = {}) {
     const resolvedDestinations = Object.fromEntries(Object.keys(DOCUMENT_VERSIONS).map(type => {
       const configured = destinations[type];
       const candidate = typeof configured === 'string' ? configured : configured?.url;
-      return [type, Object.freeze({ url: validHttpsUrl(candidate) })];
+      return [type, Object.freeze({
+        url: validHttpsUrl(candidate),
+        canonical: candidate === DEFAULT_DESTINATIONS[type].url
+      })];
     }));
+
+    function getDestination(type, locale = 'en') {
+      if (!Object.hasOwn(resolvedDestinations, type)) throw new Error(`Unknown legal destination: ${type}`);
+      const normalizedLocale = normalizeLocale(locale);
+      const resolved = resolvedDestinations[type];
+      return Object.freeze({
+        url: resolved.canonical ? publicDocumentUrl(type, normalizedLocale) : resolved.url,
+        type,
+        locale: normalizedLocale,
+        version: DOCUMENT_VERSIONS[type],
+        documentId: documentIdentity(type, normalizedLocale)
+      });
+    }
 
     function getDocument(type, locale = 'en') {
       if (!Object.hasOwn(DOCUMENT_VERSIONS, type)) throw new Error(`Unknown legal document: ${type}`);
@@ -293,15 +325,10 @@
         title: copy.title,
         summary: copy.summary,
         sections: clone(copy.sections),
-        destination: resolvedDestinations[type]
+        destination: getDestination(type, normalizedLocale)
       };
       document.plainText = plainText(document);
       return Object.freeze(document);
-    }
-
-    function getDestination(type) {
-      if (!Object.hasOwn(resolvedDestinations, type)) throw new Error(`Unknown legal destination: ${type}`);
-      return { ...resolvedDestinations[type] };
     }
 
     return Object.freeze({ getDocument, getDestination });
@@ -346,11 +373,14 @@
     RESPONSIBLE_PLAY_VERSION,
     EFFECTIVE_DATE,
     DOCUMENT_VERSIONS,
+    PUBLIC_SITE_URL,
+    DOCUMENT_SLUGS,
     DEFAULT_DESTINATIONS,
     OWNED_STORAGE_KEYS,
     OWNED_STORAGE_PREFIXES,
     normalizeLocale,
     documentIdentity,
+    publicDocumentUrl,
     ownsStorageKey,
     deleteAllLocalData,
     create,
