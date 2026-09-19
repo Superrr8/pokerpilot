@@ -14,6 +14,7 @@
 		A10000000000000000000005 /* ../manifest.webmanifest in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* ../manifest.webmanifest */; };
 		A10000000000000000000006 /* ../src in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* ../src */; };
 		A10000000000000000000007 /* ../legal in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* ../legal */; };
+		A10000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		A20000000000000000000007 /* ../src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ../src; sourceTree = "<group>"; };
 		A20000000000000000000008 /* ../legal */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ../legal; sourceTree = "<group>"; };
 		A20000000000000000000009 /* PokerElevate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerElevate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +55,7 @@
 			children = (
 				A20000000000000000000001 /* PokerElevateApp.swift */,
 				A20000000000000000000002 /* PokerElevateWebView.swift */,
+				A20000000000000000000010 /* Assets.xcassets */,
 				A20000000000000000000003 /* Info.plist */,
 				A20000000000000000000004 /* PrivacyInfo.xcprivacy */,
 			);
@@ -141,6 +144,7 @@
 				A10000000000000000000005 /* ../manifest.webmanifest in Resources */,
 				A10000000000000000000006 /* ../src in Resources */,
 				A10000000000000000000007 /* ../legal in Resources */,
+				A10000000000000000000008 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +273,7 @@
 		B20000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -295,6 +300,7 @@
 		B20000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;

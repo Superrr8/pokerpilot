@@ -102,12 +102,12 @@ test('native package retains canonical Stage 13.6C legal versions and identities
   assert.match(project, /path = \.\.\/legal;/);
 });
 
-test('Stage 13.7A adds no identity redesign, remote framework, or sensitive entitlement', () => {
+test('native package retains the Stage 13.7A dependency and entitlement boundaries', () => {
   const iosFiles = fs.readdirSync(path.join(root, 'ios'), { recursive: true }).map(String);
   const project = read(projectPath);
   const info = read(infoPath);
 
-  assert.equal(iosFiles.some(file => /Assets\.xcassets|AppIcon|\.entitlements$/i.test(file)), false);
+  assert.equal(iosFiles.some(file => /\.entitlements$/i.test(file)), false);
   assert.equal(iosFiles.some(file => /loading|rising.?chip/i.test(file)), false);
   assert.doesNotMatch(project, /XCRemoteSwiftPackageReference|CocoaPods|carthage/i);
   assert.doesNotMatch(info, /UIBackgroundModes|aps-environment|CFBundleURLTypes/);
